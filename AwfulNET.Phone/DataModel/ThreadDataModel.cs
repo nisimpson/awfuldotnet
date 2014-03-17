@@ -795,6 +795,7 @@ namespace AwfulNET.DataModel
 
         public Task OnRefreshAsync(object state, IProgress<string> progress)
         {
+            this.currentPageMetadata = null;
             return this.OnSelectedAsync(state, progress);
         }
 
