@@ -1,4 +1,4 @@
 awfuldotnet
 ===========
 
-SomethingAwful Forums posting, for .NET platforms.
+SomethingAwful Forums posting for .NET platforms.
