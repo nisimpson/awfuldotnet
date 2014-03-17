@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="windows-1252" />
+    <title>webView</title>
+    <link rel="stylesheet" href="/css/ui-dark.css" />
+    <link rel="stylesheet" href="/webview/webview.css" />
+    <link rel="stylesheet" href="/webview/webview-phone.css" />
+    <link rel="stylesheet" href="/webview/thread.css"/>
+    <link rel="stylesheet" href="/webview/thread-phone.css" />
+    <link rel="stylesheet" href="/css/ui-theme-phone.css"/>
+</head>
+<body>  
+    <div id="anchor" data-bind="css: theme">
+        <!-- This markup ensures the initial scroll to the first unread post works properly. -->
+        <div id="placeholderView" data-bind="if: displayPlaceholder" style="visibility:hidden; background-color: transparent">
+            Hello, World! If things go well, you'll never see me.
+        </div>
+        <!-- Thread template-->
+        <div id="threadView" data-bind="if: displayThread">
+            <header class="header" data-bind="with: thread">
+                <div class="header-background"></div>
+                <div class="text">
+                    <h3 class="article-description win-type-large"><span data-bind="text: description"></span></h3>
+                    <h2 class="article-title win-type-x-large"><span data-bind="text: title"></span></h2>
+                    <h3 class="article-subtitle win-type-large"><span data-bind="text: subtitle"></span></h3>
+                </div>
+            </header>
+            <div id="postContainer" data-bind="with: thread">
+                <div class="article-content"
+                     data-bind="foreach: {
+                        data: throttledPosts,
+                        as: 'post',
+                        afterRender: onPostAdd
+                    }">
+                    <!-- every article element represents a post. -->
+                    <article data-bind="
+                        css: { seen: post.isNew() == false, ignored: post.isIgnored() == true },
+                        attr: { id: post.id, 'data-index': threadIndex }">
+                        <!-- Article headers contain post info. -->
+                        <header>
+                            <img class="av" src="/"
+                                 data-bind="visible: post.showAvatar,
+                                            attr: { src: post.avatar }" />
+
+                            <h2 class="text article-title win-type-ellipsis">
+                                <span class="author" data-bind="text: post.author"></span>
+                            </h2>
+
+                            <h4 class="text article-subtitle win-type-ellipsis">
+                                <span class="date" data-bind="text: post.formattedDate"></span>
+                            </h4>
+                        </header>
+                        <!-- Post content starts here. -->
+                        <div class="article-content" data-bind="html: post.content"></div>
+                        <!-- Article footers contain post options. -->
+                        <footer>
+                            <!--
+                            (KnockoutJS) For proper JS validation, nested foreach loops
+                            must be checked for null or undefined values (use if).
+                        -->
+                            <div data-bind="if: post.options">
+                                <ul data-bind="foreach: { data: post.options, as: 'option' }">
+                                    <li>
+                                        <a href="#" class="postoption" data-bind="attr: { href: option.href }">
+                                            <span data-bind="text: option.caption" />
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="post-separator" data-bind="visible: $root.showSeparators" />
+                        </footer>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article template -->
+        <div id="articleView" data-bind="if: displayArticle">
+            <header class="header" data-bind="with: article">
+                <div class="header-background"></div>
+                <div class="text">
+                    <h3 class="article-description win-type-large">Front Page</h3>
+                    <h2 class="article-title win-type-x-large"><span data-bind="text: title"></span></h2>
+                    <h3 class="article-subtitle win-type-large"><span data-bind="text: subtitle"></span></h3>
+                </div>
+            </header>
+            <article>
+                <!--
+                <header class="header">
+                    <div class="text">
+                        <h2 class="article-title"><span data-bind="text: article().title">monkey</span></h2>
+                        <h4 class="article-subtitle"><span data-bind="text: article().subtitle">cheese</span></h4>
+                    </div>
+                </header>
+                -->
+                <div class="article-content" data-bind="html: article().content">blah blah</div>
+            </article>
+        </div>
+    </div>
+    <script type="text/javascript" src="/js/jquery-2.0.3.js"></script>
+    <script type="text/javascript" src="/js/sammy.js"></script>
+    <script type="text/javascript" src="/js/knockout.js"></script>
+    <script type="text/javascript" src="/js/jquery.scrollTo.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.unveil.js"></script>
+    <script type="text/javascript" src="/webview/webview.js"></script>
+    <script type="text/javascript">
+        
+        // -----------------------
+        // Native runtime accessible functions (via WebBrowser.InvokeScript())
+        // -----------------------
+
+        function viewThreadPage(json) {
+            return WebViewJS.viewThreadPage(json);
+        }
+        function viewArticle(json) {
+            return WebViewJS.viewArticle(json);
+        }
+        function scrollToTop() {
+            if (WebViewJS.viewModel.displayThread()) {
+                WebViewJS.threadScrollToTop(function () { }, 0, -55);
+                return "OK";
+            }
+            return "FAIL";
+        }
+        function scrollToBottom() {
+            if (WebViewJS.viewModel.displayThread()) {
+                WebViewJS.threadScrollToBottom(function () { }, 0, -55);
+                return "OK";
+            }
+            return "FAIL";
+        }
+        function scrollToPost(id) {
+            if (WebViewJS.viewModel.displayThread()) {
+                WebViewJS.threadScrollToPost(id);
+                return "OK";
+            }
+            return "FAIL";
+        }
+        function showLoadingRing() {
+            return WebViewJS.showLoadingRing();
+        }
+        function hideLoadingRing() {
+            return WebViewJS.hideLoadingRing();
+        }
+        function enablePhoneMode() {
+            WebViewJS.isPhoneModeEnabled = true;
+        }
+        function setTheme(colorTheme, accentHex) {
+            WebViewJS.viewModel.theme(colorTheme);
+            WebViewJS.viewModel.accent(accentHex);
+        }
+        function loadUrl(href) {
+            WebViewJS.loadUrl(href);
+        }
+        function setPostContent(id, html) {
+            try {
+                // locate target element
+                var post = $('#post' + id)[0];
+                // grab context of element
+                var context = ko.contextFor(post);
+                // update html property
+                context.$data.content(html);
+
+            } catch (err) { WebViewJS.echo(err); }
+        }
+
+        ko.applyBindings(WebViewJS.viewModel);
+        WebViewJS.onReady();
+        window.external.notify("domready");
+    </script>
+</body>
+</html>

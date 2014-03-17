@@ -1,0 +1,57 @@
+﻿<phone:PhoneApplicationPage x:Class="AwfulNET.Phone.ReplyPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+        xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:common="clr-namespace:AwfulNET.Common" xmlns:apu="clr-namespace:AppBarUtils;assembly=AppBarUtils"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+        FontFamily="{StaticResource PhoneFontFamilyNormal}" 
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+        Foreground="{StaticResource PhoneForegroundBrush}" SupportedOrientations="PortraitOrLandscape" 
+                            Orientation="Landscape"
+        mc:Ignorable="d" shell:SystemTray.IsVisible="True">
+    
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar>
+            <shell:ApplicationBarIconButton Text="send" IconUri="/assets/icon.png" />
+            <shell:ApplicationBarIconButton Text="cancel" IconUri="/assets/icon.png" />
+            <shell:ApplicationBarIconButton Text="upload" IconUri="/assets/icon.png" />
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="clear" />
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+        
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+    <i:Interaction.Behaviors>
+        <apu:AppBarItemCommand Type="Button" Id="send" Command="{Binding SubmitFormCommand}" Text="send"
+                IconUri="/Assets/AppBar/check.png" />
+        <apu:AppBarItemCommand Type="Button" Id="cancel" Command="{Binding PostForm.GoBackCommand}" Text="cancel"
+                IconUri="/Assets/AppBar/cancel.png" />
+        <apu:AppBarItemCommand Type="Button" Id="upload" Command="{Binding UploadCommand}" Text="upload"
+                               IconUri="/Assets/AppBar/Camera.png"/>
+        <apu:AppBarItemCommand Type="MenuItem" Id="clear" Command="{Binding ClearTextCommand}" Text="clear text"/>
+    </i:Interaction.Behaviors>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <ContentControl Style="{StaticResource pageHeaderStyle}" 
+                        Content="{Binding PostForm.Title}" />
+
+        <!--ContentPanel - place additional content here-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="0"
+              DataContext="{Binding PostForm}">
+            <common:HtmlTextBoxControl x:Name="textBoxControl" Text="{Binding Message, Mode=TwoWay}" />
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

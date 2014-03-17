@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
+  <Identity Name="17336NathanSimpson.23217D5413C29" Publisher="CN=E23272FD-C779-45D3-BC0C-2A4B95383805" Version="3.0.0.1" />
+  <Properties>
+    <DisplayName>Awful.</DisplayName>
+    <PublisherDisplayName>Nathan Simpson</PublisherDisplayName>
+    <Logo>Assets\store.png</Logo>
+  </Properties>
+  <Prerequisites>
+    <OSMinVersion>6.3.0</OSMinVersion>
+    <OSMaxVersionTested>6.3.0</OSMaxVersionTested>
+  </Prerequisites>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="AwfulNET.RT.App">
+      <m2:VisualElements DisplayName="Awful." Square150x150Logo="Assets\Logo150.png" Square30x30Logo="Assets\logo30.png" Description="Read SomethingAwful on your tablet or desktop, with a Modern look and feel." ForegroundText="light" BackgroundColor="#005B9B" ToastCapable="true">
+        <m2:DefaultTile ShortName="Awful." Wide310x150Logo="Assets/Logo310.png" Square70x70Logo="Assets/Logo70.png" Square310x310Logo="Assets\logo310sq.png">
+        </m2:DefaultTile>
+        <m2:SplashScreen Image="Assets\splash.png" BackgroundColor="#005B9B" />
+        <m2:InitialRotationPreference>
+          <m2:Rotation Preference="portrait" />
+          <m2:Rotation Preference="landscape" />
+          <m2:Rotation Preference="portraitFlipped" />
+          <m2:Rotation Preference="landscapeFlipped" />
+        </m2:InitialRotationPreference>
+      </m2:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>

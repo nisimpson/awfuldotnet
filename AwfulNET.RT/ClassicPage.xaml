@@ -1,0 +1,669 @@
+﻿<Page x:Name="pageRoot" x:Class="AwfulNET.RT.ClassicPage"
+        DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:AwfulNET.RT"
+        xmlns:common="using:AwfulNET.RT.Common" xmlns:datamodel="using:AwfulNET.DataModel"
+        xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+        xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <!-- Default style for Windows.UI.Xaml.Controls.ListViewItem -->
+
+        <!-- Collection of items displayed by this page -->
+        <CollectionViewSource x:Name="itemsViewSource" Source="{Binding CurrentDirectory.ItemsSource}" IsSourceGrouped="True"
+                d:Source="{Binding Groups, Source={d:DesignInstance IsDesignTimeCreatable=True, Type=datamodel:SampleDataGroup}}" />
+        
+    	<CollectionViewSource x:Name="tabsViewSource" Source="{Binding Threads}" IsSourceGrouped="False"
+    		d:Source="{Binding Items, Source={d:DesignInstance IsDesignTimeCreatable=True, Type=datamodel:SampleDataGroup}}" />
+
+        <Style x:Key="threadTabItemContainerStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="12,12,20,20" />
+            <Setter Property="BorderThickness" Value="0,0,0,2" />
+            <Setter Property="Margin" Value="0,0,0,0" />
+            <Setter Property="BorderBrush" Value="{ThemeResource HomePageContentBackgroundBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                Padding="{TemplateBinding Padding}" SelectionCheckMarkVisualEnabled="True"
+                                CheckHintBrush="{ThemeResource ListViewItemCheckHintThemeBrush}"
+                                CheckSelectingBrush="{ThemeResource ListViewItemCheckSelectingThemeBrush}"
+                                CheckBrush="{ThemeResource ListViewItemCheckThemeBrush}"
+                                DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                FocusBorderBrush="{ThemeResource ListViewItemFocusBorderThemeBrush}"
+                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                PointerOverBackground="{ThemeResource ListViewItemPointerOverBackgroundThemeBrush}"
+                                SelectedBorderThickness="{ThemeResource ListViewItemCompactSelectedBorderThemeThickness}"
+                                SelectedBackground="{ThemeResource HomePageContentBackgroundBrush}"
+                                SelectedForeground="{ThemeResource HomePageAccentBrush}"
+                                SelectedPointerOverBackground="{ThemeResource ListViewItemSelectedPointerOverBackgroundThemeBrush}"
+                                SelectedPointerOverBorderBrush="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}"
+                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                PointerOverBackgroundMargin="0,0,0,-2" ContentMargin="0" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Thread tab appbar button flyout -->
+		<Flyout x:Key="threadTabFlyout">
+    		<Grid MaxHeight="300">
+                <ListView x:Name="threadTabListView" HorizontalAlignment="Left" VerticalAlignment="Top"
+                        SelectedItem="{Binding Context.CurrentThread, Mode=TwoWay}"
+                        ItemsSource="{Binding Source={StaticResource tabsViewSource}}"
+                        ItemContainerStyle="{StaticResource threadTabItemContainerStyle}">
+                    <ListView.ItemTemplate>
+						<DataTemplate>
+							<Grid Margin="6,0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Button Content="&#xE108;" HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        FontFamily="Segoe UI Symbol"
+                                        Click="OnRemoveTabClick" Padding="0" 
+										BorderBrush="{ThemeResource HomePageAccentBrush}" 
+										Foreground="{ThemeResource HomePageAccentBrush}"
+										BorderThickness="2" Style="{StaticResource AppBarButtonStyle}" Margin="-38,-2,-20,0"/>
+								<StackPanel Grid.Column="2" Width="250">
+									<TextBlock Text="{Binding Title}" TextWrapping="Wrap" Style="{StaticResource TitleTextBlockStyle}" Height="20" />
+									<TextBlock TextWrapping="Wrap" Text="{Binding Description}" Style="{StaticResource SubtitleTextBlockStyle}"/>
+								</StackPanel>
+								
+							</Grid>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+    		</Grid>
+    	</Flyout>
+
+        <Style x:Key="LogoButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border BorderThickness="0,0,1,0" BorderBrush="{StaticResource AppBarBackgroundThemeBrush}"
+                                Width="221">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border VerticalAlignment="Top" HorizontalAlignment="Left" BorderThickness="1"
+                                        Padding="6"
+                                        Margin="0,0,10,0">
+                                    <Image Source="Assets/Logo70.png" />
+                                </Border>
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        Margin="0,6,0,0" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Grid.Column="1" />
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Button style for the list view header -->
+        <Style x:Key="menuFlyoutButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource ButtonBackgroundThemeBrush}" />
+            <Setter Property="Foreground" Value="{ThemeResource ButtonForegroundThemeBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderThemeBrush}" />
+            <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
+            <Setter Property="Padding" Value="12,4,12,4" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Margin="0" MinWidth="60">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                    Storyboard.TargetName="Border">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{ThemeResource ButtonPointerOverBackgroundThemeBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                    Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{ThemeResource ButtonPointerOverForegroundThemeBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                    Storyboard.TargetName="Border">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{ThemeResource ButtonPressedBackgroundThemeBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                    Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{ThemeResource ButtonPressedForegroundThemeBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                    Storyboard.TargetName="Border">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{ThemeResource ButtonDisabledBackgroundThemeBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                    Storyboard.TargetName="Border">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{ThemeResource ButtonDisabledBorderThemeBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                    Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                        Value="{ThemeResource ButtonDisabledForegroundThemeBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity"
+                                                    Storyboard.TargetName="FocusVisualWhite" />
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity"
+                                                    Storyboard.TargetName="FocusVisualBlack" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unfocused" />
+                                    <VisualState x:Name="PointerFocused" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <local:LayoutTransformer Foreground="{TemplateBinding Foreground}">
+                                <local:LayoutTransformer.LayoutTransform>
+                                    <RotateTransform Angle="-90" />
+                                </local:LayoutTransformer.LayoutTransform>
+                                <Grid>
+                                    <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Background="{TemplateBinding Background}">
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                                AutomationProperties.AccessibilityView="Raw"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                Content="{TemplateBinding Content}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                Margin="{TemplateBinding Padding}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    </Border>
+                                    <Rectangle x:Name="FocusVisualWhite" IsHitTestVisible="False" Opacity="0"
+                                            StrokeDashOffset="1.5" StrokeEndLineCap="Square"
+                                            Stroke="{ThemeResource FocusVisualWhiteStrokeThemeBrush}"
+                                            StrokeDashArray="1,1" />
+                                    <Rectangle x:Name="FocusVisualBlack" IsHitTestVisible="False" Opacity="0"
+                                            StrokeDashOffset="0.5" StrokeEndLineCap="Square"
+                                            Stroke="{ThemeResource FocusVisualBlackStrokeThemeBrush}"
+                                            StrokeDashArray="1,1" />
+                                </Grid>
+                            </local:LayoutTransformer>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Animation for fading the webview control into view. -->
+        <Storyboard x:Name="FadeInWebView">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                    Storyboard.TargetName="itemDetailPanel">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!-- Command Bar for thread content. -->
+        <common:AppBarButtonContainer x:Key="ThreadCommandBar" >
+            <common:AppBarButtonContainer.PrimaryCommands>
+                <AppBarButton x:Name="threadTabsButton" Label="tabs" Icon="List" IsEnabled="{Binding Context.EnableTabs}" Flyout="{StaticResource threadTabFlyout}" Click="threadTabsButton_Click">
+                </AppBarButton>
+                <AppBarButton x:Name="rateThreadButton" Label="rate" Icon="OutlineStar" Click="rateThreadButton_Click"
+                        d:IsLocked="True">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout x:Name="rateThreadFlyout" />
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarSeparator VerticalAlignment="Top" d:IsLocked="True" />
+                <AppBarButton x:Name="scrollToPostButton" Label="scroll" Icon="Sort" d:IsLocked="True">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout x:Name="scrollMenuFlyout">
+                            <MenuFlyoutItem x:Name="scrollTopMenuFlyoutItem" Text="scroll to top"
+                                    Click="scrollTopMenuFlyoutItem_Click" />
+                            <MenuFlyoutItem x:Name="scrollToBottomMenuFlyoutItem" Text="scroll to bottom"
+                                    Click="scrollToBottomMenuFlyoutItem_Click" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton x:Name="jumpToPageButton" Label="page" Icon="Page" Click="jumpToPageMenu_Click">
+                    <AppBarButton.Flyout>
+                        <Flyout x:Name="navBoxFlyout" Placement="Left">
+                            <ContentControl x:Name="navBoxControl" Content="{Binding}"
+                                    Style="{StaticResource navBoxWindowStyle}" />
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+            </common:AppBarButtonContainer.PrimaryCommands>
+        </common:AppBarButtonContainer>
+
+    </Page.Resources>
+    <Page.BottomAppBar>
+        <CommandBar Background="{ThemeResource HomePageAccentBrush}" Opened="OnBottomAppBarOpened" Closed="OnBottomAppBarClosed" />
+    </Page.BottomAppBar>
+
+    <!--
+        This grid acts as a root panel for the page that defines two rows:
+        * Row 0 contains the back button and page title
+        * Row 1 contains the rest of the page layout
+    -->
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="primaryColumn" Width="480" />
+            <ColumnDefinition x:Name="secondaryColumn" Width="*" />
+            <ColumnDefinition x:Name="tertiaryColumn" Width="60" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Top banner: logo, apptitle, controls -->
+        <!-- The page header panel. -->
+        <Border x:Name="topBanner" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource HomePageAccentBrush}"
+                Height="60" Grid.ColumnSpan="3" Grid.Row="0"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Button x:Name="LogoButton" Style="{StaticResource LogoButtonStyle}"
+                            HorizontalContentAlignment="Left" VerticalAlignment="Stretch" HorizontalAlignment="Left"
+                            Margin="0" Width="220" Click="logoButton_Click">
+                        <TextBlock TextWrapping="Wrap" Text="Awful." Style="{StaticResource PageSubheaderTextStyle}"
+                                Margin="0,0,0,16" VerticalAlignment="Stretch" />
+                    </Button>
+                    <Button x:Name="backButton" Content="&#xE112;" Style="{StaticResource topHeaderButtonStyle}"
+                            HorizontalContentAlignment="Left" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                            Margin="0" FontFamily="Segoe UI Symbol" Click="backButton_Click" Visibility="Collapsed"
+                            BorderThickness="0,0,1,0" BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                </Grid>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Content="Button" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Style="{StaticResource topHeaderButtonStyle}" BorderThickness="1,0,0,0"
+                            BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="Collapsed" />
+                    <Button Content="Button" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Style="{StaticResource topHeaderButtonStyle}" BorderThickness="1,0,0,0"
+                            BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="Collapsed" />
+                    <Button x:Name="loadingButton" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Style="{StaticResource topHeaderButtonStyle}" BorderThickness="2,0,0,0" Width="61"
+                            IsHitTestVisible="False">
+                        <ProgressRing x:Name="loadingRing" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                Foreground="{ThemeResource HomePageAccentBrush}" HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- First column, the list header and vertical scrolling list -->
+        <Grid x:Name="listPanel" xmlns:awful="using:AwfulNET.Common" Grid.Row="1"
+                Background="{ThemeResource HomePageBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <awful:BooleanToOpacityConverter x:Key="booleanToOpacity" />
+                <awful:BooleanToVisibilityConverter x:Key="booleanToVisibility" />
+                <awful:EventCommand x:Key="listRefreshCommand" CanExecuteRaised="OnCanRefresh"
+                        ExecuteRaised="OnRefreshListExecute" />
+                <common:LoadingToken x:Key="loadingToken" />
+            </Grid.Resources>
+
+            <!-- List Header, sideways appearance -->
+            <Grid x:Name="menuPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Canvas.ZIndex="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button x:Name="menuFlyoutButton" Content="{Binding CurrentDirectory, FallbackValue='sample text'}"
+                        Style="{StaticResource menuFlyoutButtonStyle}" BorderThickness="0,0,0,0"
+                        Command="{Binding GoUpCommand}" HorizontalContentAlignment="Right" FontSize="29.333"
+                        FontFamily="Segoe WP Light" FontWeight="Normal" VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch" BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
+                        Padding="12,4,20,4" />
+                <Button x:Name="listRefreshButton" Content="&#xE117;" HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top" Padding="12,4" BorderThickness="0,2,0,0"
+                        Style="{StaticResource topHeaderButtonStyle}" FontFamily="Segoe UI Symbol"
+                        Command="{StaticResource listRefreshCommand}" Margin="0" Grid.Row="1" />
+            </Grid>
+            <!-- Vertical scrolling item list -->
+            <ListView x:Name="itemListView"
+                    Visibility="{Binding CurrentDirectory.ShowContent, Converter={StaticResource booleanToVisibility}}"
+                    AutomationProperties.AutomationId="ItemsListView" VerticalAlignment="Top"
+                    AutomationProperties.Name="Items" TabIndex="1" Grid.Column="1" Margin="-16,0,0,0"
+                    Padding="12,0,0,60" ItemsSource="{Binding Source={StaticResource itemsViewSource}}"
+                    IsSwipeEnabled="False" SelectionChanged="ItemListView_SelectionChanged" SelectionMode="None"
+                      IsRightTapEnabled="True"
+                    Footer="{Binding CurrentDirectory}" ItemClick="itemListView_ItemClick" IsItemClickEnabled="True">
+
+                <ListView.ItemTemplateSelector>
+                    <common:DataTypeTemplateSelector>
+                        <common:DataTypeTemplateSelector.DefaultTemplate>
+                            <DataTemplate>
+                                <ContentControl Style="{StaticResource listViewItemStyle}" IsRightTapEnabled="True"
+                                        RightTapped="OnItemRightTapped"
+                                                Holding="OnItemHolding"
+                                        ContentTemplate="{StaticResource listViewItem72pxTemplate}" Content="{Binding}" />
+                            </DataTemplate>
+                        </common:DataTypeTemplateSelector.DefaultTemplate>
+                        <common:DataTypeTemplateSelector.Items>
+                            <common:DataTypeTemplate DataType="menu">
+                                <common:DataTypeTemplate.DataTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Style="{StaticResource listViewItemStyle}">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Title}" Margin="0,0,0,6"
+                                                        Style="{StaticResource SubheaderTextStyle}" />
+                                                <TextBlock Text="{Binding Subtitle}"
+                                                        Style="{StaticResource ItemTextStyle}"
+                                                        Foreground="{ThemeResource HomePageAccentBrush}" />
+                                            </StackPanel>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </common:DataTypeTemplate.DataTemplate>
+                            </common:DataTypeTemplate>
+                            <common:DataTypeTemplate DataType="article">
+                                <common:DataTypeTemplate.DataTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Style="{StaticResource listViewItemStyle}"
+                                                ContentTemplate="{StaticResource listViewItem96pxTemplate}"
+                                                Content="{Binding}" />
+                                    </DataTemplate>
+                                </common:DataTypeTemplate.DataTemplate>
+                            </common:DataTypeTemplate>
+                            <common:DataTypeTemplate DataType="forum">
+                                <common:DataTypeTemplate.DataTemplate>
+                                    <DataTemplate>
+                                        <StackPanel xmlns:awfulnet="using:AwfulNET.Common" IsRightTapEnabled="True"
+                                                RightTapped="OnItemRightTapped"
+                                                    Holding="OnItemHolding">
+                                            <TextBlock Text="{Binding Title}" Margin="0,0,0,6"
+                                                    Style="{StaticResource SubheaderTextStyle}" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding Subtitle}"
+                                                    Foreground="{ThemeResource HomePageAccentBrush}"
+                                                    Style="{StaticResource ItemTextStyle}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </common:DataTypeTemplate.DataTemplate>
+                            </common:DataTypeTemplate>
+                        </common:DataTypeTemplateSelector.Items>
+                    </common:DataTypeTemplateSelector>
+                </ListView.ItemTemplateSelector>
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="12,12,20,20" />
+                        <Setter Property="BorderThickness" Value="0,0,0,2" />
+                        <Setter Property="Margin" Value="0,0,0,0" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource HomePageContentBackgroundBrush}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            Padding="{TemplateBinding Padding}" SelectionCheckMarkVisualEnabled="True"
+                                            CheckHintBrush="{ThemeResource ListViewItemCheckHintThemeBrush}"
+                                            CheckSelectingBrush="{ThemeResource ListViewItemCheckSelectingThemeBrush}"
+                                            CheckBrush="{ThemeResource ListViewItemCheckThemeBrush}"
+                                            DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                            DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                            FocusBorderBrush="{ThemeResource ListViewItemFocusBorderThemeBrush}"
+                                            PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                            PointerOverBackground="{ThemeResource ListViewItemPointerOverBackgroundThemeBrush}"
+                                            SelectedBorderThickness="{ThemeResource ListViewItemCompactSelectedBorderThemeThickness}"
+                                            SelectedBackground="{ThemeResource HomePageContentBackgroundBrush}"
+                                            SelectedForeground="{ThemeResource HomePageAccentBrush}"
+                                            SelectedPointerOverBackground="{ThemeResource ListViewItemSelectedPointerOverBackgroundThemeBrush}"
+                                            SelectedPointerOverBorderBrush="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}"
+                                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                            ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            PointerOverBackgroundMargin="0,0,0,-2" ContentMargin="0" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.FooterTemplate>
+                    <DataTemplate>
+                        <AppBarButton Foreground="White" HorizontalAlignment="Stretch"
+                                Margin="12,0"
+                                Visibility="{Binding IsVirtualList, Converter={StaticResource booleanToVisibility}, FallbackValue=Collapsed}"
+                                Background="{ThemeResource HomePageAccentBrush}"
+                                Command="{Binding LoadMoreItemsCommand}"
+                                CommandParameter="{StaticResource loadingToken}" Icon="Download" />
+                    </DataTemplate>
+                </ListView.FooterTemplate>
+
+                <ListView.GroupStyle>
+                    <GroupStyle HidesIfEmpty="True">
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border Loaded="OnGroupHeaderBorderLoaded"
+                                        Width="{Binding ActualWidth, ElementName=itemListView}"
+                                        Margin="{Binding Margin, ElementName=itemListView}"
+                                        Background="{ThemeResource HomePageAccentBrush}"
+                                        Padding="32,12,12,12">
+                                    <TextBlock Text="{Binding}" Style="{StaticResource SubheaderTextBlockStyle}"
+                                            FontWeight="Bold" Margin="-6,0,0,12" />
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+            </ListView>
+            
+            <Grid x:Name="EmptyContentPanel" Visibility="{Binding CurrentDirectory.ShowEmpty, Converter={StaticResource booleanToVisibility}}">
+                <TextBlock x:Name="EmptyContentText" Text="{Binding EmptyText}"
+                        Style="{StaticResource SubheaderTextStyle}" />
+            </Grid>
+        </Grid>
+
+        <!-- Details for selected item -->
+        <Grid x:Name="itemDetailPanel" Grid.Column="1" Grid.Row="1" Canvas.ZIndex="10" Margin="-4,0,0,0">
+            <WebView x:Name="itemDetail" AutomationProperties.AutomationId="ItemDetailWebView" Opacity="0">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior x:Name="FadeInOnDOMLoadedBehavior" EventName="DOMContentLoaded">
+                        <Media:ControlStoryboardAction Storyboard="{StaticResource FadeInWebView}"
+                                ControlStoryboardOption="Play" />
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </WebView>
+        </Grid>
+        <!-- Side banner, includes controls for item details -->
+        <Grid x:Name="sideBanner" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="3"
+                Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="0.5*" />
+            </Grid.RowDefinitions>
+            <Button x:Name="nextPageButton" Content="&#xE111;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Grid.Row="1" Padding="12,4" BorderThickness="0,0,0,2" Style="{StaticResource topHeaderButtonStyle}"
+                    FontFamily="Segoe UI Symbol" Command="{Binding NextCommand}" />
+            <Button x:Name="prevPageButton" Content="&#xE112;" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Grid.Row="2" BorderThickness="0" Style="{StaticResource topHeaderButtonStyle}"
+                    FontFamily="Segoe UI Symbol" Command="{Binding PrevCommand}" />
+            <StackPanel Orientation="Vertical">
+                <Button x:Name="moreOptionsButton" Command="{Binding MoreCommand}" Content="&#xE10C;"
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Visibility="Collapsed"
+                        Style="{StaticResource topHeaderButtonStyle}" BorderThickness="0,0,0,2"
+                        FontFamily="Segoe UI Symbol" Height="59">
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem x:Name="jumpToPageMenu" Command="{Binding ShowNavFlyoutCommand}"
+                                    Text="jump to page..." Click="jumpToPageMenu_Click" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+                <Button x:Name="bookmarkButton" Content="&#xE113;" HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                        Padding="12,4" BorderThickness="0,0,0,2" Style="{StaticResource topHeaderButtonStyle}"
+                        FontFamily="Segoe UI Symbol" Command="{Binding BookmarkCommand}" />
+                <Button x:Name="navigationFlyoutContainer" Visibility="Collapsed" IsHitTestVisible="False">
+                    <!--
+                    <Button.Flyout>
+                        <Flyout x:Name="navBoxFlyout" Placement="Left">
+                            <ContentControl x:Name="navBoxControl" Content="{Binding}"
+                                    Style="{StaticResource navBoxWindowStyle}" />
+                        </Flyout>
+                    </Button.Flyout>
+                    -->
+                </Button>
+                <Button x:Name="refreshButton" Content="&#xE117;" HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                        Padding="12,4" BorderThickness="0,0,0,2" Style="{StaticResource topHeaderButtonStyle}"
+                        FontFamily="Segoe UI Symbol" Command="{Binding RefreshCommand}" />
+                <Button x:Name="replyButton" Content="&#xE15F;" HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                        Padding="12,4" BorderThickness="0,0,0,2" Command="{Binding ReplyCommand}"
+                        Style="{StaticResource topHeaderButtonStyle}" FontFamily="Segoe UI Symbol">
+                    <Button.Flyout>
+                        <Flyout x:Name="replyFlyout" Placement="Left">
+                            <ContentControl Content="{Binding}" Style="{StaticResource replyBoxWindowStyle}" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+
+            <!-- Visual states reflect the application's view state -->
+            <VisualStateGroup x:Name="ViewStates">
+                <VisualState x:Name="PrimaryView">
+                </VisualState>
+                <VisualState x:Name="SinglePane">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="primaryColumn"
+                                Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="*" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="secondaryColumn"
+                                Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="itemDetailPanel"
+                                Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="itemListView"
+                                Storyboard.TargetProperty="Padding">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Thickness>12,0,0,60</Thickness>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                Storyboard.TargetName="sideBanner">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.ColumnSpan)"
+                                Storyboard.TargetName="listPanel">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <x:Int32>3</x:Int32>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <!--
+                    When an item is selected and only one pane is shown the details display requires more extensive changes:
+                     * Hide the master list and the column it was in
+                     * Move item details down a row to make room for the title
+                     * Move the title directly above the details
+                     * Adjust padding for details
+                 -->
+                <VisualState x:Name="SinglePane_Detail">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="primaryColumn"
+                                Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="itemListView"
+                                Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="itemDetailPanel"
+                                Storyboard.TargetProperty="(Grid.Row)">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="itemDetailPanel"
+                                Storyboard.TargetProperty="(Grid.RowSpan)">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                Storyboard.TargetName="LogoButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                Storyboard.TargetName="backButton">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>

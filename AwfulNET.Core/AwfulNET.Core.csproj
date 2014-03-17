@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8E6562F3-B21F-4C41-A1A0-B15AA4AD9DDD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AwfulNET.Core</RootNamespace>
+    <AssemblyName>AwfulNET.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Common\AsyncObserver.cs" />
+    <Compile Include="Common\CompareThreadByNewPost.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\Exceptions.cs" />
+    <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\GenericEqualityComparer.cs" />
+    <Compile Include="Common\ISettingsModel.cs" />
+    <Compile Include="Common\NotificationService.cs" />
+    <Compile Include="Common\ObservableConverter.cs" />
+    <Compile Include="Common\IGeneratePostData.cs" />
+    <Compile Include="Common\ILog.cs" />
+    <Compile Include="Common\IStorageModel.cs" />
+    <Compile Include="Common\Messages.cs" />
+    <Compile Include="Common\Unsubscriber.cs" />
+    <Compile Include="Feeds\ArticleFeed.cs" />
+    <Compile Include="Feeds\BookmarksFeed.cs" />
+    <Compile Include="Feeds\CommonFeed.cs" />
+    <Compile Include="Feeds\ForumsIndexFeed.cs" />
+    <Compile Include="Feeds\ForumThreadsFeed.cs" />
+    <Compile Include="Feeds\PrivateMessagesFeed.cs" />
+    <Compile Include="Feeds\SmiliesFeed.cs" />
+    <Compile Include="Common\IHttpClient.cs" />
+    <Compile Include="Metadata\ForumHiearchy.cs" />
+    <Compile Include="Metadata\ForumPageMetadata.cs" />
+    <Compile Include="Metadata\FrontPageArticle.cs" />
+    <Compile Include="Parsing\ForumParser.cs" />
+    <Compile Include="Parsing\PostParser.cs" />
+    <Compile Include="Parsing\PrivateMessageParser.cs" />
+    <Compile Include="Parsing\SmileyParser.cs" />
+    <Compile Include="Parsing\ThreadPageParser.cs" />
+    <Compile Include="Parsing\ThreadParser.cs" />
+    <Compile Include="Rest\AwfulWebClient.cs" />
+    <Compile Include="Rest\HttpGetRequestBuilder.cs" />
+    <Compile Include="Rest\ICreateHttpRequest.cs" />
+    <Compile Include="Rest\ICreateRestRequest.cs" />
+    <Compile Include="Common\MetadataConverter.cs" />
+    <Compile Include="Common\PrivateMessageConverter.cs" />
+    <Compile Include="Common\ThreadPageConverter.cs" />
+    <Compile Include="Metadata\ForumMetadata.cs" />
+    <Compile Include="Metadata\PrivateMessageFolderMetadata.cs" />
+    <Compile Include="Metadata\PrivateMessageMetadata.cs" />
+    <Compile Include="Metadata\TagMetadata.cs" />
+    <Compile Include="Metadata\ThreadMetadata.cs" />
+    <Compile Include="Metadata\ThreadPageMetadata.cs" />
+    <Compile Include="Metadata\ThreadPostMetadata.cs" />
+    <Compile Include="Rest\ForumAccessToken.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rest\JsonHelper.cs" />
+    <Compile Include="Rest\NewThreadRequest.cs" />
+    <Compile Include="Rest\PrivateMessageFolderEditor.cs" />
+    <Compile Include="Rest\PrivateMessageRequest.cs" />
+    <Compile Include="Rest\ThreadForm.cs" />
+    <Compile Include="Rest\ThreadReplyForm.cs" />
+    <Compile Include="Rest\Windows1252Encoding.cs" />
+    <Compile Include="UserFeatures.cs" />
+    <Compile Include="UserSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack-PCL">
+      <HintPath>..\packages\HtmlAgilityPack-PCL.1.4.6\lib\HtmlAgilityPack-PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\portable-net45+wp80+win8\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="QDFeedParser.PCL">
+      <HintPath>..\lib\QDFeedParser.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\portable-net40+sl4+win8+wp71\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\portable-net40+sl4+win8+wp71\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\portable-net40+sl4+win8+wp71\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Rest\PostEditForm.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.10\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.10\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.10\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.10\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

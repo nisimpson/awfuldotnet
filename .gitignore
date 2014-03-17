@@ -1,0 +1,10 @@
+obj
+bin
+bld
+AppPackages
+/packages
+/local
+*.suo
+*.db
+*.user
+

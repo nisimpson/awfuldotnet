@@ -1,0 +1,96 @@
+﻿<common:WebViewAwarePage x:Class="AwfulNET.Phone.ArticlePage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+        xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:common="clr-namespace:AwfulNET.Common" xmlns:apu="clr-namespace:AppBarUtils;assembly=AppBarUtils"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+                         FontFamily="{StaticResource PhoneFontFamilyNormal}" FontSize="{StaticResource PhoneFontSizeNormal}"
+        Foreground="{StaticResource PhoneForegroundBrush}" SupportedOrientations="Portrait" Orientation="Portrait"
+        mc:Ignorable="d" shell:SystemTray.IsVisible="True">
+   
+    <common:WebViewAwarePage.Resources>
+        <common:EventCommand x:Key="prevCommand" ExecuteRaised="GoToPrevPage" CanExecuteRaised="CanGoToPrevPage" />
+        <common:EventCommand x:Key="nextCommand" ExecuteRaised="GoToNextPage" CanExecuteRaised="CanGoToNextPage" />
+    </common:WebViewAwarePage.Resources>
+    
+    <common:WebViewAwarePage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="False">
+            <shell:ApplicationBar.Buttons>
+                <shell:ApplicationBarIconButton Text="prev" IconUri="dummy.png" />
+                <shell:ApplicationBarIconButton Text="next" IconUri="dummy.png" />
+            </shell:ApplicationBar.Buttons>
+        </shell:ApplicationBar>
+    </common:WebViewAwarePage.ApplicationBar>
+    
+    <i:Interaction.Behaviors>
+        <apu:AppBarItemCommand Id="prev" Type="Button" Command="{StaticResource prevCommand}"
+                IconUri="/Assets/AppBar/appbar.back.rest.png" Text="prev" />
+        <apu:AppBarItemCommand Id="next" Type="Button" Command="{StaticResource nextCommand}"
+                IconUri="/Assets/AppBar/appbar.next.rest.png" Text="next" />
+    </i:Interaction.Behaviors>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ViewStates">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition From="Normal" GeneratedDuration="0:0:0.5" To="DetailsView">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CircleEase EasingMode="EaseIn" />
+                        </VisualTransition.GeneratedEasingFunction>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Normal" />
+                <VisualState x:Name="DetailsView">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                Storyboard.TargetName="itemTitlePanel">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)"
+                                Storyboard.TargetName="itemDetailsPanel" d:IsOptimized="True" />
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
+                                Storyboard.TargetName="itemDetailsPanel">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <System:Boolean>True</System:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel x:Name="itemTitlePanel" Margin="12,17,0,28">
+            <TextBlock x:Name="ApplicationTitle" Text="{StaticResource ApplicationTitle}"
+                    Style="{StaticResource PhoneTextNormalStyle}" FontFamily="Segoe WP Semibold" />
+            <TextBlock x:Name="ThreadTitle" Margin="9,12" Text="{Binding Title, FallbackValue=This is The Thread Title}"
+                    Style="{StaticResource PhoneTextTitle1Style}" TextWrapping="Wrap"
+                    FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+            <TextBlock x:Name="LoadingText" Margin="12,0" Style="{StaticResource PhoneTextSubtleStyle}"
+                    TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMediumLarge}" Text="loading..." />
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <Grid x:Name="itemDetailsPanel" Grid.Row="1" Opacity="0" IsHitTestVisible="False">
+            <phone:WebBrowser x:Name="Browser" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Grid>
+    </Grid>
+
+</common:WebViewAwarePage>

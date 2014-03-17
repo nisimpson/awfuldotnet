@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="windows-1252" />
+    <title>htmltextbox</title>
+    <style type="text/css">
+        @media all and (orientation:portrait) {
+            @-ms-viewport {
+                width: 320px;
+                user-zoom: fixed;
+                max-zoom: 1;
+                min-zoom: 1;
+            }
+        }
+
+        @media all and (orientation:landscape) {
+            @-ms-viewport {
+                width: 480px;
+                user-zoom: fixed;
+                max-zoom: 1;
+                min-zoom: 1;
+            }
+        }
+
+        body, html {
+            background-color: white !important;
+            overflow-y: auto !important;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        body {
+           
+        }
+
+        #container {
+            display: -ms-grid;
+            -ms-grid-columns: 1fr;
+            -ms-grid-rows: auto auto;
+            /*-ms-grid-rows: minmax(auto, max-content) auto;*/
+        }
+
+        #container #footer {
+            -ms-grid-row: 2;
+            -ms-grid-column-align: center;
+            margin-top: 6px;
+            color: #808080;
+        }
+
+        textarea {
+            width: 94%;
+            min-height: 100px;
+            font-size: large;
+            font-family: 'Segoe WP SemiLight';
+            border: 0px;
+            padding: 12px;
+            margin: 0px;
+            margin-bottom: 2px;
+            border-bottom: 1px solid #808080;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <textarea data-bind="value: content, valueUpdate: 'afterkeydown'"
+                  rows="10"
+                  cols="35"
+                  placeholder="Type your reply here."
+                  wrap="hard"
+                  autofocus>
+        </textarea>
+        <div id="footer">end of text.</div>
+    </div>
+    <script type="text/javascript" src="/js/jquery-2.0.3.js"></script>
+    <script type="text/javascript" src="/js/knockout.js"></script>
+    <script type="text/javascript">
+        var HtmlTextBox = {
+            content: ko.observable(''),
+            active: ko.observable(false)
+        };
+
+        function resizeTextarea(textarea) {
+            var lines = textarea.value.split('\n');
+            var width = textarea.cols;
+            var height = 1;
+            for (var i = 0; i < lines.length; i++) {
+                var linelength = lines[i].length;
+                if (linelength >= width) {
+                    height += Math.ceil(linelength / width);
+                }
+            }
+            height += lines.length;
+            textarea.rows = height;
+        }
+
+        function getText() {
+            $('textarea').blur();
+            return HtmlTextBox.content();
+        }
+
+        function setText(value) {
+            HtmlTextBox.content(value);
+        }
+
+        function onReady() {
+            
+            var throttledContent = ko.computed(HtmlTextBox.content)
+               .extend({ throttle: 100 });
+
+            throttledContent.subscribe(function (val) {
+                var textarea = $('textarea')[0];
+                resizeTextarea(textarea);
+                window.external.notify(val);
+            }, this);
+            
+            ko.applyBindings(HtmlTextBox);
+            window.external.notify("domready");
+        }
+
+        $(document).ready(function () {
+            try {onReady();}
+            catch (err) { window.external.notify(err); }
+        });
+    </script>
+</body>
+</html>

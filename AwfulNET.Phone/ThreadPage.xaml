@@ -1,0 +1,203 @@
+﻿<common:WebViewAwarePage x:Class="AwfulNET.Phone.ThreadPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+        xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:apu="clr-namespace:AppBarUtils;assembly=AppBarUtils"
+                         xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:common="clr-namespace:AwfulNET.Common"
+        xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+                         FontFamily="{StaticResource PhoneFontFamilyNormal}" FontSize="{StaticResource PhoneFontSizeNormal}"
+        Foreground="{StaticResource PhoneForegroundBrush}" SupportedOrientations="Portrait" Orientation="Portrait"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+        mc:Ignorable="d" shell:SystemTray.IsVisible="True">
+    
+    <phone:PhoneApplicationPage.Resources>
+        <common:EventCommand x:Key="scrollToTopCommand" ExecuteRaised="scrollToTop"
+                CanExecuteRaised="OnAppBarCanExecute" />
+        <common:EventCommand x:Key="scrollToBottomCommand" ExecuteRaised="scrollToBottom"
+                CanExecuteRaised="OnAppBarCanExecute" />
+        <common:EventCommand x:Key="replyCommand" ExecuteRaised="GoToReplyPage" CanExecuteRaised="OnAppBarCanExecute" />
+        <common:EventCommand x:Key="rateCommand" 
+                             CanExecuteRaised="OnAppBarCanExecute"
+                             ExecuteRaised="ShowRatePanel" />
+        <common:EventCommand x:Key="bookmarkCommand" 
+                             CanExecuteRaised="OnAppBarCanExecute"
+                             ExecuteRaised="ToggleBookmarks" />
+        <common:EventCommand x:Key="jumpToPageCommand" 
+                             CanExecuteRaised="OnAppBarCanExecute"
+                             ExecuteRaised="ShowNavigationPanel"/>
+        <common:EventCommand x:Key="goBackCommand" 
+                             CanExecuteRaised="OnAppBarCanExecute"
+                             ExecuteRaised="GoBack" />
+        <common:EventCommand x:Key="prevCommand" ExecuteRaised="GoToPrevPage" CanExecuteRaised="CanGoToPrevPage" />
+        <common:EventCommand x:Key="refreshCommand" ExecuteRaised="RefreshCurrentPage" CanExecuteRaised="CanRefreshCurrentPage" />
+        <common:EventCommand x:Key="nextCommand" ExecuteRaised="GoToNextPage" CanExecuteRaised="CanGoToNextPage" />
+        <common:EventCommand x:Key="tabsCommand" ExecuteRaised="ShowTabsView" CanExecuteRaised="CanShowTabsView" />
+        <common:EventCommand x:Key="showDetailsCommand" ExecuteRaised="OnShowDetailsCommandExecuted" />
+    </phone:PhoneApplicationPage.Resources>
+    
+    <i:Interaction.Triggers>
+        <apu:StateChangedTrigger State="{Binding CurrentState}">
+            <apu:SwitchAppBarAction>
+                <apu:SwitchAppBarAction.AppBars>
+                    <!-- normal view app bar -->
+                    <apu:AppBar Id="0" IsVisible="False" />
+                    <!-- details view app bar -->
+                    <apu:AppBar Id="1">
+                        <apu:AppBar.Buttons>
+                            <apu:AppBarButton Command="{StaticResource prevCommand}"
+                                    IconUri="/Assets/AppBar/appbar.back.rest.png" Text="prev" />
+                            <apu:AppBarButton Command="{StaticResource refreshCommand}"
+                                    IconUri="/Assets/AppBar/sync.png" Text="refresh" />
+                            <apu:AppBarButton Command="{StaticResource nextCommand}"
+                                    IconUri="/Assets/AppBar/appbar.next.rest.png" Text="next" />
+                        </apu:AppBar.Buttons>
+                        <apu:AppBar.MenuItems>
+                            <apu:AppBarMenuItem Command="{StaticResource scrollToTopCommand}" Text="scroll to top" />
+                            <apu:AppBarMenuItem Command="{StaticResource scrollToBottomCommand}" Text="scroll to bottom" />
+                            <apu:AppBarMenuItem Command="{StaticResource replyCommand}" Text="reply..." />
+                            <apu:AppBarMenuItem Command="{StaticResource rateCommand}" Text="rate..." />
+                            <apu:AppBarMenuItem Command="{StaticResource bookmarkCommand}" Text="toggle bookmark" />
+                            <apu:AppBarMenuItem Command="{StaticResource jumpToPageCommand}" Text="jump to page..." />
+                            <!--<apu:AppBarMenuItem Command="{StaticResource goBackCommand}" Text="hide window" />-->
+                            <apu:AppBarMenuItem Command="{StaticResource tabsCommand}" Text="tabs..." />
+                        </apu:AppBar.MenuItems>
+                    </apu:AppBar>
+                    <!-- tabs view app bar -->
+                    <apu:AppBar Id="2">
+                        <apu:AppBar.Buttons>
+                            <apu:AppBarButton Text="close" IconUri="/Assets/AppBar/cancel.png" Command="{StaticResource showDetailsCommand}" />
+                        </apu:AppBar.Buttons>
+                    </apu:AppBar>
+                </apu:SwitchAppBarAction.AppBars>
+            </apu:SwitchAppBarAction>
+        </apu:StateChangedTrigger>
+    </i:Interaction.Triggers>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ViewStates">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition From="Normal" GeneratedDuration="0:0:0.5" To="DetailsView">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CircleEase EasingMode="EaseIn" />
+                        </VisualTransition.GeneratedEasingFunction>
+                    </VisualTransition>
+                   
+                    <VisualTransition From="TabsView" GeneratedDuration="0:0:0.5" To="DetailsView">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CircleEase EasingMode="EaseIn" />
+                        </VisualTransition.GeneratedEasingFunction>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Normal" />
+                <VisualState x:Name="DetailsView">
+                    <Storyboard>
+                    	<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                    		Storyboard.TargetName="itemTitlePanel">
+                    		<DiscreteObjectKeyFrame KeyTime="0">
+                    			<DiscreteObjectKeyFrame.Value>
+                    				<Visibility>Collapsed</Visibility>
+                    			</DiscreteObjectKeyFrame.Value>
+                    		</DiscreteObjectKeyFrame>
+                    	</ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)"
+                                Storyboard.TargetName="itemDetailsPanel" d:IsOptimized="True" />
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)"
+                                Storyboard.TargetName="itemDetailsPanel">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <System:Boolean>True</System:Boolean>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="TabsView">
+                	<Storyboard>
+                		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="tabsPanel">
+                			<DiscreteObjectKeyFrame KeyTime="0">
+                				<DiscreteObjectKeyFrame.Value>
+                					<Visibility>Visible</Visibility>
+                				</DiscreteObjectKeyFrame.Value>
+                			</DiscreteObjectKeyFrame>
+                		</ObjectAnimationUsingKeyFrames>
+                		<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="itemTitlePanel">
+                			<DiscreteObjectKeyFrame KeyTime="0">
+                				<DiscreteObjectKeyFrame.Value>
+                					<Visibility>Collapsed</Visibility>
+                				</DiscreteObjectKeyFrame.Value>
+                			</DiscreteObjectKeyFrame>
+                		</ObjectAnimationUsingKeyFrames>
+                	</Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel x:Name="itemTitlePanel" Margin="12,17,0,28">
+            <TextBlock x:Name="ApplicationTitle" Text="{StaticResource ApplicationTitle}" Style="{StaticResource PhoneTextNormalStyle}" FontFamily="Segoe WP Semibold"/>
+            <TextBlock x:Name="ThreadTitle" Margin="9,12" Text="{Binding Title, FallbackValue=This is The Thread Title}" Style="{StaticResource PhoneTextTitle1Style}" TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeExtraLarge}"/>
+            <TextBlock x:Name="LoadingText" Margin="12,0" Style="{StaticResource PhoneTextSubtleStyle}" TextWrapping="Wrap" FontSize="{StaticResource PhoneFontSizeMediumLarge}" Text="loading..."/>
+        </StackPanel>
+
+        <Grid x:Name="itemDetailsPanel" Opacity="0" IsHitTestVisible="False">
+            <phone:WebBrowser x:Name="Browser" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Grid x:Name="itemDetailsContextMenuPanel" Canvas.ZIndex="10" Background="Black" Opacity="0.7"
+                    Visibility="Collapsed" />
+            <Grid x:Name="pageNavPanel" Canvas.ZIndex="10" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                    Visibility="Collapsed">
+                <common:PageNavigator x:Name="pageNavigator" />
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="tabsPanel" Visibility="Collapsed" Canvas.ZIndex="100">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <ListBox x:Name="tabsListView" Grid.Row="1" d:DataContext="{Binding Source={StaticResource SampleItemsSource}}"
+                     ItemsSource="{Binding Items}" SelectionChanged="tabsListView_SelectionChanged"
+                    HorizontalContentAlignment="Stretch" Margin="12,0">
+                <ListBox.ItemContainerStyle>
+					<Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemBaseStyle}">
+						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					</Style>
+				</ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="100" Margin="0,0,0,20" toolkit:TiltEffect.IsTiltEnabled="True">
+                        	<Grid.ColumnDefinitions>
+                        		<ColumnDefinition/>
+                        		<ColumnDefinition Width="Auto"/>
+                        	</Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding Title, FallbackValue=thread title}"
+										   Foreground="{Binding Foreground, ElementName=ContentContainer}"
+                                           TextTrimming="WordEllipsis"
+                                           FontFamily="{StaticResource PhoneFontFamilySemiLight}"
+                                           FontSize="{StaticResource PhoneFontSizeLarge}" Style="{StaticResource PhoneTextBlockBase}" />
+                                <TextBlock Text="{Binding Description, FallbackValue=description}"
+                                        Style="{StaticResource PhoneTextSubtleStyle}" />
+                                <TextBlock Style="{StaticResource PhoneTextNormalStyle}" FontFamily="Segoe WP Semibold">
+                    				<Run Text="Current Page: " />
+                    				<Run Text="{Binding CurrentPage, FallbackValue=17}" />
+                    			</TextBlock>
+                    		</StackPanel>
+                    		<Button Content="&#xE108;" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1" Style="{StaticResource RoundButtonStyle}" FontFamily="Segoe UI Symbol" Padding="5" Width="72" Height="72" Click="OnRemoveTabClick"/>
+                    	</Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel x:Name="tabsHeaderPanel" Margin="12,17,0,28">
+            	<TextBlock x:Name="ApplicationTitle1" Text="{StaticResource ApplicationTitle}" Style="{StaticResource PhoneTextNormalStyle}" FontFamily="Segoe WP Semibold"/>
+            	<TextBlock x:Name="ThreadTabTitle" Style="{StaticResource PhoneTextTitle1Style}" TextWrapping="Wrap" Text="thread tabs" Margin="12,-7,12,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+</common:WebViewAwarePage>

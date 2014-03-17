@@ -1,0 +1,46 @@
+﻿html, body {
+    height: auto !important;
+    overflow : auto !important;
+}
+
+body {
+    margin: 0px;
+    font-size: 11pt;
+    font-family: "Segoe WP";
+    letter-spacing: 0.02em;
+    background-color: black;
+}
+
+    body a {
+        color: lightskyblue;
+    }
+
+#anchor {
+   height: auto !important;
+   color: white;
+}
+
+#articleView {
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    z-index: 10;
+}
+
+@media all and (orientation:portrait) {
+    @-ms-viewport {
+        width:320px;
+        user-zoom: fixed;
+        max-zoom: 1;
+        min-zoom: 1;
+    }
+}
+
+@media all and (orientation:landscape) {
+    @-ms-viewport {
+        width:480px;
+        user-zoom: fixed;
+        max-zoom: 1;
+        min-zoom: 1;
+    }
+}

@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{897BEB80-C198-4F1C-8C06-4A6EEFD3AB8B}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AwfulNET.RT</RootNamespace>
+    <AssemblyName>AwfulNET.RT</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PackageCertificateKeyFile>AwfulNET.RT_StoreKey.pfx</PackageCertificateKeyFile>
+    <ExpressionBlendVersion>12.0.41212.0</ExpressionBlendVersion>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>AF6ABF60CE66C8184EED0E83A3285ABF1431D48B</PackageCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\AwfulNET.Core\AwfulNET.Core.csproj">
+      <Project>{8e6562f3-b21f-4c41-a1a0-b15aa4ad9ddd}</Project>
+      <Name>AwfulNET.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AwfulNET.Phone\Common\BindableBase.cs">
+      <Link>Common\BindableBase.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\BooleanToOpacityConverter.cs">
+      <Link>Common\BooleanToOpacityConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\BooleanToVisibilityConverter.cs">
+      <Link>Common\BooleanToVisibilityConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\CaseConverters.cs">
+      <Link>Common\CaseConverters.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\CommonDelegates.cs">
+      <Link>Common\CommonDelegates.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\CommonMessageBox.cs">
+      <Link>Common\CommonMessageBox.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\CommonValueConverter.cs">
+      <Link>Common\CommonValueConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\ContextMenu\AwfulContextMenu.cs">
+      <Link>Common\ContextMenu\AwfulContextMenu.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\EventCommand.cs">
+      <Link>Common\EventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\Extensions.cs">
+      <Link>Common\Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\HaltableCommand.cs">
+      <Link>Common\HaltableCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\RelayCommand.cs">
+      <Link>Common\RelayCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\StringToVisibilityConverter.cs">
+      <Link>Common\StringToVisibilityConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\UIExtensions.cs">
+      <Link>Common\UIExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Common\WebViewScriptNotificationHandler.cs">
+      <Link>Common\WebViewScriptNotificationHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\ArticleDataModel.cs">
+      <Link>DataModel\ArticleDataModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\AwfulDataGroupBase.cs">
+      <Link>DataModel\AwfulDataGroupBase.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\AwfulViewPostForm.cs">
+      <Link>DataModel\AwfulViewPostForm.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\CommonDataModel.cs">
+      <Link>DataModel\CommonDataModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\ForumDataModel.cs">
+      <Link>DataModel\ForumDataModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\JumpListDataModel.cs">
+      <Link>DataModel\JumpListDataModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\MainDataModel.cs">
+      <Link>DataModel\MainDataModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\SignInDataModel.cs">
+      <Link>DataModel\SignInDataModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\ThreadDataModel.cs">
+      <Link>DataModel\ThreadDataModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Views\IArticlePageView.cs">
+      <Link>Views\IArticlePageView.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Views\IListViewModel.cs">
+      <Link>Views\IListViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Views\IThreadPageView.cs">
+      <Link>Views\IThreadPageView.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Views\LoadMoreItemsConverter.cs">
+      <Link>Views\LoadMoreItemsConverter.cs</Link>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClassicPage.xaml.cs">
+      <DependentUpon>ClassicPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AppBarButtonList.cs" />
+    <Compile Include="Common\DataTypeTemplateSelector.cs" />
+    <Compile Include="Common\ContextMenu\IContextMenuExtensions.cs" />
+    <Compile Include="Common\ImageVisibilityConverter.cs" />
+    <Compile Include="Common\INotifyPropertyChanging.cs" />
+    <Compile Include="Common\IProgressFactory.cs" />
+    <Compile Include="Common\LayoutTransformer\LayoutTransformer.cs" />
+    <Compile Include="Common\LoadingToken.cs" />
+    <Compile Include="Common\NavigationHelper.cs" />
+    <Compile Include="Common\ObservableDictionary.cs" />
+    <Compile Include="Common\SettingsModelFactory.cs" />
+    <Compile Include="Common\StorageModelFactory.cs" />
+    <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Common\ToastGenerator.cs" />
+    <Compile Include="Common\WebBrowserTask.cs" />
+    <Compile Include="Common\WinRTHttpClient.cs" />
+    <Compile Include="Common\WinRTSettingsModel.cs" />
+    <Compile Include="Common\WinRTStorageModel.cs" />
+    <Compile Include="DataModel\AwfulViewPageNavigator.cs" />
+    <Compile Include="Data\UserAccount.cs" />
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="AwfulNET.RT_StoreKey.pfx" />
+    <None Include="AwfulNET.RT_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\AwfulNET.Phone\js\jquery-2.0.3.js">
+      <Link>js\jquery-2.0.3.js</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\js\jquery.easing.js">
+      <Link>js\jquery.easing.js</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\js\jquery.scrollTo.min.js">
+      <Link>js\jquery.scrollTo.min.js</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\js\jquery.unveil.js">
+      <Link>js\jquery.unveil.js</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\js\knockout.js">
+      <Link>js\knockout.js</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\js\sammy.js">
+      <Link>js\sammy.js</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\webview\img\awfulnet-large-bw.png">
+      <Link>webview\img\awfulnet-large-bw.png</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\webview\img\image-loading.png">
+      <Link>webview\img\image-loading.png</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\webview\thread.css">
+      <Link>webview\thread.css</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\webview\webview.css">
+      <Link>webview\webview.css</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\webview\webview.html">
+      <Link>webview\webview.html</Link>
+    </Content>
+    <Content Include="..\AwfulNET.Phone\webview\webview.js">
+      <Link>webview\webview.js</Link>
+    </Content>
+    <Content Include="Assets\badge.scale-100.png" />
+    <Content Include="Assets\badge.scale-140.png" />
+    <Content Include="Assets\badge.scale-180.png" />
+    <Content Include="Assets\logo150.scale-100.png" />
+    <Content Include="Assets\logo150.scale-140.png" />
+    <Content Include="Assets\logo150.scale-180.png" />
+    <Content Include="Assets\logo150.scale-80.png" />
+    <Content Include="Assets\logo30.scale-100.png" />
+    <Content Include="Assets\logo30.scale-140.png" />
+    <Content Include="Assets\logo30.scale-180.png" />
+    <Content Include="Assets\logo30.scale-80.png" />
+    <Content Include="Assets\logo30.target-16.png" />
+    <Content Include="Assets\logo30.target-256.png" />
+    <Content Include="Assets\logo30.target-32.png" />
+    <Content Include="Assets\logo30.target-48.png" />
+    <Content Include="Assets\logo310.scale-100.png" />
+    <Content Include="Assets\logo310.scale-140.png" />
+    <Content Include="Assets\logo310.scale-180.png" />
+    <Content Include="Assets\logo310.scale-80.png" />
+    <Content Include="Assets\logo310sq.scale-100.png" />
+    <Content Include="Assets\logo310sq.scale-140.png" />
+    <Content Include="Assets\logo310sq.scale-180.png" />
+    <Content Include="Assets\logo310sq.scale-80.png" />
+    <Content Include="Assets\logo70.scale-100.png" />
+    <Content Include="Assets\logo70.scale-140.png" />
+    <Content Include="Assets\logo70.scale-180.png" />
+    <Content Include="Assets\logo70.scale-80.png" />
+    <Content Include="Assets\splash.scale-100.png" />
+    <Content Include="Assets\splash.scale-140.png" />
+    <Content Include="Assets\splash.scale-180.png" />
+    <Content Include="Assets\store.scale-100.png" />
+    <Content Include="Assets\store.scale-140.png" />
+    <Content Include="Assets\store.scale-180.png" />
+    <Content Include="Common\ReadMe.txt" />
+    <Content Include="css\ui-dark.css" />
+    <Content Include="css\ui-light.css" />
+    <None Include="Package.StoreAssociation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="ClassicPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\CustomStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Common\LayoutTransformer\LayoutTransformer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Common\StandardStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="BehaviorsXamlSDKManaged, Version=12.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\winrt45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.165\lib\win8\Microsoft.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.165\lib\win8\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\win8\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.18.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\win8\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
+    <VisualStudioVersion>12.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.13\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.13\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.13\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.13\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

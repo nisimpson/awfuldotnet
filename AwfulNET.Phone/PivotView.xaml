@@ -1,0 +1,181 @@
+﻿<phone:PhoneApplicationPage
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+        xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:apu="clr-namespace:AppBarUtils;assembly=AppBarUtils" xmlns:common="clr-namespace:AwfulNET.Common"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+        xmlns:datamodel="clr-namespace:AwfulNET.DataModel" xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="AwfulNET.Phone.PivotView"
+        mc:Ignorable="d"
+        SupportedOrientations="Portrait" Orientation="Portrait"
+        shell:SystemTray.IsVisible="True">
+
+    <phone:PhoneApplicationPage.Resources>
+        <common:EventCommand x:Key="refreshCommand" ExecuteRaised="OnRefreshCommandExecuteRaised"
+                CanExecuteRaised="OnRefreshCommandCanExecuteRaised" />
+        <common:EventCommand x:Key="logoutCommand" ExecuteRaised="OnLogoutCommandExecuted" />
+        <common:SystemTrayProgressToken x:Key="progressToken" />
+    </phone:PhoneApplicationPage.Resources>
+    
+	<phone:PhoneApplicationPage.FontFamily>
+		<StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+	</phone:PhoneApplicationPage.FontFamily>
+	<phone:PhoneApplicationPage.FontSize>
+		<StaticResource ResourceKey="PhoneFontSizeNormal"/>
+	</phone:PhoneApplicationPage.FontSize>
+	<phone:PhoneApplicationPage.Foreground>
+		<StaticResource ResourceKey="PhoneForegroundBrush"/>
+	</phone:PhoneApplicationPage.Foreground>
+    
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True">
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="logout" />
+                <shell:ApplicationBarMenuItem Text="donate" />
+            </shell:ApplicationBar.MenuItems>
+        	<shell:ApplicationBarIconButton Text="refresh" IconUri="Assets/logo.png" />
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+    
+    <i:Interaction.Behaviors>
+        <apu:AppBarItemCommand Id="refresh" Type="Button" IconUri="Assets/AppBar/sync.png"
+                Command="{StaticResource refreshCommand}" />
+        <apu:AppBarItemCommand Id="logout" Type="MenuItem" Command="{StaticResource logoutCommand}" Text="logout..." />
+        <apu:AppBarItemNavigation Id="donate" Type="MenuItem" Text="donate..." TargetPage="/DonateView.xaml" />
+    </i:Interaction.Behaviors>
+    
+    <!--LayoutRoot is the root grid where all page content is placed-->
+	<Grid
+		xmlns:views="clr-namespace:AwfulNET.Views"
+		xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+		x:Name="LayoutRoot"
+		Background="Transparent">
+		<Grid.Resources>
+
+            <!-- jump list template and style -->
+
+			<DataTemplate x:Key="listViewItemTemplate">
+				<Grid toolkit:TiltEffect.IsTiltEnabled="True">
+					<toolkit:ContextMenuService.ContextMenu>
+						<toolkit:ContextMenu x:Name="itemContextMenu" IsZoomEnabled="False"
+							Opened="itemContextMenu_Opened"/>
+					</toolkit:ContextMenuService.ContextMenu>
+					<common:VariableContentControl x:Name="listItem" Tap="listItem_Tap"
+						Style="{StaticResource listViewItemStyle}"
+						ContentTemplateSelector="{StaticResource listItemTemplateSelector}" Content="{Binding}" />
+				</Grid>
+			</DataTemplate>
+
+            <!-- pivot data template for list content -->
+			<Style x:Key="listContentStyle" TargetType="ContentControl">
+				<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				<Setter Property="VerticalContentAlignment" Value="Top" />
+				<Setter Property="ContentTemplate">
+					<Setter.Value>
+						<DataTemplate>
+							<Grid>
+								<phone:LongListSelector x:Name="itemsListView"
+									Visibility="{Binding ShowContent, Converter={StaticResource booleanToVisibility}}"
+									Loaded="itemsListView_Loaded" SelectionChanged="itemsListView_SelectionChanged"
+									JumpListStyle="{StaticResource itemJumpListStyle}"
+									ItemsSource="{Binding ItemsSource}"
+									GroupHeaderTemplate="{StaticResource itemJumpListGroupHeaderTemplate}"
+									IsGroupingEnabled="{Binding IsJumpList}"
+									ListFooterTemplate="{StaticResource loadMoreItemsTemplate}"
+									ListFooter="{Binding}" HideEmptyGroups="True"
+									ItemTemplate="{StaticResource listViewItemTemplate}" />
+								<TextBlock
+									Visibility="{Binding ShowEmpty, Converter={StaticResource booleanToVisibility}}"
+									Text="{Binding EmptyText}" TextWrapping="Wrap"
+									Style="{StaticResource PhoneTextGroupHeaderStyle}"
+									Foreground="{StaticResource PhoneSubtleBrush}" />
+							</Grid>
+						</DataTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+            <!-- Common pivot header template -->
+			<DataTemplate x:Key="pivotHeaderTemplate">
+				<Border Margin="0,12,0,0">
+					<TextBlock Text="{Binding Converter={StaticResource lowercaseConverter}}" 
+						FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+				</Border>
+			</DataTemplate>
+
+		</Grid.Resources>
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup x:Name="ViewStates">
+				<VisualStateGroup.Transitions>
+					<VisualTransition From="Hidden" GeneratedDuration="0:0:0.3" To="Normal"/>
+				</VisualStateGroup.Transitions>
+				<VisualState x:Name="Normal">
+					<Storyboard>
+						<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="LayoutRoot" d:IsOptimized="True"/>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="LayoutRoot">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<System:Boolean>True</System:Boolean>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+				<VisualState x:Name="Hidden">
+					<Storyboard>
+						<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="LayoutRoot" d:IsOptimized="True"/>
+						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="LayoutRoot">
+							<DiscreteObjectKeyFrame KeyTime="0">
+								<DiscreteObjectKeyFrame.Value>
+									<System:Boolean>False</System:Boolean>
+								</DiscreteObjectKeyFrame.Value>
+							</DiscreteObjectKeyFrame>
+						</ObjectAnimationUsingKeyFrames>
+					</Storyboard>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+        
+        <!--Pivot Control-->
+		<phone:Pivot x:Name="mainPivot"
+			HeaderTemplate="{StaticResource pivotHeaderTemplate}"
+			Title="{Binding Converter={StaticResource uppercaseConverter}, Source={StaticResource ApplicationTitle}}"
+			SelectionChanged="mainPivot_SelectionChanged">
+            
+			<!--Pivot item one-->
+			<phone:PivotItem DataContext="{Binding Bookmarks}"
+				d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=datamodel:SampleDataGroup}"
+				Header="{Binding Title}">
+				<Grid>
+					<ContentControl Style="{StaticResource listContentStyle}" Content="{Binding}" />
+				</Grid>
+			</phone:PivotItem>
+
+			<!--Pivot item two-->
+			<phone:PivotItem DataContext="{Binding Favorites}" Header="{Binding Title}">
+				<Grid>
+					<ContentControl Style="{StaticResource listContentStyle}" Content="{Binding}" />
+				</Grid>
+			</phone:PivotItem>
+
+			<!--Pivot item three-->
+			<phone:PivotItem DataContext="{Binding Forums}" Header="{Binding Title}">
+				<Grid>
+					<ContentControl Style="{StaticResource listContentStyle}" Content="{Binding}" />
+				</Grid>
+			</phone:PivotItem>
+
+			<!--Pivot item four-->
+			<phone:PivotItem DataContext="{Binding Articles}" Header="{Binding Title}">
+				<Grid>
+					<ContentControl Style="{StaticResource listContentStyle}"
+						Content="{Binding}" />
+				</Grid>
+			</phone:PivotItem>
+		</phone:Pivot>
+	</Grid>
+    
+</phone:PhoneApplicationPage>

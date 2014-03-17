@@ -1,0 +1,68 @@
+﻿html {
+}
+
+body {
+    margin: 0px;
+    font-size: 11pt;
+    font-family: "Segoe WP";
+    letter-spacing: 0.02em;
+}
+
+#threadView {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+    #threadView .header .text {
+        padding-top: 30px;
+    }
+
+    #threadView article {
+        margin-bottom: 0px;
+        border-bottom: 1px solid #1f1f1f;
+        background-color: transparent;
+    }
+
+    #threadView article:last-child {
+        border-bottom: 0px;
+    }
+
+        #threadView article > header .av {
+            width: 36px;
+            height: 36px;
+            margin-right: 6px;
+        }
+
+        #threadView article > header .article-subtitle {
+            margin-top: 6px;
+        }
+
+        /* Post options modification: just show underlined text. */
+        #threadView article > footer ul li a {
+                    border: 1px solid white;
+                    background-color: transparent;
+                    color: white;
+                }
+
+                #threadView article > footer ul li a:hover {
+                    background-color: white;
+                    color: black;
+                }
+
+@media all and (orientation:portrait) {
+    @-ms-viewport {
+        width:320px;
+        user-zoom: fixed;
+        max-zoom: 1;
+        min-zoom: 1;
+    }
+}
+
+@media all and (orientation:landscape) {
+    @-ms-viewport {
+        width:480px;
+        user-zoom: fixed;
+        max-zoom: 1;
+        min-zoom: 1;
+    }
+}

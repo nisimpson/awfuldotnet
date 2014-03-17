@@ -1,0 +1,68 @@
+Mobile posting for the 1%.
+
+ver. 3.0.0.11:
+- Rearranged content order. Bookmarks first!
+- Performance enhancements.
+- Fancy Header for articles.
+
+ver. 3.0.0.10:
+
+- Fixed an issue where the app would crash when users add a forum to favorites after quick pivot navigation.
+
+ver. 3.0.0.9:
+- Pivot like butter.
+- Navigate to first or last page menu works as intended.
+
+ver. 3.0.0.8:
+
+- Look, everyone should just type in English, okay?? (Int'l char fix)
+- Upload images to Imgur for EZ screenshot postin'.
+- Lazy loading of images. How fast can you scroll??
+- Tap images to view/save in IE
+- Image urls appear as captions
+- Leaving the edit post page cancels the edit completely (Oops!!!).
+
+ver. 3.0.0.7:
+
+- Windows Phone look and feel (for The Lord Bude only)
+- Fixed (for real this time) international character display.
+
+ver. 3.0.0.6:
+
+- Fixed favorites functionality.
+- Users can now view ignored posts.
+- International characters now show up appropriately.
+
+ver. 3.0.0.5:
+
+- Fixed an issue where the app would crash if the user quickly navigates to her Bookmarks.
+- Changed hyperlink colors in dark theme for better visibility.
+- Added light theme support.
+
+ver. 3.0.0.4:
+
+- You can now view the forums without an account. Please logout of your accounts and test it out!
+- Updated the style of the post option buttons.
+- Added some more animations.
+- You can now scroll to the top and bottom of posts.
+
+ver. 3.0.0.3:
+
+- Articles and threads scroll instantly.
+- Better visualization of unread posts.
+- Visual indication of visited threads.
+- Fixed refresh issues.
+- Back button removed. Use hardware back button (until Microsoft removes it in the phone revision).
+
+ver. 3.0.0.2:
+
+- Random bug fixes.
+- Some cool animations.
+
+ver. 3.0.0.1:
+
+- Fixed an issue where users couldn't not browse articles properly.
+- Modified look and feel on list content.
+- Articles scroll to the top on load.
+
+Please post bugs in the thread, or as a review!

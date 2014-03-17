@@ -1,0 +1,34 @@
+﻿
+#anchor.light {
+    background-color: white !important;
+    color: black !important;
+}
+
+    #anchor.light a {
+        color: dodgerblue;
+    }
+
+    #anchor.light #threadView .header .text {
+        color: white;
+    }
+
+    #anchor.light #threadView article {
+        margin-bottom: 0px;
+        border-bottom: 1px solid #dddddd;
+    }
+
+    #anchor.light #threadView article:last-child {
+        border-bottom: 0px;
+    }
+
+/* Thread post option style: just show underlined text. */
+    #anchor.light #threadView article > footer ul li a {
+        border: 1px solid black;
+        background-color: transparent;
+        color: black;
+    }
+
+       #anchor.light #threadView article > footer ul li a:hover {
+            background-color: black;
+            color: white;
+        }
