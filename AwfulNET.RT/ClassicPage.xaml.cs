@@ -467,6 +467,11 @@ namespace AwfulNET.RT
 
         #region IWebViewPage
 
+        public void SetContentAsActive(IContentViewModel content)
+        {
+            this.viewModelWrapper.SetContentAsActive(content);
+        }
+
         public object InvokeScript(string functionName, params string[] args)
         {
             if (!itemDetailPanel.IsHitTestVisible)
@@ -773,7 +778,7 @@ namespace AwfulNET.RT
         {
             FrameworkElement border = sender as FrameworkElement;
             groupHeaders.Remove(border);
-        }
+        }   
     }
 
     public sealed class ClassicPageViewModel : BindableBase
@@ -915,11 +920,6 @@ namespace AwfulNET.RT
             var pagination = this.currentContent as IPaginationViewModelWithProgress<string>;
             pagination.GoToNextAsync(this.page, this.progress).ContinueWith(task =>
                 {
-                    if (this.currentContent is ArticleDataItem)
-                    {
-                        this.currentContent = (this.currentContent as ArticleDataItem).NextItem;
-                    }
-
                     NotifyContentCommands();
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -938,12 +938,7 @@ namespace AwfulNET.RT
             var pagination = this.currentContent as IPaginationViewModelWithProgress<string>;
             pagination.GoToPrevAsync(this.page, this.progress).ContinueWith(task =>
             {
-                if (this.currentContent is ArticleDataItem)
-                {
-                    this.currentContent = (this.currentContent as ArticleDataItem).PrevItem;
-                }
                 NotifyContentCommands();
-
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
@@ -1003,5 +998,10 @@ namespace AwfulNET.RT
         }
 
         public bool IsListActive { get; set; }
+
+        internal void SetContentAsActive(IContentViewModel content)
+        {
+            this.currentContent = content;
+        }
     }
 }

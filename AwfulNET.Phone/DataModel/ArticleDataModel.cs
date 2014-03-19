@@ -367,11 +367,12 @@ namespace AwfulNET.DataModel
         /// <summary>
         /// Invokes the DOM JavaScript function for displaying other articles.
         /// </summary>
-        private Task LoadArticleAsync(int index, object state, IProgress<string> progress)
+        private async Task LoadArticleAsync(int index, object state, IProgress<string> progress)
         {
             ArticleDataGroup group = this.Group as ArticleDataGroup;
             ArticleDataItem item = group.Items[index] as ArticleDataItem;
-            return item.OnSelectedAsync(state, progress);
+            await item.OnSelectedAsync(state, progress);
+            (state as IWebViewPage).SetContentAsActive(item);
         }
 
         public async Task OnSelectedAsync(object state, IProgress<string> progress)

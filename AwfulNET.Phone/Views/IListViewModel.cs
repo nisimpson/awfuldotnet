@@ -67,6 +67,7 @@ namespace AwfulNET.Views
 
     public interface IWebViewPage : IApplicationPage
     {
+        void SetContentAsActive(IContentViewModel content);
         object InvokeScript(string functionName, params string[] args);
         Task<object> InvokeScriptAsync(string functionName, params string[] args);
     }

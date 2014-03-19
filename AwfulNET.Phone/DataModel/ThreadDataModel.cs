@@ -848,6 +848,7 @@ namespace AwfulNET.DataModel
         {
             this.CurrentPage = this.CurrentPage + 1;
             await this.OnSelectedAsync(state, progress, this.CurrentPage);
+            (state as IWebViewPage).SetContentAsActive(this);
             return true;
         }
 
@@ -855,12 +856,14 @@ namespace AwfulNET.DataModel
         {
             this.CurrentPage = this.CurrentPage - 1;
             await this.OnSelectedAsync(state, progress, this.CurrentPage);
+            (state as IWebViewPage).SetContentAsActive(this);
             return true;
         }
 
         public async Task<bool> GoToPageAsync(int pageNumber, object state, IProgress<string> progress)
         {
             await this.OnSelectedAsync(state, progress, pageNumber);
+            (state as IWebViewPage).SetContentAsActive(this);
             return true;
         }
 
