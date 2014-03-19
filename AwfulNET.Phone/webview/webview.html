@@ -130,9 +130,11 @@
             }
             return "FAIL";
         }
+        // Scrolls to the thread post with the target post id.
         function scrollToPost(id) {
             if (WebViewJS.viewModel.displayThread()) {
-                WebViewJS.threadScrollToPost(id);
+                // post elements in the DOM have 'post' appended to the id
+                WebViewJS.threadScrollToPost("post" + id);
                 return "OK";
             }
             return "FAIL";
