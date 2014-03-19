@@ -227,6 +227,8 @@ namespace AwfulNET.Common
             this.NavigationService.Navigate(uri);
         }
 
+        public void SetContentAsActive(IContentViewModel content) { }
+
         #endregion IWebViewPage
     }
 }
