@@ -443,7 +443,7 @@
         }
         else {
             console.log("all posts...read? scrolling to top.");
-            scrollToTopPost(then, 0);
+            scrollToBottomPost(then, 0);
         }
     }
 
