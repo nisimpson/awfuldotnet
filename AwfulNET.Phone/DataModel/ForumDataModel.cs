@@ -19,7 +19,6 @@ namespace AwfulNET.DataModel
         AwfulDataGroupBase
     {
         private ForumsIndexFeed feed;
-        private bool isBusy;
         private readonly Dictionary<ForumCategory, ICommonDataGroup> categories;
         private Func<ForumsIndexFeed> createFeed;
         private PinnedForumsGroup pinned;
@@ -160,7 +159,7 @@ namespace AwfulNET.DataModel
 
         public override bool CanRefresh()
         {
-            return !this.isBusy;
+            return !this.IsBusy;
         }
 
         private void NotifyItemsSourceChanged()
@@ -172,7 +171,7 @@ namespace AwfulNET.DataModel
 
         private async Task LoadAsync(Func<Task> requestAsync, IProgress<string> progress)
         {
-            this.isBusy = true;
+            this.IsBusy = true;
            
             // detach listener to pin changes
             ThreadDataGroup.PinChanged -= ThreadDataGroup_PinChanged;
@@ -186,12 +185,13 @@ namespace AwfulNET.DataModel
             }
             
             await requestAsync();
+            this.IsBusy = false;
             ReportProgress(progress, null);
         }
 
         protected override async Task OnSelectedAsyncCore(object state, IProgress<string> progress)
         {
-            if (!this.isBusy && this.Items.Count == 0)
+            if (!this.IsBusy && this.Items.Count == 0)
                 await LoadAsync(() =>
                 {
                     if (this.feed == null)
@@ -202,11 +202,15 @@ namespace AwfulNET.DataModel
                     }
                     return this.feed.UpdateAsync();
                 }, progress);
+            else
+            {
+                SetOnItemsReady(true);
+            }
         }
 
         protected override async Task OnRefreshAsyncCore(object state, IProgress<string> progress)
         {
-            if (!this.isBusy)
+            if (!this.IsBusy)
                 await this.LoadAsync(() =>
                     {
                         if (this.feed == null)
@@ -215,6 +219,7 @@ namespace AwfulNET.DataModel
                             this.feed = this.createFeed();
                             this.InitializeFeed(feed);
                         }
+                        ReportProgress(progress, "Refreshing forums index...");
                         return this.feed.PullAsync();
                     }, progress);
         }
@@ -240,7 +245,6 @@ namespace AwfulNET.DataModel
         {
             if (this.isNewInstance)
             {
-                this.Items.Clear();
                 EmptyText = "Please wait...";
                 await forumsIndex.OnSelectedAsync(state, progress);
                 this.ItemsSource = this.Items;
