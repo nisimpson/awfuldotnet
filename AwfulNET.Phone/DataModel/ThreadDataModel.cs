@@ -13,6 +13,7 @@ using Microsoft.CSharp.RuntimeBinder;
 #if WINDOWS_PHONE
 using Microsoft.Phone.Tasks;
 using Microsoft.Phone.Controls;
+using System.Collections.ObjectModel;
 #else
 using AwfulNET.WinRT;
 #endif
@@ -316,6 +317,13 @@ namespace AwfulNET.DataModel
         private bool isBusy = false;
         private WebViewScriptRequestHandler requestHandler;
 
+        private IEnumerable<ThreadPostMetadata> currentPagePosts = null;
+        public IEnumerable<ThreadPostMetadata> CurrentPagePosts
+        {
+            get { return this.currentPagePosts; }
+            set { SetProperty(ref this.currentPagePosts, value); }
+        }
+        
         public string NewPostCount
         {
             get
@@ -438,6 +446,7 @@ namespace AwfulNET.DataModel
                 this.thread.Title = threadPage.ThreadTitle;
                 this.CurrentPage = threadPage.PageNumber;
                 this.LastPage = threadPage.LastPage;
+                this.CurrentPagePosts = threadPage.Posts;
                 MessagePostModel form = new MessagePostModel(this.thread);
                 form.SubmitCommand = new RelayCommand(async () => { await SubmitFormAsync(form, this.myToken); });
                 page.SetPostForm(form, false);

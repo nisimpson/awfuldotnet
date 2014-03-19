@@ -177,6 +177,7 @@ namespace AwfulNET.Phone
             (this.Resources["refreshCommand"] as EventCommand).RaiseCanExecuteChanged();
             (this.Resources["nextCommand"] as EventCommand).RaiseCanExecuteChanged();
             (this.Resources["tabsCommand"] as EventCommand).RaiseCanExecuteChanged();
+            (this.Resources["postJumpCommand"] as EventCommand).RaiseCanExecuteChanged();
         }
 
         public void SetPostForm(MessagePostModel model, bool navigateToReplyView)
@@ -217,6 +218,19 @@ namespace AwfulNET.Phone
         #endregion IThreadPageView
 
         #region AppBar Events
+
+        private void ShowJumpToPostView(object sender, ExecuteEventArgs args)
+        {
+            this.viewmodel.CurrentState = ThreadPageViewModel.State.PostJump;
+            VisualStateManager.GoToState(this, "PostJumpView", true);
+        }
+
+        private void CanShowJumpToPostView(object sender, CanExecuteEventArgs args)
+        {
+            args.CanExecute = false;
+            if (this.viewmodel != null)
+                args.CanExecute = this.viewmodel.CurrentThread != null;
+        }
 
         private void scrollToTop(object sender, ExecuteEventArgs args)
         {
@@ -406,6 +420,18 @@ namespace AwfulNET.Phone
             }
         }
 
+        private void postJumpItem_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                ThreadPostMetadata post = element.DataContext as ThreadPostMetadata;
+                this.Browser.InvokeScript("scrollToPost", post.PostID);
+                this.viewmodel.CurrentState = ThreadPageViewModel.State.Details;
+                VisualStateManager.GoToState(this, "DetailsView", true);
+            }
+        }
+
         #region LogicalPageNavigation
 
         private async void tabsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -430,7 +456,7 @@ namespace AwfulNET.Phone
             }
         }
 
-        #endregion LogicalPageNavigation
+        #endregion LogicalPageNavigation  
     }
 
     [DataContract]
@@ -474,7 +500,8 @@ namespace AwfulNET.Phone
         {
             Normal = 0,
             Details,
-            Tabs
+            Tabs,
+            PostJump
         }
 
         private State currentState;
