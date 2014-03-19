@@ -647,6 +647,8 @@ namespace AwfulNET.RT
             try
             {
                 CommandBar bottomBar = this.BottomAppBar as CommandBar;
+                bottomBar.PrimaryCommands.Clear();
+                bottomBar.SecondaryCommands.Clear();
 
                 foreach (ICommandBarElement item in container.PrimaryCommands)
                     bottomBar.PrimaryCommands.Add(item);
