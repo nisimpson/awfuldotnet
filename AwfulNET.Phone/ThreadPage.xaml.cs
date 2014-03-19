@@ -177,7 +177,7 @@ namespace AwfulNET.Phone
             (this.Resources["refreshCommand"] as EventCommand).RaiseCanExecuteChanged();
             (this.Resources["nextCommand"] as EventCommand).RaiseCanExecuteChanged();
             (this.Resources["tabsCommand"] as EventCommand).RaiseCanExecuteChanged();
-            (this.Resources["postJumpCommand"] as EventCommand).RaiseCanExecuteChanged();
+            (this.Resources["jumpToPostCommand"] as EventCommand).RaiseCanExecuteChanged();
         }
 
         public void SetPostForm(MessagePostModel model, bool navigateToReplyView)
