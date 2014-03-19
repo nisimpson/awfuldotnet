@@ -136,9 +136,7 @@ namespace AwfulNET.Phone
         protected override void OnSelectionChanged(Exception error)
         {
             base.OnSelectionChanged(error);
-
-            VisualStateManager.GoToState(this, "DetailsView", true);
-            this.viewmodel.CurrentState = ThreadPageViewModel.State.Details;
+            ShowDetailsView();
         }
 
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
@@ -148,9 +146,9 @@ namespace AwfulNET.Phone
                 suppressBackButton = false;
                 e.Cancel = true;
             }
-            else if (isTabsViewVisible)
+            else if (!isDetailsViewVisible)
             {
-                this.HideTabsView();
+                this.ShowDetailsView();
                 e.Cancel = true;
             }
             else if (this.pageNavPanel.Visibility == System.Windows.Visibility.Visible)
@@ -221,8 +219,7 @@ namespace AwfulNET.Phone
 
         private void ShowJumpToPostView(object sender, ExecuteEventArgs args)
         {
-            this.viewmodel.CurrentState = ThreadPageViewModel.State.PostJump;
-            VisualStateManager.GoToState(this, "PostJumpView", true);
+            ShowPostJumpView();
         }
 
         private void CanShowJumpToPostView(object sender, CanExecuteEventArgs args)
@@ -345,21 +342,36 @@ namespace AwfulNET.Phone
             args.CanExecute = args.CanExecute && this.viewmodel.CanGoToNext();
         }
 
-        private bool isTabsViewVisible = false;
+        private bool isDetailsViewVisible = true;
         private void ShowTabsView(object sender, ExecuteEventArgs args)
-        { 
+        {
+            this.isDetailsViewVisible = false;
             VisualStateManager.GoToState(this, "TabsView", true);
             this.viewmodel.CurrentState = ThreadPageViewModel.State.Tabs;
-            this.isTabsViewVisible = true;
             (this.Resources["tabsCommand"] as EventCommand).RaiseCanExecuteChanged();
         }
 
-        private void HideTabsView()
+        private void ShowDetailsView()
         {
+            isDetailsViewVisible = true;
             VisualStateManager.GoToState(this, "DetailsView", true);
             this.viewmodel.CurrentState = ThreadPageViewModel.State.Details;
-            isTabsViewVisible = false;
             (this.Resources["tabsCommand"] as EventCommand).RaiseCanExecuteChanged();
+        }
+
+        private void ShowPostJumpView()
+        {
+            if (postJumpList.ItemsSource.Count > 0)
+            {
+                // always show first post in view; this might fail if
+                // the list hasn't been rendered yet, so surround with a try/catch.
+                try { postJumpList.ScrollTo(postJumpList.ItemsSource[0]); }
+                catch (Exception) { }
+            }
+
+            this.isDetailsViewVisible = false;
+            this.viewmodel.CurrentState = ThreadPageViewModel.State.PostJump;
+            VisualStateManager.GoToState(this, "PostJumpView", true);
         }
 
         private void CanShowTabsView(object sender, CanExecuteEventArgs e)
@@ -393,8 +405,7 @@ namespace AwfulNET.Phone
 
         private void OnShowDetailsCommandExecuted(object sender, ExecuteEventArgs args)
         {
-            if (this.isTabsViewVisible)
-                HideTabsView();
+            ShowDetailsView();
         }
 
         #endregion
@@ -427,8 +438,7 @@ namespace AwfulNET.Phone
             {
                 ThreadPostMetadata post = element.DataContext as ThreadPostMetadata;
                 this.Browser.InvokeScript("scrollToPost", post.PostID);
-                this.viewmodel.CurrentState = ThreadPageViewModel.State.Details;
-                VisualStateManager.GoToState(this, "DetailsView", true);
+                ShowDetailsView();
             }
         }
 
@@ -452,7 +462,7 @@ namespace AwfulNET.Phone
 
                 // go back to details view
                 else if (this.viewmodel.CurrentState == ThreadPageViewModel.State.Tabs)
-                    HideTabsView();
+                    ShowDetailsView();
             }
         }
 

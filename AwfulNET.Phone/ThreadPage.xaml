@@ -60,11 +60,11 @@
                         <apu:AppBar.MenuItems>
                             <apu:AppBarMenuItem Command="{StaticResource scrollToTopCommand}" Text="scroll to top" />
                             <apu:AppBarMenuItem Command="{StaticResource scrollToBottomCommand}" Text="scroll to bottom" />
+                            <apu:AppBarMenuItem Command="{StaticResource jumpToPostCommand}" Text="scroll to post..." />
                             <apu:AppBarMenuItem Command="{StaticResource replyCommand}" Text="reply..." />
                             <apu:AppBarMenuItem Command="{StaticResource rateCommand}" Text="rate..." />
                             <apu:AppBarMenuItem Command="{StaticResource bookmarkCommand}" Text="toggle bookmark" />
                             <apu:AppBarMenuItem Command="{StaticResource jumpToPageCommand}" Text="jump to page..." />
-                            <apu:AppBarMenuItem Command="{StaticResource jumpToPostCommand}" Text="jump to post..." />
                             <!--<apu:AppBarMenuItem Command="{StaticResource goBackCommand}" Text="hide window" />-->
                             <apu:AppBarMenuItem Command="{StaticResource tabsCommand}" Text="tabs..." />
                         </apu:AppBar.MenuItems>
@@ -253,13 +253,25 @@
             <phone:LongListSelector x:Name="postJumpList" ItemsSource="{Binding CurrentThread.CurrentPagePosts}" Grid.Row="1">
                 <phone:LongListSelector.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" Tap="postJumpItem_Tap">
+                        <StackPanel Orientation="Horizontal" Margin="24,0,0,12" Tap="postJumpItem_Tap"
+                                    toolkit:TiltEffect.IsTiltEnabled="True">
                             <Border Height="64" Width="64" BorderBrush="{StaticResource PhoneBorderBrush}"
+                                    Background="{StaticResource PhoneAccentBrush}"
                                     BorderThickness="{StaticResource PhoneBorderThickness}">
-                                <TextBlock Text="{Binding PostIndex}" TextAlignment="Center" />
+                                <TextBlock TextAlignment="Center" FontWeight="Bold"
+                                           Margin="0"
+                                       FontSize="{StaticResource PhoneFontSizeMedium}" VerticalAlignment="Center">
+                                    <Run Text="{Binding PageIndex}" />
+                                </TextBlock>
                             </Border>
-                            <TextBlock Margin="{StaticResource PhoneHorizontalMargin}" Text="{Binding Author}"
-                                    Style="{StaticResource PhoneTextTitle3Style}" />
+                            <StackPanel Margin="{StaticResource PhoneHorizontalMargin}"
+                                        VerticalAlignment="Center">
+                                <TextBlock Margin="0" Text="{Binding Author}"
+                                        VerticalAlignment="Center" Style="{StaticResource PhoneTextTitle3Style}" />
+                                <TextBlock Margin="0" Text="{Binding PostDate}"
+                                        Style="{StaticResource PhoneTextSubtleStyle}" />
+                            </StackPanel>
+                           
                         </StackPanel>
                     </DataTemplate>
                 </phone:LongListSelector.ItemTemplate>
