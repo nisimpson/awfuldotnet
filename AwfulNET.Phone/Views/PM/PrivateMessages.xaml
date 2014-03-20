@@ -1,0 +1,100 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="AwfulNET.Phone.Views.PM.PrivateMessages"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:common="clr-namespace:AwfulNET.Common"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+    xmlns:apu="clr-namespace:AppBarUtils;assembly=AppBarUtils"
+        xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+    
+    <i:Interaction.Triggers>
+        <apu:StateChangedTrigger State="{Binding CurrentState}">
+            <apu:SwitchAppBarAction>
+                <!-- id 0: current folder view -->
+                <apu:AppBar Id="0">
+                    <apu:AppBarButton Command="{Binding SyncCommand}" Text="sync"
+                                      IconUri="Assets/AppBar/sync.png"/>
+                    <apu:AppBar.MenuItems>
+                        <apu:AppBarMenuItem Command="{Binding ShowFoldersCommand}" Text="folders..." />
+                    </apu:AppBar.MenuItems>
+                </apu:AppBar>
+                <!-- id 1: all folders view -->
+                <apu:AppBar Id="1">
+                    <apu:AppBarButton Command="{Binding ShowCurrentFolderCommand}" Text="close"
+                            IconUri="Assets/AppBar/cancel.png" />
+                </apu:AppBar>
+            </apu:SwitchAppBarAction>
+        </apu:StateChangedTrigger>
+    </i:Interaction.Triggers>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel x:Name="TitlePanel"  Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock Text="{Binding Title, FallbackValue='PRIVATE MESSAGES'}" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock Text="{Binding Subtitle, FallbackValue='inbox'}" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <Grid.Resources>
+                <common:DataTypeTemplateSelector x:Key="itemTemplateSelector">
+                    <!-- the default template. should never be shown in this case. -->
+                    <common:DataTypeTemplateSelector.DefaultTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                        </DataTemplate>
+                    </common:DataTypeTemplateSelector.DefaultTemplate>
+                    <common:DataTypeTemplateSelector.Items>
+                        <!-- data template for private message folders. -->
+                        <common:DataTypeTemplate DataType="Folder">
+                            <StackPanel Orientation="Horizontal">
+                                <Border>
+                                    <!-- ui symbol is a file folder -->
+                                    <TextBlock VerticalAlignment="Center" TextAlignment="Center"
+                                               FontSize="{StaticResource PhoneFontSizeLarge}"
+                                            FontFamily="Segoe UI Symbol" Text="&#xe197;" />
+                                </Border>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </common:DataTypeTemplate>
+                        <!-- data template for private messages. -->
+                        <common:DataTypeTemplate DataType="PrivateMessage">
+                            <ContentControl Content="{Binding}"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Top"
+                                    ContentTemplate="{StaticResource listViewItem72pxTemplate}" />
+                        </common:DataTypeTemplate>
+                    </common:DataTypeTemplateSelector.Items>
+                </common:DataTypeTemplateSelector>
+            </Grid.Resources>
+
+            <phone:LongListSelector x:Name="itemListView" ItemsSource="{Binding Source.ItemsSource}">
+                <phone:LongListSelector.ItemTemplate>
+                    <DataTemplate>
+                        <common:VariableContentControl Style="{StaticResource listViewItemStyle}" Tap="currentItem_Tap"
+                                ContentTemplateSelector="{StaticResource itemTemplateSelector}" Content="{Binding}" />
+                    </DataTemplate>
+                </phone:LongListSelector.ItemTemplate>
+            </phone:LongListSelector>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>
