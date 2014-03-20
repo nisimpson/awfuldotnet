@@ -12,6 +12,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Runtime.Serialization;
 using AwfulNET.Core;
+using AwfulNET.RT;
+using AwfulNET.DataModel;
 
 namespace AwfulNET.Data
 {
@@ -76,6 +78,19 @@ namespace AwfulNET.Data
 
             return false;
         }
+
+        internal void AddFavorite(ThreadDataGroup thread)
+        {
+            if (!HasUserFavoriteWithId(thread.UniqueID))
+                UserFavorites.Add(new UserFavorite(thread));
+        }
+
+        internal void RemoveFavorite(ThreadDataGroup thread)
+        {
+            var toRemove = UserFavorites.SingleOrDefault(item => item.ItemId.Equals(thread.UniqueID));
+            if (toRemove != null)
+                UserFavorites.Remove(toRemove);
+        }
     }
 
     [DataContract]
@@ -139,6 +154,11 @@ namespace AwfulNET.Data
             if (string.IsNullOrEmpty(UserFavoriteId))
                 UserFavoriteId = Guid.NewGuid().ToString();
         }
+
+        public UserFavorite(ThreadDataGroup thread) : this()
+        {
+            this.ItemId = thread.UniqueID;
+        }
     }
 
     [DataContract]
@@ -151,7 +171,7 @@ namespace AwfulNET.Data
         public List<UserToken> UserTokens { get; set; }
 
         [DataMember]
-        public List<UserFavorite> UserFavorites { get; set; }
+        public ObservableCollection<UserFavorite> UserFavorites { get; set; }
 
         public static string ConnectionString { get; set; }
 
@@ -159,7 +179,12 @@ namespace AwfulNET.Data
         {
             UserAccounts = new List<UserAccount>();
             UserTokens = new List<UserToken>();
-            UserFavorites = new List<UserFavorite>();
+            UserFavorites = new ObservableCollection<UserFavorite>();
+        }
+
+        private static async void UserFavorites_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            await App.UserContext.SaveChangesAsync(App.CurrentAccount, SettingsModelFactory.GetSettingsModel());
         }
 
         public UserDataContext(string connectionString) { }
@@ -172,7 +197,8 @@ namespace AwfulNET.Data
             {
                 UserAccounts = new List<UserAccount>();
                 UserTokens = new List<UserToken>();
-                UserFavorites = new List<UserFavorite>();
+                UserFavorites = new ObservableCollection<UserFavorite>();
+                UserFavorites.CollectionChanged += UserFavorites_CollectionChanged;
                 tcs.SetResult(true);
             }
             else { tcs.SetResult(false); }
@@ -257,11 +283,11 @@ namespace AwfulNET.Data
                     break;
             }
 
+            foreach (var item in toAdd)
+                UserFavorites.Add(item);
 
-            UserFavorites.AddRange(toAdd);
-            UserFavorites.RemoveAll(item => toRemove.Contains(item));
-
-            //return StorageModelFactory.GetStorageModel().SaveToStorageAsync(ConnectionString, this);
+            foreach (var item in toRemove)
+                UserFavorites.Remove(item);
         }
 
         private static bool isLoggedOut = false;
@@ -298,18 +324,18 @@ namespace AwfulNET.Data
             }
 
             // save changes
-            SaveChanges(selected, SettingsModelFactory.GetSettingsModel());
+            await SaveChangesAsync(selected, SettingsModelFactory.GetSettingsModel());
 
             return selected;
         }
 
-        public void SaveChanges(UserAccount account, ISettingsModel settings)
+        public async Task SaveChangesAsync(UserAccount account, ISettingsModel settings)
         {
             if (!isLoggedOut && !string.IsNullOrEmpty(account.Username))
             {
                 settings.AddOrUpdate("currentUser", account.Username);
                 settings.SaveSettings();
-                StorageModelFactory.GetStorageModel().SaveToStorageAsync(ConnectionString, this);
+                await StorageModelFactory.GetStorageModel().SaveToStorageAsync(ConnectionString, this);
             }
         }
 
@@ -361,6 +387,7 @@ namespace AwfulNET.Data
                 result = new UserDataContext(); 
             }
             
+            result.UserFavorites.CollectionChanged += UserFavorites_CollectionChanged;
             return result;
         }
     }

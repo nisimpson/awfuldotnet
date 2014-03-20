@@ -12,7 +12,7 @@ namespace AwfulNET.Common
     {
         public static ISettingsModel GetSettingsModel()
         {
-            return new WinRTSettingsModel();
+            return new WinRTRoamingSettingsModel();
         }
     }
 }

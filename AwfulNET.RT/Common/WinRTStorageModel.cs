@@ -13,7 +13,7 @@ namespace AwfulNET.Common
 {
     public class WinRTStorageModel : IStorageModel
     {
-        private WinRTStorageModel() { }
+        protected WinRTStorageModel() { }
 
         static WinRTStorageModel() { Instance = new WinRTStorageModel(); }
 
@@ -24,7 +24,7 @@ namespace AwfulNET.Common
             MemoryStream sessionData = new MemoryStream();
             DataContractSerializer dcs = new DataContractSerializer(typeof(T));
             dcs.WriteObject(sessionData, value);
-            var appfolder = ApplicationData.Current.LocalFolder;
+            var appfolder = GetStorageFolder();
             var file = await appfolder.CreateFileAsync(path, CreationCollisionOption.ReplaceExisting);
             using (var stream = await file.OpenStreamForWriteAsync())
             {
@@ -36,7 +36,8 @@ namespace AwfulNET.Common
         public async Task<T> LoadFromStorageAsync<T>(string path)
         {
             T data = default(T);
-            StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(path);
+            var appfolder = GetStorageFolder();
+            StorageFile file = await appfolder.GetFileAsync(path);
             using (IInputStream inStream = await file.OpenSequentialReadAsync())
             {
                 DataContractSerializer serializer =
@@ -52,7 +53,9 @@ namespace AwfulNET.Common
 
     public sealed class WinRTRoamingStorageModel : WinRTStorageModel
     {
-        public static WinRTRoamingStorageModel Instance { get; private set; }
+        public static new WinRTRoamingStorageModel Instance { get; private set; }
+
+        private WinRTRoamingStorageModel() : base() { }
 
         static WinRTRoamingStorageModel() { Instance = new WinRTRoamingStorageModel(); }
 

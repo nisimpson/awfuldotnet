@@ -50,7 +50,7 @@ namespace AwfulNET.RT
 
             // Intialize User DB
             UserDataContext.ConnectionString = DB_CONNECTION_STRING;
-            UserContext = UserDataContext.Load(WinRTStorageModel.Instance);
+            UserContext = UserDataContext.Load(StorageModelFactory.GetStorageModel());
             var dbCreationResult = UserContext.CreateIfNotExistsAsync().Result;
 
             // Intialize Main ViewModel
@@ -62,6 +62,12 @@ namespace AwfulNET.RT
             NotificationService.Default.Register<ConfirmDialogMessage>(OnConfirmDialogMessage);
             NotificationService.Default.Register<NetworkDetectionMessage>(OnNetworkDetectionMessage);
             NotificationService.Default.Register<AccessTokenMessage>(OnAccessTokenMessage);
+            NotificationService.Default.Register<PinnedForumQuery>(OnPinnedForumQuery);
+        }
+
+        private void OnPinnedForumQuery(INotification<PinnedForumQuery> obj)
+        {
+            obj.Value.IsPinned = CurrentAccount.HasUserFavoriteWithId(obj.Value.UniqueID);
         }
 
         private void OnAccessTokenMessage(INotification<AccessTokenMessage> obj)
@@ -137,7 +143,17 @@ namespace AwfulNET.RT
 #endif
 
             if (CurrentAccount == null)
+            {
                 CurrentAccount = await UserContext.LoadCurrentUser(SettingsModelFactory.GetSettingsModel());
+                ThreadDataGroup.PinChanged += (o, a) =>
+                    {
+                        var thread = o as ThreadDataGroup;
+                        if (thread.IsPinned)
+                            CurrentAccount.AddFavorite(thread);
+                        else
+                            CurrentAccount.RemoveFavorite(thread);
+                    };
+            }
 
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -195,12 +211,12 @@ namespace AwfulNET.RT
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             
             // save user db
-            UserContext.SaveChanges(CurrentAccount, SettingsModelFactory.GetSettingsModel());
+            await UserContext.SaveChangesAsync(CurrentAccount, SettingsModelFactory.GetSettingsModel());
 
             deferral.Complete();
         }

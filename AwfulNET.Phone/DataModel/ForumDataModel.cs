@@ -252,7 +252,7 @@ namespace AwfulNET.DataModel
                 this.isNewInstance = false;
             }
 
-            else { this.SetOnItemsReady(true); }
+             this.SetOnItemsReady(true);
         }
 
         public override bool CanRefresh()
