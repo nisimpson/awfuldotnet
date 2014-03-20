@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="17336NathanSimpson.23217D5413C29" Publisher="CN=E23272FD-C779-45D3-BC0C-2A4B95383805" Version="3.0.0.1" />
+  <Identity Name="17336NathanSimpson.23217D5413C29" Publisher="CN=E23272FD-C779-45D3-BC0C-2A4B95383805" Version="3.0.0.2" />
   <Properties>
     <DisplayName>Awful.</DisplayName>
     <PublisherDisplayName>Nathan Simpson</PublisherDisplayName>
