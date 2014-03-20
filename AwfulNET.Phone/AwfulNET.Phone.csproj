@@ -169,6 +169,7 @@
     <Compile Include="DataModel\ForumDataModel.cs" />
     <Compile Include="DataModel\JumpListDataModel.cs" />
     <Compile Include="DataModel\MainDataModel.cs" />
+    <Compile Include="DataModel\PrivateMessageDataModel.cs" />
     <Compile Include="DataModel\SignInDataModel.cs" />
     <Compile Include="DataModel\ThreadDataModel.cs" />
     <Compile Include="Data\UserAccount.cs" />
@@ -204,8 +205,12 @@
     <Compile Include="Views\IHomePageView.cs" />
     <Compile Include="Views\IListViewModel.cs" />
     <Compile Include="Views\IArticlePageView.cs" />
+    <Compile Include="Views\IPrivateMessageView.cs" />
     <Compile Include="Views\IThreadPageView.cs" />
     <Compile Include="Views\LoadMoreItemsConverter.cs" />
+    <Compile Include="Views\PM\PrivateMessages.xaml.cs">
+      <DependentUpon>PrivateMessages.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -257,6 +262,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ThreadPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PM\PrivateMessages.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

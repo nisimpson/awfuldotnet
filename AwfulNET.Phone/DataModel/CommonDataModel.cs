@@ -196,8 +196,11 @@ namespace AwfulNET.DataModel
         public void SetImage(String path)
         {
             this._image = null;
-            this.imagePath = path;
-            this.OnPropertyChanged("Image");
+            if (this.imagePath != path)
+            {
+                this.imagePath = path;
+                this.OnPropertyChanged("Image");
+            }
         }
 
         private ICommonDataGroup group = null;

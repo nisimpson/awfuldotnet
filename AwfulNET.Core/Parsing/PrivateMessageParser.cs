@@ -226,7 +226,10 @@ namespace AwfulNET.Core.Parsing
                 .SingleOrDefault();
 
             if (postBodyNode != null)
+            {
                 pm.RawHtml = postBodyNode.InnerHtml;
+                pm.RawText = postBodyNode.InnerText;
+            }
 
             // ***** PARSE AUTHOR *****
             var authorNode = top.Descendants("dt")

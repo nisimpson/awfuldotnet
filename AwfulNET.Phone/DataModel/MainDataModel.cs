@@ -18,10 +18,13 @@ namespace AwfulNET.DataModel
         public const string DATATYPE_THREAD = "item";
         public const string DATATYPE_MENU = "menu";
         public const string DATATYPE_FORUM = "forum";
+        public const string DATATYPE_FOLDER = "Folder";
+        public const string DATATYPE_PM = "PrivateMessage";
 
         [Obsolete]
         private ForumAccessToken token;
 
+        private PrivateMessageFolderIndex messages;
         private ArticleDataGroup articles;
         private BookmarkDataGroup bookmarks;
         private ForumsIndexGroup forums;
@@ -31,6 +34,7 @@ namespace AwfulNET.DataModel
         public BookmarkDataGroup Bookmarks { get { return bookmarks; } }
         public ForumsIndexGroup Forums { get { return forums; } }
         public PinnedForumsGroup Pinned { get { return pinned; } }
+        public PrivateMessageFolderIndex Messages { get { return messages; } }
 
         public MainDataModel() : base(false, false)
         {
@@ -62,6 +66,12 @@ namespace AwfulNET.DataModel
             this.pinned.Subtitle = "Quick access to your favorite forums.";
             this.pinned.DataType = DATATYPE_MENU;
             this.pinned.Group = this;
+
+            this.messages = new PrivateMessageFolderIndex();
+            this.messages.Title = "Private Messages";
+            this.messages.Subtitle = "Check your PMs here. Platinum membership required.";
+            this.messages.DataType = DATATYPE_MENU;
+            this.messages.Group = this;
             
             this.Items.Add(pinned);
             this.Items.Add(forums);
@@ -115,6 +125,15 @@ namespace AwfulNET.DataModel
         {
             var selected = forums.Items.SingleOrDefault(item => item.UniqueID.Equals(uniqueID));
             return selected as IListViewModel;
+        }
+
+        internal PrivateMessageItem GetPrivateMessageByID(string uniqueID)
+        {
+            var selected = messages.Items
+                .SelectMany(group => (group as ICommonDataGroup).Items)
+                .SingleOrDefault(item => item.UniqueID.Equals(uniqueID));
+
+            return selected as PrivateMessageItem;
         }
 
         #region AwfulDataGroupBase

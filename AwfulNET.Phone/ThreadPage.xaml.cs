@@ -26,7 +26,7 @@ namespace AwfulNET.Phone
         private bool isNewInstance = false;
         private bool isStateLoaded = false;
 
-        private const string THREAD_TAB_MESSAGE = "Congrats, you've unlocked thread tabs! Access the tabs menu to switch between active tabs. Pressing the back button will still return you to the home page. Enjoy! Press OK to never show this message again, or CANCEL if you need to be reminded.";
+        private const string THREAD_TAB_MESSAGE = "Congrats, you've unlocked metadata tabs! Access the tabs menu to switch between active tabs. Pressing the back button will still return you to the home page. Enjoy! Press OK to never show this message again, or CANCEL if you need to be reminded.";
         
         public ThreadPage()
         {
@@ -57,10 +57,10 @@ namespace AwfulNET.Phone
             InitializeWebView(this.Browser);
         }
 
-        protected override Task<Views.IWebViewModel<string>> CreateWebViewModelAsync(NavigationEventArgs e)
+        protected override Task<IWebViewModel<string>> CreateWebViewModelAsync(NavigationEventArgs e)
         {
             string id = null;
-            TaskCompletionSource<Views.IWebViewModel<string>> tcs = new TaskCompletionSource<IWebViewModel<string>>();
+            TaskCompletionSource<IWebViewModel<string>> tcs = new TaskCompletionSource<IWebViewModel<string>>();
             if (NavigationContext.QueryString.ContainsKey("id"))
             {
                 id = NavigationContext.QueryString["id"];

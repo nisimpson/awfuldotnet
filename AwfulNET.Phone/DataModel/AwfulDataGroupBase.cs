@@ -166,6 +166,7 @@ namespace AwfulNET.DataModel
                 onItemsReady = new TaskCompletionSource<bool>();
                 await OnSelectedAsyncCore(state, progress);
                 bool result = await onItemsReady.Task;
+                ReportProgress(progress, null);
             }
         }
 
