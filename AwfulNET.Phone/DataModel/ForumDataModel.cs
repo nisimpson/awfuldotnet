@@ -251,6 +251,8 @@ namespace AwfulNET.DataModel
                 EmptyText = "Long press your favorite forum and select 'pin to favorites'.";
                 this.isNewInstance = false;
             }
+
+            else { this.SetOnItemsReady(true); }
         }
 
         public override bool CanRefresh()

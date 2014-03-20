@@ -470,6 +470,8 @@ namespace AwfulNET.RT
         public void SetContentAsActive(IContentViewModel content)
         {
             this.viewModelWrapper.SetContentAsActive(content);
+            this.viewModelWrapper.IsListActive = false;
+            NotifyAppBarCommands();
         }
 
         public object InvokeScript(string functionName, params string[] args)

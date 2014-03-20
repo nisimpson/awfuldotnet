@@ -17,6 +17,8 @@ namespace AwfulNET.Common
 
         static WinRTStorageModel() { Instance = new WinRTStorageModel(); }
 
+        protected virtual StorageFolder GetStorageFolder() { return ApplicationData.Current.LocalFolder; }
+
         public async Task SaveToStorageAsync<T>(string path, T value)
         {
             MemoryStream sessionData = new MemoryStream();
@@ -46,5 +48,17 @@ namespace AwfulNET.Common
         }
 
         public static WinRTStorageModel Instance { get; private set; }
+    }
+
+    public sealed class WinRTRoamingStorageModel : WinRTStorageModel
+    {
+        public static WinRTRoamingStorageModel Instance { get; private set; }
+
+        static WinRTRoamingStorageModel() { Instance = new WinRTRoamingStorageModel(); }
+
+        protected override StorageFolder GetStorageFolder()
+        {
+            return ApplicationData.Current.RoamingFolder;
+        }
     }
 }
