@@ -220,7 +220,7 @@ namespace AwfulNET.DataModel
         private string FormatIconImageSource(PrivateMessageMetadata metadata)
         {
             if (string.IsNullOrEmpty(metadata.IconUri))
-                return null;
+                return "AppBar/mail.png";
 
             string filename = Path.GetFileName(metadata.IconUri);
             filename = filename.Replace(Path.GetExtension(filename), ".png");

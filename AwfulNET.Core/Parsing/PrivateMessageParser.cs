@@ -133,15 +133,16 @@ namespace AwfulNET.Core.Parsing
                     var rows = item.Descendants("td").ToArray();
                     var statusNode = rows[0];
                     message.Status = GetMessageStatusFromNode(statusNode);
-                    // skip the thread tag node, since I'm not using those yet
-                    var titleNode = rows[2];
+                    // thread tag
+                    var tagNode = rows.SingleOrDefault(row => row.GetAttributeValue("class", string.Empty).Contains("icon"));
+                    message.IconUri = GetMessageIconUriFromNode(tagNode);
                     // title node has our subject and message id
+                    var titleNode = rows[2];
                     message.Subject = GetMessageTitleFromNode(titleNode);
                     message.PrivateMessageId = GetMessageIDFromNode(titleNode);
                     // author node is next <td>
                     var authorNode = rows[3];
                     message.From = GetMessageAuthorFromNode(authorNode);
-
                     // postmark node is next <td>
                     var postmarkNode = rows[4];
                     message.PostDate = GetPostMarkFromNode(postmarkNode);
@@ -370,6 +371,19 @@ namespace AwfulNET.Core.Parsing
 
             value = valueNode == null ? string.Empty : valueNode.GetAttributeValue("value", string.Empty);
             return value;
+        }
+
+        private static string GetMessageIconUriFromNode(HtmlNode node)
+        {
+            // grab the image tag
+            HtmlNode img = node.Descendants("img").FirstOrDefault();
+            if (img != null)
+            {
+                var src = img.GetAttributeValue("src", string.Empty);
+                return src;
+            }
+
+            return null;
         }
 
         private static DateTime? GetPostMarkFromNode(HtmlNode node)
