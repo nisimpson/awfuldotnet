@@ -17,7 +17,7 @@ namespace AwfulNET.Core.Rest
     public delegate ForumAccessToken TokenDelegate();
 
     [DataContract]
-    public class ForumAccessToken
+    public class ForumAccessToken : IForumAccessToken
     {
         public const int DefaultTimeoutInMilliseconds = 60000;
         private HttpClient client;
@@ -517,6 +517,7 @@ namespace AwfulNET.Core.Rest
             var htmlDocument = await client.GetHtmlAsync("/");
             return forums.ParseForumDescription(htmlDocument);
         }
+
     }
 
     [Obsolete("This class is deprecated. Acquire tokens by registering for the AccessMessageToken notification.", true)]

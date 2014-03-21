@@ -89,6 +89,7 @@
     <Compile Include="Metadata\ThreadPostMetadata.cs" />
     <Compile Include="Rest\ForumAccessToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rest\IForumAccessToken.cs" />
     <Compile Include="Rest\JsonHelper.cs" />
     <Compile Include="Rest\NewThreadRequest.cs" />
     <Compile Include="Rest\PrivateMessageFolderEditor.cs" />
