@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using Microsoft.Phone.Net.NetworkInformation;
 using AwfulNET.Data;
 using System.Threading.Tasks;
+using AwfulNET.Core.Rest;
 
 namespace AwfulNET.Phone
 {
@@ -111,7 +112,11 @@ namespace AwfulNET.Phone
         // Grab current user's account token.
         private void OnAccessTokenMessage(INotification<AccessTokenMessage> obj)
         {
+#if OFFLINE
+            obj.Value.Token = new MockForumAccessToken();
+#else
             obj.Value.Token = CurrentAccount.AsForumAccessToken();
+#endif
         }
 
         // Open up a dialog message.

@@ -22,7 +22,7 @@ namespace AwfulNET.DataModel
         public const string DATATYPE_PM = "PrivateMessage";
 
         [Obsolete]
-        private ForumAccessToken token;
+        private IForumAccessToken token;
 
         private PrivateMessageFolderIndex messages;
         private ArticleDataGroup articles;
@@ -91,7 +91,7 @@ namespace AwfulNET.DataModel
         internal static async Task<MainDataModel> CreateAsync(string user)
         {
             var storage = StorageModelFactory.GetStorageModel();
-            ForumAccessToken token = await storage.LoadAccessTokenFromStorage(user);
+            IForumAccessToken token = await storage.LoadAccessTokenFromStorage(user);
             MainDataModel main = null;
             if (token != null)
             {

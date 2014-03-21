@@ -13,7 +13,7 @@ namespace AwfulNET.Core.Feeds
     public class SmiliesFeed : CommonFeed<IEnumerable<TagMetadata>>
     {
         [IgnoreDataMember]
-        public ForumAccessToken Token
+        public IForumAccessToken Token
         {
             get
             {

@@ -17,7 +17,7 @@ namespace AwfulNET.Core.Feeds
         static ForumThreadsFeed() { threadTable = new Dictionary<string, ForumThreadsFeed>(); }
 
         [IgnoreDataMember]
-        public ForumAccessToken Token
+        public IForumAccessToken Token
         {
             get 
             {
@@ -65,7 +65,7 @@ namespace AwfulNET.Core.Feeds
             }
         }
 
-        protected ForumAccessToken GetToken() { return this.Token; }
+        protected IForumAccessToken GetToken() { return this.Token; }
 
         protected virtual async Task<ForumPageMetadata> GetMetadataAsync(int page)
         {

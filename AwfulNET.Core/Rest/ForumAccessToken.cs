@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace AwfulNET.Core.Rest
 {
-    public delegate ForumAccessToken TokenDelegate();
+    public delegate IForumAccessToken TokenDelegate();
 
     [DataContract]
     public class ForumAccessToken : IForumAccessToken
@@ -95,7 +95,7 @@ namespace AwfulNET.Core.Rest
 
         public override string ToString()
         {
-            return string.Format("[ForumAccessToken]: {0}", this.Username);
+            return string.Format("[IForumAccessToken]: {0}", this.Username);
         }
 
         public async Task<UserFeatures> GetUserFeaturesAsync()
@@ -525,7 +525,7 @@ namespace AwfulNET.Core.Rest
     {
         public static event EventHandler<ForumAccessTokenRequestArgs> TokenRequested;
 
-        public static ForumAccessToken RequestToken(object sender)
+        public static IForumAccessToken RequestToken(object sender)
         {
             var handler = TokenRequested;
             if (handler != null)
@@ -541,7 +541,7 @@ namespace AwfulNET.Core.Rest
 
     public class ForumAccessTokenRequestArgs : EventArgs
     {
-        public ForumAccessToken Token { get; set; }
+        public IForumAccessToken Token { get; set; }
         public ForumAccessTokenRequestArgs() { }
     }
 }

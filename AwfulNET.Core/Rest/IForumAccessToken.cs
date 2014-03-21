@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AwfulNET.Core.Rest
 {
-    interface IForumAccessToken
+    public interface IForumAccessToken
     {
         /// <summary>
         /// Gets the name of the account associated with this token.

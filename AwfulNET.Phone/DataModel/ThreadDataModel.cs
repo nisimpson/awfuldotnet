@@ -311,7 +311,7 @@ namespace AwfulNET.DataModel
             IPaginationViewModelWithProgress<string>
     {
         private ThreadMetadata thread;
-        private ForumAccessToken myToken;
+        private IForumAccessToken myToken;
         private int currentPage = 0;
         private ThreadPageMetadata currentPageMetadata;
         private bool isBusy = false;
@@ -358,7 +358,7 @@ namespace AwfulNET.DataModel
 
         public ThreadMetadata Thread { get { return this.thread; } }
 
-        public ThreadDataItem(ThreadMetadata thread, ForumAccessToken token)
+        public ThreadDataItem(ThreadMetadata thread, IForumAccessToken token)
             : base()
         {
             this.myToken = token;
@@ -461,7 +461,7 @@ namespace AwfulNET.DataModel
             return success;
         }
 
-        private async Task SubmitFormAsync(MessagePostModel form, ForumAccessToken token)
+        private async Task SubmitFormAsync(MessagePostModel form, IForumAccessToken token)
         {
             ConfirmDialogMessage confirm = new ConfirmDialogMessage("Are you sure?", "Submit Post");
             NotificationService.Default.Notify<ConfirmDialogMessage>(this, confirm);
@@ -883,7 +883,7 @@ namespace AwfulNET.DataModel
     {
         private ThreadPageMetadata page;
         private bool isFirstInstance = false;
-        public ThreadDataItemFromPage(ThreadPageMetadata page, ForumAccessToken token)
+        public ThreadDataItemFromPage(ThreadPageMetadata page, IForumAccessToken token)
             : base(page.ToThreadMetadata(), token)
         {
             this.page = page;

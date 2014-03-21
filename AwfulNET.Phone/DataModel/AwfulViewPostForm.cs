@@ -17,7 +17,7 @@ namespace AwfulNET.DataModel
     {
         IThreadForm form;
         ThreadMetadata thread;
-        Func<ForumAccessToken, Task<ThreadFormResponse>> submit;
+        Func<IForumAccessToken, Task<ThreadFormResponse>> submit;
         ICommand submitCommand;
         ICommand goBackCommand;
         SuccessDelegate onSuccess = MessagePostModel.DoNothing;
@@ -91,7 +91,7 @@ namespace AwfulNET.DataModel
             set { SetProperty(ref message, value); }
         }
 
-        public async Task<ThreadFormResponse> SubmitAsync(ForumAccessToken token)
+        public async Task<ThreadFormResponse> SubmitAsync(IForumAccessToken token)
         {
             ThreadFormResponse response = null;
             this.WhileBusy(true);
@@ -111,7 +111,7 @@ namespace AwfulNET.DataModel
             return response;
         }
 
-        private Task<ThreadFormResponse> SubmitFormAsync(ForumAccessToken token)
+        private Task<ThreadFormResponse> SubmitFormAsync(IForumAccessToken token)
         {
             if (form != null)
             {
@@ -124,7 +124,7 @@ namespace AwfulNET.DataModel
             }
         }
 
-        private Task<ThreadFormResponse> SubmitPostAsync(ForumAccessToken token)
+        private Task<ThreadFormResponse> SubmitPostAsync(IForumAccessToken token)
         {
             return thread.ReplyAsync(this.message, token);
         }

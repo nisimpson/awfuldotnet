@@ -13,7 +13,7 @@ namespace AwfulNET.Core.Feeds
     public class PrivateMessagesFeed : CommonFeed<IEnumerable<PrivateMessageFolderFeed>>
     {
         [IgnoreDataMember]
-        public ForumAccessToken Token
+        public IForumAccessToken Token
         {
             get
             {
@@ -54,7 +54,7 @@ namespace AwfulNET.Core.Feeds
     public class PrivateMessageFolderFeed : CommonFeed<PrivateMessageMetadataCollection>
     {
         [IgnoreDataMember]
-        public ForumAccessToken Token
+        public IForumAccessToken Token
         {
             get 
             {
