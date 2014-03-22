@@ -181,6 +181,7 @@ namespace AwfulNET.DataModel
         IPaginationViewModelWithProgress<string>
     {
         private bool isBusy = false;
+        private bool imageSet = false;
         private PrivateMessageMetadata metadata;
         
         public PrivateMessageItem(PrivateMessageMetadata metadata) 
@@ -214,7 +215,9 @@ namespace AwfulNET.DataModel
             this.UniqueID = metadata.PrivateMessageId;
             this.Subtitle = metadata.From;
             this.Description = FormatDescription(metadata);
-            this.SetImage(this.FormatIconImageSource(metadata));
+            
+            if (!imageSet)
+                this.SetImage(this.FormatIconImageSource(metadata));
         }
 
         private const string ICON_BASE = "http://raw.github.com/Awful/thread-tags/master/";
@@ -225,6 +228,7 @@ namespace AwfulNET.DataModel
 
             string filename = Path.GetFileName(metadata.IconUri);
             filename = filename.Replace(Path.GetExtension(filename), ".png");
+            imageSet = true;
             return ICON_BASE + filename;
         }
 
