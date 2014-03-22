@@ -18,8 +18,6 @@
 
         theme: ko.observable(''),
         accent: ko.observable(''),
-        onMessageRendered: onMessageRendered,
-
         isLoading: ko.observable(false)
     };
 
@@ -197,14 +195,6 @@
 
         if (self.isLastPage()) { self.footer("end of thread."); }
         else { self.footer("continue to next page"); }
-    }
-
-    // Invoked when DOM element for private message is rendered.
-    function onMessageRendered(element) {
-        attachSpoilerEvent(element);
-        fixLongLinks(element);
-        youTubeFix(element);
-        attachImageEvents(element);
     }
 
     // Called when webview is ready for display
@@ -664,6 +654,15 @@
         });
     }
 
+    // Moves selected elements after their heading element.
+    function unnestElements(element, selector) {
+        $(selector, element).filter(function () {
+            return $(this).closest(':header').length;
+        }).each(function () {
+            $(this).insertAfter($(this).closest(':header'));
+        });
+    }
+
     function attachUnveilPlugin() {
         $(".unveil-img").unveil(200, function () {
             $(this).load(function () {
@@ -727,7 +726,16 @@
             title: message.Subject,
             subtitle: formatDate(message.PostDate),
             description: message.From,
-            content: message.RawHtml
+            content: message.RawHtml,
+            // Invoked when DOM element for private message is rendered.
+            onRender: function (element) {
+                sendEcho("onMessageRendered.");
+                attachSpoilerEvent(element);
+                fixLongLinks(element);
+                youTubeFix(element);
+                attachImageEvents(element);
+                unnestElements(element, "blockquote");
+            }
         };
 
         webViewModel.message(model);

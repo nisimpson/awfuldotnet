@@ -77,7 +77,7 @@
         </div>
 
         <!-- Private Message template -->
-        <div id="pmView" class="sectionView" data-bind='template: { if: displayMessage, name: "messageTemplate", data: message, afterRender: onMessageRendered }'></div>
+        <div id="pmView" class="sectionView" data-bind='template: { if: displayMessage, name: "messageTemplate", data: message, afterRender: message().onRender }'></div>
 
         <script type="text/html" id="messageTemplate">
             <header class="header">

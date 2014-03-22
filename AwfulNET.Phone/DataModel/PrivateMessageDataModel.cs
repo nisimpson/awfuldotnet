@@ -232,12 +232,16 @@ namespace AwfulNET.DataModel
 
         public Task OnScriptNotifyAsync(object state, string value)
         {
-            throw new NotImplementedException();
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            tcs.SetResult(true);
+            return tcs.Task;
         }
 
         public Task OnScriptNotifyAsync(object state, IProgress<string> progress, string value)
         {
-            throw new NotImplementedException();
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            tcs.SetResult(true);
+            return tcs.Task;
         }
 
         public async Task OnSelectedAsync(object state, IProgress<string> progress)

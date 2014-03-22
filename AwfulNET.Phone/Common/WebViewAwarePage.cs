@@ -147,6 +147,11 @@ namespace AwfulNET.Common
                     await InvokeAndNotifyOnError(this.ViewModel.OnScriptNotifyAsync(this, this.progress, e.Value));
                     break;
             }
+
+#if DEBUG
+            // show the passed in value
+            MessageBox.Show(e.Value, "Script Notify", MessageBoxButton.OK);
+#endif
         }
 
         protected virtual async Task InvokeAndNotifyOnError(Task task)
