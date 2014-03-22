@@ -77,34 +77,28 @@
         </div>
 
         <!-- Private Message template -->
-        <div id="pmView" class="sectionView" data-bind="if: displayMessage">
-            <div data-bind='template: { 
-                            name: "messageTemplate",
-                            data: message,
-                            afterRender: onMessageRendered }'>
-            </div>
+        <div id="pmView" class="sectionView" data-bind='template: { if: displayMessage, name: "messageTemplate", data: message, afterRender: onMessageRendered }'></div>
 
-            <script type="text/html" id="messageTemplate">
-                <header class="header">
-                    <div class="header-background"></div>
-                    <div class="text">
-                        <h3 class="article-description win-type-large"><span data-bind="test: description"></span></h3>
-                        <h2 class="article-title win-type-x-large"><span data-bind="text: title"></span></h2>
-                        <h3 class="article-subtitle win-type-large"><span data-bind="text: subtitle"></span></h3>
-                    </div>
-                </header>
-                <article>
-                    <div class="article-content" data-bind="html: content">blah blah</div>
-                </article>
-            </script>
-        </div>
+        <script type="text/html" id="messageTemplate">
+            <header class="header">
+                <div class="header-background"></div>
+                <div class="text">
+                    <h3 class="article-description win-type-large"><span data-bind="test: description"></span></h3>
+                    <h2 class="article-title win-type-x-large"><span data-bind="text: title"></span></h2>
+                    <h3 class="article-subtitle win-type-large"><span data-bind="text: subtitle"></span></h3>
+                </div>
+            </header>
+            <article>
+                <div class="article-content" data-bind="html: content">blah blah</div>
+            </article>
+        </script>
+
 
         <!-- Article template -->
-        <div id="articleView" class="sectionView" data-bind="if: displayArticle">
-            
-            
-            
-            <header class="header" data-bind="with: article">
+        <div id="articleView" class="sectionView" data-bind='template: { if: displayArticle, name: "articleTemplate", data: article }'></div>
+
+        <script type="text/html" id="articleTemplate">
+            <header class="header">
                 <div class="header-background"></div>
                 <div class="text">
                     <h3 class="article-description win-type-large">Front Page</h3>
@@ -113,9 +107,9 @@
                 </div>
             </header>
             <article>
-                <div class="article-content" data-bind="html: article().content">blah blah</div>
+                <div class="article-content" data-bind="html: content">blah blah</div>
             </article>
-        </div>
+        </script>
     </div>
     <script type="text/javascript" src="/js/jquery-2.0.3.js"></script>
     <script type="text/javascript" src="/js/sammy.js"></script>
