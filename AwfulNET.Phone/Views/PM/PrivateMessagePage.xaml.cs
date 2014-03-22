@@ -39,8 +39,8 @@ namespace AwfulNET.Phone.Views.PM
             PrivateMessageItem selected = null;
             if (NavigationContext.QueryString.ContainsKey("id"))
             {
-                if (mainDataModel.Articles.Items.Count == 0)
-                    await mainDataModel.Articles.OnSelectedAsync(this, this.progress);
+                if (mainDataModel.Messages.Items.Count == 0)
+                    await mainDataModel.Messages.OnSelectedAsync(this, this.progress);
 
                 selected = mainDataModel.GetPrivateMessageByID(NavigationContext.QueryString["id"]);
                 this.viewmodel = selected;

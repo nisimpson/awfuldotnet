@@ -328,6 +328,7 @@
     <Content Include="Assets\AppBar\check.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\AppBar\message-add.png" />
     <Content Include="Assets\AppBar\mail.png" />
     <Content Include="Assets\AppBar\sync.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

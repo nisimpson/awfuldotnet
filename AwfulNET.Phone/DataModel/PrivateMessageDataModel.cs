@@ -122,6 +122,7 @@ namespace AwfulNET.DataModel
                     foreach (var item in task.Result)
                     {
                         this.Items.Add(item);
+                        item.Group = this;
                         item.Metadata.RefreshAsync(token).ContinueWith(
                             t => UpdatePrivateMessageItem(item, t),
                             TaskScheduler.FromCurrentSynchronizationContext());

@@ -34,7 +34,7 @@
                 IconUri="/Assets/AppBar/appbar.back.rest.png" Text="prev" />
         <apu:AppBarItemCommand Id="next" Type="Button" Command="{StaticResource nextCommand}"
                 IconUri="/Assets/AppBar/appbar.next.rest.png" Text="next" />
-        <apu:AppBarItemNavigation Id="reply" Text="reply" TargetPage="/Views/PM/NewPrivateMessagePage.xaml" />
+        <apu:AppBarItemNavigation Id="reply" Text="reply" IconUri="Assets/AppBar/message-add.png" TargetPage="/Views/PM/NewPrivateMessagePage.xaml" />
         <apu:AppBarItemNavigation Id="fwd" Text="forward..." TargetPage="/Views/PM/NewPrivateMessagePage.xaml?fwd=true" />
     </i:Interaction.Behaviors>
 
