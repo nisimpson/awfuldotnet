@@ -658,17 +658,15 @@
     function unwrapQuotes(element) {
         var quotes = $('.bbc-block', element);
         if (quotes.length > 1) {
-            //sendEcho('quote count: ' + quotes.length);
             var top = quotes[0];
             var current = top;
 
             quotes.each(function () {
                 if ($(this).parent().is('blockquote')) {
-                    //sendEcho('unwrapping quote...');
                     var quote = $(this).detach();
                     $(current).after(quote);
                     current = quote;
-                }
+                } else { current = this; }
             });
         }
     }
