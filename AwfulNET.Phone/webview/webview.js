@@ -725,7 +725,7 @@
         var message = JSON.parse(json);
         var model = {
             title: message.Subject,
-            subtitle: message.PostDate,
+            subtitle: formatDate(message.PostDate),
             description: message.From,
             content: message.RawHtml
         };

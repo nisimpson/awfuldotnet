@@ -111,17 +111,17 @@
             background-color: #808080;
         }
 
-        #threadView article .article-content {
-            padding-top: 15px;
-            font-size: larger;
-        }
+.article-content {
+    padding-top: 15px;
+    font-size: larger;
+}
 
-            #threadView article .article-content blockquote {
-                margin: 0 0 1.6em 0.8em;
-                padding: 0 1em 0 1em;
-                border-left: 2px solid #808080;
-                font-size: smaller;
-            }
+    .article-content blockquote {
+        margin: 0 0 1.6em 0.8em;
+        padding: 0 1em 0 1em;
+        border-left: 2px solid #808080;
+        font-size: smaller;
+    }
 
             /*
                 #threadView article .article-content blockquote:first-child {
@@ -135,31 +135,31 @@
                }
             */
 
-            #threadView article .article-content .bbc-spoiler {
-            }
+    .article-content .bbc-spoiler {
+    }
 
-            #threadView article .article-content .long-link {
-                word-wrap: break-word;
-                width: inherit;
-                -ms-word-break: break-all;
-                word-break: break-all;
-                hyphens: auto;
-                -ms-hyphens: auto;
-            }
+    .article-content .long-link {
+        word-wrap: break-word;
+        width: inherit;
+        -ms-word-break: break-all;
+        word-break: break-all;
+        hyphens: auto;
+        -ms-hyphens: auto;
+    }
 
-            #threadView article .article-content .editedby {
-                font-size: smaller;
-                font-weight: lighter;
-            }
+    .article-content .editedby {
+        font-size: smaller;
+        font-weight: lighter;
+    }
 
-            #threadView article .article-content .youtube-player {
-                max-width: 100%;
-            }
+    .article-content .youtube-player {
+        max-width: 100%;
+    }
 
-            #threadView article .article-content img {
-                max-width: 90%;
-                height: auto;
-            }
+    .article-content img {
+        max-width: 90%;
+        height: auto;
+    }
 
         /* Post Options */
         #threadView article > footer ul {
