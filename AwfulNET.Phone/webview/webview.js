@@ -654,13 +654,23 @@
         });
     }
 
-    // Moves selected elements after their heading element.
-    function unnestElements(element, selector) {
-        $(selector, element).filter(function () {
-            return $(this).closest(':header').length;
-        }).each(function () {
-            $(this).insertAfter($(this).closest(':header'));
-        });
+    // Unnests deep quotes. Use for private messages.
+    function unwrapQuotes(element) {
+        var quotes = $('.bbc-block', element);
+        if (quotes.length > 1) {
+            //sendEcho('quote count: ' + quotes.length);
+            var top = quotes[0];
+            var current = top;
+
+            quotes.each(function () {
+                if ($(this).parent().is('blockquote')) {
+                    //sendEcho('unwrapping quote...');
+                    var quote = $(this).detach();
+                    $(current).after(quote);
+                    current = quote;
+                }
+            });
+        }
     }
 
     function attachUnveilPlugin() {
@@ -727,14 +737,14 @@
             subtitle: formatDate(message.PostDate),
             description: message.From,
             content: message.RawHtml,
+
             // Invoked when DOM element for private message is rendered.
             onRender: function (element) {
-                sendEcho("onMessageRendered.");
+                unwrapQuotes(element);
                 attachSpoilerEvent(element);
                 fixLongLinks(element);
                 youTubeFix(element);
                 attachImageEvents(element);
-                unnestElements(element, "blockquote");
             }
         };
 
