@@ -7,15 +7,19 @@
         value: ko.observable("fart"),
         displayArticle: ko.observable(false),
         displayThread: ko.observable(false),
-        displayPlaceholder : ko.observable(true),
 
+        displayMessage: ko.observable(false),
+        displayPlaceholder : ko.observable(true),
         article: ko.observable(''),
+
         thread: ko.observable(''),
         message: ko.observable(''),
-
         showSeparators: ko.observable(false),
+
         theme: ko.observable(''),
         accent: ko.observable(''),
+        onMessageRendered: onMessageRendered,
+
         isLoading: ko.observable(false)
     };
 
@@ -27,6 +31,7 @@
 
         disableScroll: disableScrolling,
         enableScroll: enableScrolling,
+        viewMessage: viewMessage,
 
         viewThreadPage: viewThreadPage,
         threadScrollToTop: scrollToTopPost,
@@ -192,6 +197,14 @@
 
         if (self.isLastPage()) { self.footer("end of thread."); }
         else { self.footer("continue to next page"); }
+    }
+
+    // Invoked when DOM element for private message is rendered.
+    function onMessageRendered(element) {
+        attachSpoilerEvent(element);
+        fixLongLinks(element);
+        youTubeFix(element);
+        attachImageEvents(element);
     }
 
     // Called when webview is ready for display
@@ -705,6 +718,26 @@
         return "OK: " + JSON.stringify(model);
     }
 
+    function viewMessage(json) {
+        // clear display
+        hideView();
+
+        var message = JSON.parse(json);
+        var model = {
+            title: message.Subject,
+            subtitle: message.PostDate,
+            description: message.From,
+            content: message.RawHtml
+        };
+
+        webViewModel.message(model);
+        webViewModel.displayMessage(true);
+        attachUnveilPlugin();
+        webViewModel.value("message loaded.");
+        scrollToIndex(0, function () { }, 0);
+        return "OK: " + JSON.stringify(model);
+    }
+
     function viewThreadPage(json) {
         hideView();
 
@@ -720,6 +753,7 @@
     function hideView() {
         webViewModel.displayArticle(false);
         webViewModel.displayThread(false);
+        webViewModel.displayMessage(false);
         webViewModel.displayPlaceholder(false);
         return "OK";
     }

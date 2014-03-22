@@ -16,6 +16,7 @@
         <div id="placeholderView" data-bind="if: displayPlaceholder" style="visibility:hidden; background-color: transparent">
             Hello, World! If things go well, you'll never see me.
         </div>
+        
         <!-- Thread template-->
         <div id="threadView" data-bind="if: displayThread">
             <header class="header" data-bind="with: thread">
@@ -75,8 +76,31 @@
             </div>
         </div>
 
+        <!-- Private Message template -->
+        <div id="pmView" class="sectionView" data-bind="if: displayMessage">
+            <div data-bind='template: { 
+                            name: "messageTemplate",
+                            data: message,
+                            afterRender: onMessageRendered }'>
+            </div>
+
+            <script type="text/html" id="messageTemplate">
+                <header class="header">
+                    <div class="header-background"></div>
+                    <div class="text">
+                        <h3 class="article-description win-type-large"><span data-bind="test: description"></span></h3>
+                        <h2 class="article-title win-type-x-large"><span data-bind="text: title"></span></h2>
+                        <h3 class="article-subtitle win-type-large"><span data-bind="text: subtitle"></span></h3>
+                    </div>
+                </header>
+                <article>
+                    <div class="article-content" data-bind="html: content">blah blah</div>
+                </article>
+            </script>
+        </div>
+
         <!-- Article template -->
-        <div id="articleView" data-bind="if: displayArticle">
+        <div id="articleView" class="sectionView" data-bind="if: displayArticle">
             <header class="header" data-bind="with: article">
                 <div class="header-background"></div>
                 <div class="text">
@@ -115,6 +139,9 @@
         }
         function viewArticle(json) {
             return WebViewJS.viewArticle(json);
+        }
+        function viewMessage(json) {
+            return WebViewJS.viewMessage(json);
         }
         function scrollToTop() {
             if (WebViewJS.viewModel.displayThread()) {
