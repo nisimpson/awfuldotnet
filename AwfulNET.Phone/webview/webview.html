@@ -101,6 +101,9 @@
 
         <!-- Article template -->
         <div id="articleView" class="sectionView" data-bind="if: displayArticle">
+            
+            
+            
             <header class="header" data-bind="with: article">
                 <div class="header-background"></div>
                 <div class="text">
@@ -110,14 +113,6 @@
                 </div>
             </header>
             <article>
-                <!--
-                <header class="header">
-                    <div class="text">
-                        <h2 class="article-title"><span data-bind="text: article().title">monkey</span></h2>
-                        <h4 class="article-subtitle"><span data-bind="text: article().subtitle">cheese</span></h4>
-                    </div>
-                </header>
-                -->
                 <div class="article-content" data-bind="html: article().content">blah blah</div>
             </article>
         </div>
