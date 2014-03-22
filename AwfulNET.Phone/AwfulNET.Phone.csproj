@@ -238,6 +238,9 @@
     <Compile Include="Views\IPrivateMessageView.cs" />
     <Compile Include="Views\IThreadPageView.cs" />
     <Compile Include="Views\LoadMoreItemsConverter.cs" />
+    <Compile Include="Views\PM\PrivateMessagePage.xaml.cs">
+      <DependentUpon>PrivateMessagePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PM\PrivateMessages.xaml.cs">
       <DependentUpon>PrivateMessages.xaml</DependentUpon>
     </Compile>
@@ -292,6 +295,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ThreadPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PM\PrivateMessagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -247,7 +247,7 @@ namespace AwfulNET.DataModel
                 if (view == null)
                 {
                     (state as IApplicationPage).Navigate(
-                        new Uri("/Views/PM/PrivateMessageDetails.xaml?id=" + this.UniqueID, UriKind.RelativeOrAbsolute));
+                        new Uri("/Views/PM/PrivateMessagePage.xaml?id=" + this.UniqueID, UriKind.RelativeOrAbsolute));
                 }
                 else
                 {
@@ -278,7 +278,7 @@ namespace AwfulNET.DataModel
             string json = await JsonHelper.SerializeObjectAsync(this.metadata);
 
             // present private message content to webview
-            await (state as IWebViewPage).InvokeScriptAsync("showPrivateMessage", json);
+            await (state as IWebViewPage).InvokeScriptAsync("viewMessage", json);
 
             // hide progress
             progress.Report(null);

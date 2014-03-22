@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace AwfulNET.Phone.Views.PM
 {
-    public partial class PrivateMessages : PhoneApplicationPage
+    public partial class PrivateMessages : PhoneApplicationPage, IApplicationPage
     {
         private bool isNewInstance = false;
         private readonly PrivateMessagesViewModel context = null;
@@ -130,6 +130,11 @@ namespace AwfulNET.Phone.Views.PM
         {
             this.isCurrentFolderView = false;
             context.ShowAllFolders();
+        }
+
+        public void Navigate(Uri uri)
+        {
+            NavigationService.Navigate(uri);
         }
     }
 

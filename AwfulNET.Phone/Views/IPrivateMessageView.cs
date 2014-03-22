@@ -9,8 +9,6 @@ namespace AwfulNET.Views
 {
     interface IPrivateMessageView : IWebViewPage
     {
-        void SetPostForm(MessagePostModel model, bool navigateToReplyView);
-        void SetPagination(IPaginationViewModelWithProgress<string> viewmodel);
         void NotifyAppBarCommands();
     }
 }
