@@ -379,7 +379,9 @@ namespace AwfulNET.Core.Rest
             endpoint.AppendFormat("action={0}", "newmessage");
             endpoint.AppendFormat("&privatemessageid={0}", privateMessageId);
             var doc = await this.Client.GetHtmlAsync(endpoint.ToString());
-            return PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+            var form = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+            form.PrivateMessageId = privateMessageId;
+            return form;
         }
 
         public async Task<IPrivateMessageRequest> GetForwardRequestAsync(string privateMessageId)
@@ -389,7 +391,10 @@ namespace AwfulNET.Core.Rest
             endpoint.AppendFormat("&forward={0}", "true");
             endpoint.AppendFormat("&privatemessageid={0}", privateMessageId);
             var doc = await this.Client.GetHtmlAsync(endpoint.ToString());
-            return PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+            var form = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+            form.PrivateMessageId = privateMessageId;
+            form.IsForward = true;
+            return form;
         }
 
         public Task<bool> SendMessageAsync(IPrivateMessageRequest request)

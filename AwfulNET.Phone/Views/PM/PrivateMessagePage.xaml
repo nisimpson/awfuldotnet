@@ -20,11 +20,11 @@
         <shell:ApplicationBar IsVisible="False">
             <shell:ApplicationBar.Buttons>
                 <shell:ApplicationBarIconButton Text="prev" IconUri="dummy.png" />
-                <shell:ApplicationBarIconButton Text="reply" IconUri="dummy.png" />
+                <shell:ApplicationBarIconButton x:Name="replyMenu" Text="reply" IconUri="dummy.png" Click="replyMenu_Click" />
                 <shell:ApplicationBarIconButton Text="next" IconUri="dummy.png" />
             </shell:ApplicationBar.Buttons>
             <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="fwd" />
+                <shell:ApplicationBarMenuItem x:Name="forwardMenu" Text="fwd" Click="forwardMenu_Click" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
     </common:WebViewAwarePage.ApplicationBar>
@@ -34,8 +34,8 @@
                 IconUri="/Assets/AppBar/appbar.back.rest.png" Text="prev" />
         <apu:AppBarItemCommand Id="next" Type="Button" Command="{StaticResource nextCommand}"
                 IconUri="/Assets/AppBar/appbar.next.rest.png" Text="next" />
-        <apu:AppBarItemNavigation Id="reply" Text="reply" IconUri="Assets/AppBar/message-add.png" TargetPage="/Views/PM/NewPrivateMessagePage.xaml" />
-        <apu:AppBarItemNavigation Id="fwd" Text="forward..." TargetPage="/Views/PM/NewPrivateMessagePage.xaml?fwd=true" />
+        <apu:AppBarItemCommand Id="reply" Text="reply" IconUri="Assets/AppBar/reply.png"/>
+        <apu:AppBarItemCommand Id="fwd" Type="MenuItem" Text="forward..."/>
     </i:Interaction.Behaviors>
 
     <!--LayoutRoot is the root grid where all page content is placed-->

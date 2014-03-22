@@ -238,6 +238,9 @@
     <Compile Include="Views\IPrivateMessageView.cs" />
     <Compile Include="Views\IThreadPageView.cs" />
     <Compile Include="Views\LoadMoreItemsConverter.cs" />
+    <Compile Include="Views\PM\NewMessageView.xaml.cs">
+      <DependentUpon>NewMessageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PM\PrivateMessagePage.xaml.cs">
       <DependentUpon>PrivateMessagePage.xaml</DependentUpon>
     </Compile>
@@ -298,6 +301,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\PM\NewMessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PM\PrivateMessagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -330,6 +337,7 @@
     </Content>
     <Content Include="Assets\AppBar\message-add.png" />
     <Content Include="Assets\AppBar\mail.png" />
+    <Content Include="Assets\AppBar\reply.png" />
     <Content Include="Assets\AppBar\sync.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

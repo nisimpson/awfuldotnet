@@ -105,5 +105,17 @@ namespace AwfulNET.Phone.Views.PM
         }
 
         #endregion
+
+        private void replyMenu_Click(object sender, EventArgs e)
+        {
+            string id = this.viewmodel.UniqueID;
+            NavigationService.Navigate(new Uri("/Views/PM/NewMessageView.xaml?id=" + id, UriKind.RelativeOrAbsolute));
+        }
+
+        private void forwardMenu_Click(object sender, EventArgs e)
+        {
+            string id = this.viewmodel.UniqueID;
+            NavigationService.Navigate(new Uri("/Views/PM/NewMessageView.xaml?fwd=true&id=" + id, UriKind.RelativeOrAbsolute));
+        }
     }
 }
