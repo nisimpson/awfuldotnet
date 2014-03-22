@@ -173,6 +173,9 @@ namespace AwfulNET.Core.Rest
             PrivateMessageMetadata data = PrivateMessageParser.ParsePrivateMessageDocument(
                 CreateHtmlDocument(sample.GenerateMockPrivateMessageHtml()));
 
+            // randomize id
+            data.PrivateMessageId = Guid.NewGuid().ToString("N");
+
             return ToTask(data);
         }
         
