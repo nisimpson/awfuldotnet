@@ -34,7 +34,7 @@ namespace AwfulNET.RT
     /// the currently isNotAList item.
     /// </summary>
     public sealed partial class ClassicPage : Page, 
-        IWebViewPage, IThreadViewPage
+        IWebViewPage, IThreadViewPage, IPrivateMessageView
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();

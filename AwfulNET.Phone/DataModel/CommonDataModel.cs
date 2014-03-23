@@ -52,7 +52,7 @@ namespace AwfulNET.DataModel
 #if WINDOWS_PHONE
         private const string IMG_PREFIX = "/Assets/";
 #else
-        private const string IMG_PREFIX = "ms-appx:///";
+        private const string IMG_PREFIX = "ms-appx:///Assets/";
 #endif
 
         public CommonDataModel()

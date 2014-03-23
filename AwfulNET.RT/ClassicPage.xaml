@@ -408,6 +408,26 @@
                                     </DataTemplate>
                                 </common:DataTypeTemplate.DataTemplate>
                             </common:DataTypeTemplate>
+                            <common:DataTypeTemplate DataType="folder">
+                                <common:DataTypeTemplate.DataTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Style="{StaticResource listViewItemStyle}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Title}" Margin="0,0,0,6"
+                                                        Style="{StaticResource SubheaderTextStyle}" />
+                                                <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="&#xE188;" 
+                                                           FontFamily="Segoe UI Symbol"
+                                                           Margin="12,0,0,0"
+                                                           Style="{StaticResource SubheaderTextBlockStyle}"/>
+                                            </Grid>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </common:DataTypeTemplate.DataTemplate>
+                            </common:DataTypeTemplate>
                             <common:DataTypeTemplate DataType="article">
                                 <common:DataTypeTemplate.DataTemplate>
                                     <DataTemplate>

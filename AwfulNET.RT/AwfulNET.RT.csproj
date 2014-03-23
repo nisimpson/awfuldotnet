@@ -244,6 +244,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\AwfulNET.Phone\Assets\AppBar\mail.png">
+      <Link>Assets\AppBar\mail.png</Link>
+    </Content>
     <Content Include="..\AwfulNET.Phone\js\jquery-2.0.3.js">
       <Link>js\jquery-2.0.3.js</Link>
     </Content>

@@ -94,7 +94,7 @@ namespace AwfulNET.DataModel
             this.feed = feed;
             this.unsubscriber = this.feed.SubscribeAsync(OnNext, OnError, OnCompleted);
             this.Title = this.feed.Items.FolderName;
-            this.DataType = "Folder";
+            this.DataType = MainDataModel.DATATYPE_FOLDER;
         }
 
         private void OnCompleted()
@@ -187,7 +187,7 @@ namespace AwfulNET.DataModel
         public PrivateMessageItem(PrivateMessageMetadata metadata) 
             : base(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, null)
         {
-            this.DataType = "PrivateMessage";
+            this.DataType = MainDataModel.DATATYPE_PM;
             UpdateModel(metadata);
         }
 

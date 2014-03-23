@@ -18,8 +18,8 @@ namespace AwfulNET.DataModel
         public const string DATATYPE_THREAD = "item";
         public const string DATATYPE_MENU = "menu";
         public const string DATATYPE_FORUM = "forum";
-        public const string DATATYPE_FOLDER = "Folder";
-        public const string DATATYPE_PM = "PrivateMessage";
+        public const string DATATYPE_FOLDER = "folder";
+        public const string DATATYPE_PM = "message";
 
         [Obsolete]
         private IForumAccessToken token;
@@ -73,9 +73,9 @@ namespace AwfulNET.DataModel
 
             this.Items.Add(articles);
             this.Items.Add(bookmarks);
-            this.Items.Add(messages);
             this.Items.Add(pinned);
             this.Items.Add(forums);
+            this.Items.Add(messages);
             this.ItemsSource = this.Items;
         }
 
