@@ -63,7 +63,7 @@
                     </common:DataTypeTemplateSelector.DefaultTemplate>
                     <common:DataTypeTemplateSelector.Items>
                         <!-- data template for private message folders. -->
-                        <common:DataTypeTemplate DataType="Folder">
+                        <common:DataTypeTemplate DataType="folder">
                             <StackPanel Orientation="Horizontal">
                                 <Border>
                                     <!-- ui symbol is a file folder -->
@@ -76,7 +76,7 @@
                             </StackPanel>
                         </common:DataTypeTemplate>
                         <!-- data template for private messages. -->
-                        <common:DataTypeTemplate DataType="PrivateMessage">
+                        <common:DataTypeTemplate DataType="message">
                             <ContentControl Content="{Binding}"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Top"

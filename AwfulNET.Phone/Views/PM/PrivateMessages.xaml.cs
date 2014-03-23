@@ -96,11 +96,11 @@ namespace AwfulNET.Phone.Views.PM
                 CommonDataModel item = element.DataContext as CommonDataModel;
                 switch(item.DataType)
                 {
-                    case "Folder":
+                    case MainDataModel.DATATYPE_FOLDER:
                         await ShowPrivateMessageFolder(item);
                         break;
 
-                    case "PrivateMessage":
+                    case MainDataModel.DATATYPE_PM:
                         ShowPrivateMessage(item);
                         break;
 
