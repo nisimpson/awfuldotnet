@@ -796,6 +796,7 @@ namespace AwfulNET.RT
         private RelayCommand prevCommand;
         private RelayCommand bookmarkCommand;
         private RelayCommand refreshCommand;
+        private RelayCommand replyCommand;
 
         private ObservableCollection<ThreadDataItem> threads = new ObservableCollection<ThreadDataItem>();
         public ObservableCollection<ThreadDataItem> Threads
@@ -863,6 +864,7 @@ namespace AwfulNET.RT
             refreshCommand = new RelayCommand(RefreshContent, CanRefreshContent);
             bookmarkCommand = new RelayCommand(BookmarkContent, CanBookmarkContent);
             goUpCommand = new RelayCommand(GoUp, CanGoUp);
+            replyCommand = new RelayCommand(() => { }, CanReply);
 
             this.threads.CollectionChanged += (o, a) => { OnPropertyChanged("EnableTabs"); };
 
@@ -873,7 +875,13 @@ namespace AwfulNET.RT
             pageViewModel["PrevCommand"] = this.prevCommand;
             pageViewModel["RefreshCommand"] = this.refreshCommand;
             pageViewModel["BookmarkCommand"] = this.bookmarkCommand;
-            pageViewModel["GoUpCommand"] = this.goUpCommand;            
+            pageViewModel["GoUpCommand"] = this.goUpCommand;
+            pageViewModel["ReplyCommand"] = this.replyCommand;
+        }
+
+        private bool CanReply()
+        {
+            return this.currentContent is ThreadDataItem;
         }
 
         private bool CanGoUp()
@@ -986,6 +994,7 @@ namespace AwfulNET.RT
 
         public void NotifyContentCommands()
         {
+            replyCommand.RaiseCanExecuteChanged();
             nextCommand.RaiseCanExecuteChanged();
             prevCommand.RaiseCanExecuteChanged();
             bookmarkCommand.RaiseCanExecuteChanged();
