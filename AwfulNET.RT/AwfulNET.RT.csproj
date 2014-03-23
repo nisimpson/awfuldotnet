@@ -180,6 +180,9 @@
     <Compile Include="..\AwfulNET.Phone\DataModel\MainDataModel.cs">
       <Link>DataModel\MainDataModel.cs</Link>
     </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\PrivateMessageDataModel.cs">
+      <Link>DataModel\PrivateMessageDataModel.cs</Link>
+    </Compile>
     <Compile Include="..\AwfulNET.Phone\DataModel\SignInDataModel.cs">
       <Link>DataModel\SignInDataModel.cs</Link>
     </Compile>
@@ -191,6 +194,9 @@
     </Compile>
     <Compile Include="..\AwfulNET.Phone\Views\IListViewModel.cs">
       <Link>Views\IListViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Views\IPrivateMessageView.cs">
+      <Link>Views\IPrivateMessageView.cs</Link>
     </Compile>
     <Compile Include="..\AwfulNET.Phone\Views\IThreadPageView.cs">
       <Link>Views\IThreadPageView.cs</Link>

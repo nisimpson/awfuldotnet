@@ -46,15 +46,13 @@ namespace AwfulNET.DataModel
             this.articles.Subtitle = "Your awful news feed.";
             this.articles.Group = this;
             this.articles.DataType = DATATYPE_MENU;
-            this.Items.Add(articles);
-
+           
             this.bookmarks = new BookmarkDataGroup(new BookmarksFeed());
             this.bookmarks.Title = "Bookmarks";
             this.bookmarks.Subtitle = "Threads you've bookmarked go here.";
             this.bookmarks.DataType = DATATYPE_MENU;
             this.bookmarks.Group = this;
-            this.Items.Add(bookmarks);
-
+           
             this.forums = new ForumsIndexGroup(new ForumsIndexFeed(StorageModelFactory.GetStorageModel()), pinned);
             this.forums.Title = "Forums Index";
             this.forums.Subtitle = "The Something Awful Forums.";
@@ -72,7 +70,10 @@ namespace AwfulNET.DataModel
             this.messages.Subtitle = "Check your PMs here. Platinum membership required.";
             this.messages.DataType = DATATYPE_MENU;
             this.messages.Group = this;
-            
+
+            this.Items.Add(articles);
+            this.Items.Add(bookmarks);
+            this.Items.Add(messages);
             this.Items.Add(pinned);
             this.Items.Add(forums);
             this.ItemsSource = this.Items;
