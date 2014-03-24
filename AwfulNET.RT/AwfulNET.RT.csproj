@@ -229,6 +229,7 @@
     <Compile Include="Common\WinRTSettingsModel.cs" />
     <Compile Include="Common\WinRTStorageModel.cs" />
     <Compile Include="DataModel\AwfulViewPageNavigator.cs" />
+    <Compile Include="DataModel\NewPrivateMessageForm.cs" />
     <Compile Include="Data\UserAccount.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

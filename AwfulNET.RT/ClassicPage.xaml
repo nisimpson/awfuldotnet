@@ -272,10 +272,23 @@
                 </AppBarButton>
             </common:AppBarButtonContainer.PrimaryCommands>
         </common:AppBarButtonContainer>
+        
+        <!-- Command Bar for private message content -->
+        <common:AppBarButtonContainer x:Key="MessageCommandBar">
+            <common:AppBarButtonContainer.PrimaryCommands>
+                <AppBarButton x:Name="messageReplyButton" Label="reply" Icon="MailReply" 
+                              Flyout="{StaticResource MessageFormFlyout}"
+                              Click="messageReplyButton_Click"/>
+                <AppBarButton x:Name="messageForwardButton" Label="reply" Icon="MailForward"
+                        Flyout="{StaticResource MessageFormFlyout}" Click="messageForwardButton_Click" />
+            </common:AppBarButtonContainer.PrimaryCommands>
+        </common:AppBarButtonContainer>
 
     </Page.Resources>
     <Page.BottomAppBar>
-        <CommandBar Background="{ThemeResource HomePageAccentBrush}" Opened="OnBottomAppBarOpened" Closed="OnBottomAppBarClosed" />
+        <CommandBar Background="{ThemeResource HomePageAccentBrush}" Opened="OnBottomAppBarOpened"
+                Closed="OnBottomAppBarClosed">
+        </CommandBar>
     </Page.BottomAppBar>
 
     <!--

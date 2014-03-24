@@ -2,6 +2,7 @@
 using AwfulNET.Core.Common;
 using AwfulNET.DataModel;
 using AwfulNET.RT.Common;
+using AwfulNET.RT.DataModel;
 using AwfulNET.Views;
 using AwfulNET.WinRT.Common;
 using System;
@@ -678,6 +679,10 @@ namespace AwfulNET.RT
                     ApplyThreadContextAppBar();
                     break;
 
+                case MainDataModel.DATATYPE_PM:
+                    ApplyMessageContextAppBar();
+                    break;
+
                 // if we didn't provide a data type above, don't allow the app bar to open.
                 default:
                     SelectBottomAppBar(new AppBarButtonContainer());
@@ -689,6 +694,12 @@ namespace AwfulNET.RT
         {
             var threadBar = this.Resources["ThreadCommandBar"] as AppBarButtonContainer;
             SelectBottomAppBar(threadBar);
+        }
+
+        private void ApplyMessageContextAppBar()
+        {
+            var messageBar = this.Resources["MessageCommandBar"] as AppBarButtonContainer;
+            SelectBottomAppBar(messageBar);
         }
 
         #region ThreadCommandBar Events
@@ -780,7 +791,29 @@ namespace AwfulNET.RT
         {
             FrameworkElement border = sender as FrameworkElement;
             groupHeaders.Remove(border);
-        }   
+        }
+
+        #region MessageCommandBar Events
+
+        private async void messageReplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            Task task = this.viewModelWrapper.OnMessageReplyClicked(this.progress);
+            AppBarButton button = sender as AppBarButton;
+            button.Flyout.Hide();
+            await task;
+            button.Flyout.ShowAt(button);
+        }
+
+        private async void messageForwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            Task task = this.viewModelWrapper.OnMessageFowardClicked(this.progress);
+            AppBarButton button = sender as AppBarButton;
+            button.Flyout.Hide();
+            await task;
+            button.Flyout.ShowAt(button);
+        }
+
+        #endregion
     }
 
     public sealed class ClassicPageViewModel : BindableBase
@@ -790,6 +823,7 @@ namespace AwfulNET.RT
         private Stack<IListViewModel> history = new Stack<IListViewModel>();
         private IProgress<string> progress;
         private AwfulViewPageNavigator pageNav;
+        private NewPrivateMessageForm pmForm;
         
         private RelayCommand goUpCommand;
         private RelayCommand nextCommand;
@@ -830,6 +864,8 @@ namespace AwfulNET.RT
                 pageViewModel["PostForm"] = value;
             }
         }
+
+        public NewPrivateMessageForm MessageForm { get { return this.pmForm; } }
 
         private IListViewModel currentDirectory;
         public IListViewModel CurrentDirectory
@@ -877,6 +913,7 @@ namespace AwfulNET.RT
             pageViewModel["BookmarkCommand"] = this.bookmarkCommand;
             pageViewModel["GoUpCommand"] = this.goUpCommand;
             pageViewModel["ReplyCommand"] = this.replyCommand;
+            pageViewModel["MessageForm"] = this.MessageForm;
         }
 
         private bool CanReply()
@@ -1013,6 +1050,42 @@ namespace AwfulNET.RT
         internal void SetContentAsActive(IContentViewModel content)
         {
             this.currentContent = content;
+        }
+
+        internal async Task OnMessageReplyClicked(IProgress<string> progress)
+        {
+            PrivateMessageItem pm = this.currentContent as PrivateMessageItem;
+            if (pm != null)
+            {
+                try
+                {
+                    progress.Report("Please wait...");
+                    AccessTokenMessage token = new AccessTokenMessage();
+                    NotificationService.Default.Notify(this, token);
+                    var request = await pm.Metadata.GetReplyRequestAsync(token.Token);
+                    this.pmForm.UpdateView(request);
+                }
+                catch (Exception) { }
+                finally { progress.Report(null); }
+            }
+        }
+
+        internal async Task OnMessageFowardClicked(IProgress<string> progress)
+        {
+            PrivateMessageItem pm = this.currentContent as PrivateMessageItem;
+            if (pm != null)
+            {
+                try
+                {
+                    progress.Report("Please wait...");
+                    AccessTokenMessage token = new AccessTokenMessage();
+                    NotificationService.Default.Notify(this, token);
+                    var request = await pm.Metadata.GetForwardRequestAsync(token.Token);
+                    this.pmForm.UpdateView(request);
+                }
+                catch (Exception) { }
+                finally { progress.Report(null); }
+            }
         }
     }
 }
