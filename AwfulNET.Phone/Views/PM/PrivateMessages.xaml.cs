@@ -225,12 +225,12 @@ namespace AwfulNET.Phone.Views.PM
             await this.currentFolder.OnSelectedAsync(state, progress);
         }
 
-        public bool OnContextMenuOpening(string type, Common.IContextMenu menu, object state, IProgress<string> progress)
+        public bool OnContextMenuOpening(string type, IContextMenu menu, object state, IProgress<string> progress)
         {
             throw new NotImplementedException();
         }
 
-        public System.Threading.Tasks.Task<bool> OnContextMenuOpeningAsync(string type, Common.IContextMenu menu, object state, IProgress<string> progress)
+        public System.Threading.Tasks.Task<bool> OnContextMenuOpeningAsync(string type, IContextMenu menu, object state, IProgress<string> progress)
         {
             throw new NotImplementedException();
         }

@@ -14,6 +14,8 @@ using Microsoft.Phone.Net.NetworkInformation;
 using AwfulNET.Data;
 using System.Threading.Tasks;
 using AwfulNET.Core.Rest;
+using AwfulNET.Core.Common;
+using AwfulNET.Phone.Common;
 
 namespace AwfulNET.Phone
 {
@@ -23,6 +25,11 @@ namespace AwfulNET.Phone
         
         // Specify the local database connection string.
         private const string userDBConnectionString = "Data Source=isostore:/users.sdf";
+
+        /// <summary>
+        /// Logging client.
+        /// </summary>
+        public static WPLogger Log { get; private set; }
 
         /// <summary>
         /// Data context for the user management database.
@@ -159,7 +166,12 @@ namespace AwfulNET.Phone
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            // Load current account
             CurrentAccount = UserContext.LoadCurrentUser(SettingsModelFactory.GetSettingsModel());
+
+            // Load debugger
+            Log = new WPLogger();
+            AwfulNET.Core.Common.Logger.Default = Log;
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -172,16 +184,22 @@ namespace AwfulNET.Phone
 
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
-        private void Application_Deactivated(object sender, DeactivatedEventArgs e)
+        private async void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
             UserContext.SaveChanges(CurrentAccount, SettingsModelFactory.GetSettingsModel());
+
+            // Save log to storage
+            await Log.SaveLogToStorageAsync();
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
         // This code will not execute when the application is deactivated
-        private void Application_Closing(object sender, ClosingEventArgs e)
+        private async void Application_Closing(object sender, ClosingEventArgs e)
         {
             UserContext.SaveChanges(CurrentAccount, SettingsModelFactory.GetSettingsModel());
+
+            // Save log to storage
+            await Log.SaveLogToStorageAsync();
         }
 
         // Code to execute if a navigation fails
@@ -198,6 +216,7 @@ namespace AwfulNET.Phone
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(e.ExceptionObject.Message);
+            Log.AddEntry(LogLevel.CRITICAL, e.ExceptionObject);
 
             if (Debugger.IsAttached)
             {
