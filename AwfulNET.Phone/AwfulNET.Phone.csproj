@@ -190,6 +190,7 @@
     <Compile Include="Common\VariableContentControl.cs" />
     <Compile Include="Common\WebViewAwarePage.cs" />
     <Compile Include="Common\WebViewScriptNotificationHandler.cs" />
+    <Compile Include="Common\WPLogger.cs" />
     <Compile Include="Common\WPSettingsModel.cs" />
     <Compile Include="Common\WPStorageModel.cs" />
     <Compile Include="DataModel\ArticleDataModel.cs" />
