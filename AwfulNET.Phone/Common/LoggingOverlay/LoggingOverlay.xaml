@@ -14,7 +14,7 @@
         <phone:LongListSelector x:Name="logEntryListView" ItemsSource="{Binding Context.Entries}">
             <phone:LongListSelector.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" Style="{StaticResource PhoneTextNormalStyle}"/>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding}" Style="{StaticResource PhoneTextNormalStyle}"/>
                 </DataTemplate>
             </phone:LongListSelector.ItemTemplate>
         </phone:LongListSelector>

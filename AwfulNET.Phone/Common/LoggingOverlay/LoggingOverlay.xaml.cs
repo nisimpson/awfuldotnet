@@ -29,7 +29,14 @@ namespace AwfulNET.Common
 
         public LoggingOverlayViewModel()
         {
-            Context = App.Log;
+            if (this.IsInDesignMode())
+            {
+                Context = new WPLogger();
+                Context.AddEntry(Core.Common.LogLevel.INFO, "This is a designer log entry.");
+                Context.AddEntry(Core.Common.LogLevel.INFO, "This is also a fake entry.");
+            }
+
+            else { Context = App.Log; }
         }
     }
 }

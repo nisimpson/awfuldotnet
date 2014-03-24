@@ -143,6 +143,8 @@
         
         <!--Pivot Control-->
 		<phone:Pivot x:Name="mainPivot"
+                     Canvas.ZIndex="10"
+                     Opacity="0.1"
 			HeaderTemplate="{StaticResource pivotHeaderTemplate}"
 			Title="{Binding Converter={StaticResource uppercaseConverter}, Source={StaticResource ApplicationTitle}}"
 			SelectionChanged="mainPivot_SelectionChanged">
@@ -178,6 +180,9 @@
 				</Grid>
 			</phone:PivotItem>
 		</phone:Pivot>
+        
+        <!-- Logging Overlay -->
+        <common:LoggingOverlay x:Name="logOverlay" />
 	</Grid>
     
 </phone:PhoneApplicationPage>
