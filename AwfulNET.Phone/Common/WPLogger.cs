@@ -21,6 +21,7 @@ namespace AwfulNET.Phone.Common
         public WPLogger()
         {
             this.entries = new ObservableCollection<LogEntry>();
+            this.AddEntrySync(LogLevel.INFO, "*** AwfulNET Logger is now active. ***");
         }
 
         private static object lockObj = new object();
@@ -31,6 +32,12 @@ namespace AwfulNET.Phone.Common
         {
             get { return this.entries; }
             set { SetProperty(ref this.entries, value); }
+        }
+
+        private void AddEntrySync(LogLevel level, string message)
+        {
+            LogEntry entry = new LogEntry() { Level = level, Message = message, Timestamp = DateTime.UtcNow };
+            entries.Add(entry);
         }
 
         public void AddEntry(LogLevel level, string message)
@@ -60,6 +67,7 @@ namespace AwfulNET.Phone.Common
         public async Task<bool> SaveLogToStorageAsync()
         {
             bool success = false;
+            AddEntrySync(LogLevel.INFO, "Saving Log...");
             string snapshot = WriteAsString();
             string filename = string.Format("{0}.log", DateTime.Now.Date.ToString("{0:yyyyMMdd}"));
             var storage = ApplicationData.Current.LocalFolder;
