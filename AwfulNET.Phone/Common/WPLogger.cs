@@ -4,6 +4,7 @@ using AwfulNET.Core.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -37,12 +38,20 @@ namespace AwfulNET.Phone.Common
         private void AddEntrySync(LogLevel level, string message)
         {
             LogEntry entry = new LogEntry() { Level = level, Message = message, Timestamp = DateTime.UtcNow };
+            
+            if (Debugger.IsAttached)
+                Debug.WriteLine(entry.ToString());
+
             entries.Add(entry);
         }
 
         public void AddEntry(LogLevel level, string message)
         {
             LogEntry entry = new LogEntry() { Level = level, Message = message, Timestamp = DateTime.UtcNow };
+            
+            if (Debugger.IsAttached)
+                Debug.WriteLine(entry.ToString());
+
             Deployment.Current.Dispatcher.BeginInvoke(() => { entries.Add(entry); });
         }
 
