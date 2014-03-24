@@ -72,5 +72,12 @@ namespace AwfulNET.RT.DataModel
             finally { this.IsEnabled = true; progress.Report(null); }
             return success;
         }
+
+        internal void Clear()
+        {
+            this.To = string.Empty;
+            this.Subject = string.Empty;
+            this.Message = string.Empty;
+        }
     }
 }

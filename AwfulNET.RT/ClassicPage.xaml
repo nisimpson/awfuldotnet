@@ -279,7 +279,7 @@
                 <AppBarButton x:Name="messageReplyButton" Label="reply" Icon="MailReply" 
                               Flyout="{StaticResource MessageFormFlyout}"
                               Click="messageReplyButton_Click"/>
-                <AppBarButton x:Name="messageForwardButton" Label="reply" Icon="MailForward"
+                <AppBarButton x:Name="messageForwardButton" Label="forward" Icon="MailForward"
                         Flyout="{StaticResource MessageFormFlyout}" Click="messageForwardButton_Click" />
             </common:AppBarButtonContainer.PrimaryCommands>
         </common:AppBarButtonContainer>

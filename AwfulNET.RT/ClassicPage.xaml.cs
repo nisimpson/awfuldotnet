@@ -893,6 +893,7 @@ namespace AwfulNET.RT
             this.pageViewModel = defaultViewModel;
             this.progress = progress;
             this.pageNav = new AwfulViewPageNavigator(page, progress);
+            this.pmForm = new NewPrivateMessageForm();
             this.IsListActive = true;
 
             nextCommand = new RelayCommand(GoToNextPage, CanGoToNextPage);
@@ -1057,6 +1058,8 @@ namespace AwfulNET.RT
             PrivateMessageItem pm = this.currentContent as PrivateMessageItem;
             if (pm != null)
             {
+                this.pmForm.Clear();
+
                 try
                 {
                     progress.Report("Please wait...");
@@ -1075,6 +1078,8 @@ namespace AwfulNET.RT
             PrivateMessageItem pm = this.currentContent as PrivateMessageItem;
             if (pm != null)
             {
+                this.pmForm.Clear();
+
                 try
                 {
                     progress.Report("Please wait...");
