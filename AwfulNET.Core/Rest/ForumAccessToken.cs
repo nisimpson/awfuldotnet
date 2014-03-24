@@ -666,8 +666,10 @@ namespace AwfulNET.Core.Rest
             Task<IPrivateMessageRequest> task = Task.Run(() =>
                 {
                     Logger.Default.AddEntry(LogLevel.INFO, "[ReplyPM] Parsing html...");
-                    IPrivateMessageRequest parsed = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
-                    parsed.PrivateMessageId = privateMessageId;
+                    IPrivateMessageRequest parsed = null;
+                    var result = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+                    result.PrivateMessageId = privateMessageId;
+                    parsed = result;
                     Logger.Default.AddEntry(LogLevel.INFO, "[ReplyPM] Completed.");
                     return parsed;
                 });
@@ -691,8 +693,10 @@ namespace AwfulNET.Core.Rest
             Task<IPrivateMessageRequest> task = Task.Run(() =>
                 {
                     Logger.Default.AddEntry(LogLevel.INFO, "[ForwardPM] Parsing html...");
-                    IPrivateMessageRequest parsed = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
-                    parsed.PrivateMessageId = privateMessageId;
+                    IPrivateMessageRequest parsed = null;
+                    var result = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+                    result.PrivateMessageId = privateMessageId;
+                    parsed = result;
                     Logger.Default.AddEntry(LogLevel.INFO, "[ForwardPM] Completed.");
                     return parsed;
                 });
