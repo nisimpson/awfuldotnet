@@ -590,80 +590,180 @@ namespace AwfulNET.Core.Rest
             return success;
         }
 
-        public Task<bool> RemoveFromBookmarkAsync(string threadid)
+        public async Task<bool> RemoveFromBookmarkAsync(string threadid)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Removing thread {0} from bookmarks...", threadid));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[RemoveBookmark] Creating web request...");
             HttpPostRequestBuilder endpoint = new HttpPostRequestBuilder("bookmarkthreads.php");
             endpoint.AddParameter("json", "1");
             endpoint.AddParameter("action", "remove");
             endpoint.AddParameter("threadid", threadid);
-            return endpoint.SendAndConfirmAsync(this.Client);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[RemoveBookmark] Submitting html...");
+            var success = await endpoint.SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[RemoveBookmark] Completed.");
+            return success;
         }
 
         public async Task<PrivateMessageMetadata> RefreshAsync(string privateMessageId)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Refreshing private message {0}", privateMessageId));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPM] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("private.php");
             endpoint.AddParameter("action", "show");
             endpoint.AddParameter("privatemessageid", privateMessageId);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPM] Fetching html...");
             var doc = await endpoint.GetHtmlAsync(this.Client);
-            return PrivateMessageParser.ParsePrivateMessageDocument(doc);
+
+            Task<PrivateMessageMetadata> task = Task.Run(() =>
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPM] Parsing html...");
+                var parsed = PrivateMessageParser.ParsePrivateMessageDocument(doc);
+                Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPM] Completed.");
+                return parsed;
+            });
+
+            return await task;
         }
 
         public async Task<IPrivateMessageRequest> CreateNewPrivateMessageAsync()
         {
+            Logger.Default.AddEntry(LogLevel.INFO, "Creating new private message form...");
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[NewPM] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("private.php");
             endpoint.AddParameter("action", "newmessage");
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[NewPM] Fetching html...");
             var doc = await endpoint.GetHtmlAsync(this.Client);
-            return PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+
+            Task<IPrivateMessageRequest> task = Task.Run(() =>
+                {
+                    Logger.Default.AddEntry(LogLevel.INFO, "[NewPM] Parsing html...");
+                    IPrivateMessageRequest parsed = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+                    Logger.Default.AddEntry(LogLevel.INFO, "[NewPM] Completed.");
+                    return parsed;
+                });
+
+            return await task;
         }
 
         public async Task<IPrivateMessageRequest> GetReplyRequestAsync(string privateMessageId)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Creating private message {0} reply form...", privateMessageId));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[ReplyPM] Creating web request...");
             StringBuilder endpoint = new StringBuilder("/private.php?");
             endpoint.AppendFormat("action={0}", "newmessage");
             endpoint.AppendFormat("&privatemessageid={0}", privateMessageId);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[ReplyPM] Fetching html...");
             var doc = await this.Client.GetHtmlAsync(endpoint.ToString());
-            return PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+
+            Task<IPrivateMessageRequest> task = Task.Run(() =>
+                {
+                    Logger.Default.AddEntry(LogLevel.INFO, "[ReplyPM] Parsing html...");
+                    IPrivateMessageRequest parsed = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+                    Logger.Default.AddEntry(LogLevel.INFO, "[ReplyPM] Completed.");
+                    return parsed;
+                });
+
+            return await task;
         }
 
         public async Task<IPrivateMessageRequest> GetForwardRequestAsync(string privateMessageId)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Creating private message {0} forward form...", privateMessageId));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[ForwardPM] Creating web request...");
             StringBuilder endpoint = new StringBuilder("/private.php?");
             endpoint.AppendFormat("action={0}", "newmessage");
             endpoint.AppendFormat("&forward={0}", "true");
             endpoint.AppendFormat("&privatemessageid={0}", privateMessageId);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[ForwardPM] Fetching html...");
             var doc = await this.Client.GetHtmlAsync(endpoint.ToString());
-            return PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+
+            Task<IPrivateMessageRequest> task = Task.Run(() =>
+                {
+                    Logger.Default.AddEntry(LogLevel.INFO, "[ForwardPM] Parsing html...");
+                    IPrivateMessageRequest parsed = PrivateMessageParser.ParseNewPrivateMessageFormDocument(doc);
+                    Logger.Default.AddEntry(LogLevel.INFO, "[ForwardPM] Completed.");
+                    return parsed;
+                });
+
+            return await task;
         }
 
-        public Task<bool> SendMessageAsync(IPrivateMessageRequest request)
+        public async Task<bool> SendMessageAsync(IPrivateMessageRequest request)
         {
-            return request.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "Sending private message request...");
+
+            var success = await request.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[SendPM] Completed.");
+            return success;
         }
 
         public async Task<IEnumerable<PrivateMessageFolderMetadata>> GetPrivateMessageFoldersAsync(bool loadInbox = true)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting private message folders. Load inbox? {0}", loadInbox));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetPMFolders] Creating web request...");
             var endpoint = new HttpGetRequestBuilder("private.php");
             var doc = await endpoint.GetHtmlAsync(this.Client);
             List<PrivateMessageFolderMetadata> items = new List<PrivateMessageFolderMetadata>();
-            var folders = Task.Run(() => { return PrivateMessageParser.ParseFolderList(doc); });
+
+            var folders = Task.Run(() => {
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetPMFolders] Parsing html...");
+                var parsed = PrivateMessageParser.ParseFolderList(doc);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetPMFolders] Parse completed.");
+                return parsed;
+            });
+
             items.AddRange(await folders);
+
             if (loadInbox)
             {
-                var inbox = Task.Run(() => { return PrivateMessageParser.ParseMessageList(doc); });
+                var inbox = Task.Run(() => {
+                    Logger.Default.AddEntry(LogLevel.INFO, "[GetPMFolders] Parsing inbox...");
+                    var parsed = PrivateMessageParser.ParseMessageList(doc);
+                    Logger.Default.AddEntry(LogLevel.INFO, "[GetPMFolders] Parsing inbox completed.");
+                    return parsed;
+                });
+
                 List<PrivateMessageMetadata> messages = new List<PrivateMessageMetadata>();
                 messages.AddRange(await inbox);
                 items[0].Messages = messages;
             }
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetPMFolders] Completed.");
             return items;
         }
 
         public async Task<PrivateMessageFolderMetadata> RefreshPrivateMessageFolderAsync(string folderId)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Refreshing private message folder {0}", folderId));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPMFolder] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("private.php");
             endpoint.AddParameter("folderid", folderId);
             endpoint.AddParameter("daysprune", "9999");
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPMFolder] Fetching html...");
             var doc = await endpoint.GetHtmlAsync(this.Client);
-            return PrivateMessageParser.ParsePrivateMessageFolder(doc);
+
+            Task<PrivateMessageFolderMetadata> task = Task.Run(() =>
+               {
+                   Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPMFolder] Parsing html...");
+                   var parsed = PrivateMessageParser.ParsePrivateMessageFolder(doc);
+                   Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPMFolder] Completed.");
+                   return parsed;
+               });
+
+            return await task;
         }
 
         private async Task<bool> PrivateMessageAPICallAsync(IEnumerable<KeyValuePair<string, string>> messageKeys,
@@ -672,6 +772,9 @@ namespace AwfulNET.Core.Rest
             string apiAction,
             string apiValue)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, "Generating private message api call...");
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[PMApi] Creating web request...");
             var endpoint = new HttpPostRequestBuilder("private.php");
             string folderId = string.Empty;
             foreach(KeyValuePair<string, string> pair in messageKeys)
@@ -686,79 +789,138 @@ namespace AwfulNET.Core.Rest
             endpoint.AddParameter("folderid", destinationFolderId);
             endpoint.AddParameter(apiAction, apiValue);
             bool success = false;
-            try { var result = await endpoint.SendRequestAsync(this.Client); result.EnsureSuccessStatusCode(); success = true; }
-            catch (Exception) { success = false; }
+            try {
+                Logger.Default.AddEntry(LogLevel.INFO, "[PMApi] Submitting request...");
+                var result = await endpoint.SendRequestAsync(this.Client); 
+                result.EnsureSuccessStatusCode(); 
+                success = true;
+                Logger.Default.AddEntry(LogLevel.INFO, "[PMApi] Completed.");
+            }
+            catch (Exception ex) {
+                Logger.Default.AddEntry(LogLevel.WARNING, "[PMApi] Request failed:");
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                success = false; 
+            }
+
             return success;
         }
 
-        public Task<bool> DeletePrivateMessageAsync(string privateMessageId, string folderId)
+        public async Task<bool> DeletePrivateMessageAsync(string privateMessageId, string folderId)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Deleting private message {0} from folder {1}...", privateMessageId, folderId));
+
             var list = new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(privateMessageId, folderId) };
-            return PrivateMessageAPICallAsync(list, folderId, folderId, "delete", DELETE_MESSAGE_SUBMIT_ACTION);
+            var success = await PrivateMessageAPICallAsync(list, folderId, folderId, "delete", DELETE_MESSAGE_SUBMIT_ACTION);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[DeletePM] Completed.");
+            return success;
         }
 
-        public Task<bool> MoveAllPrivateMessagesAsync(IEnumerable<KeyValuePair<string, string>> pairs,
+        public async Task<bool> MoveAllPrivateMessagesAsync(IEnumerable<KeyValuePair<string, string>> pairs,
             string destinationFolderId)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Moving private messages to folder {0}", destinationFolderId));
+
             var first = pairs.First();
             string sourceFolderId = first.Value;
-            return PrivateMessageAPICallAsync(pairs, destinationFolderId, sourceFolderId, "move", MOVE_MESSAGE_SUBMIT_VALUE);
+            bool success = await PrivateMessageAPICallAsync(pairs, destinationFolderId, sourceFolderId, "move", MOVE_MESSAGE_SUBMIT_VALUE);
+            Logger.Default.AddEntry(LogLevel.INFO, "[MovePMs] Completed.");
+            return success;
         }
 
-        public Task<bool> MovePrivateMessageAsync(string privateMessageId, string srcFolderId, string dstFolderId)
+        public async Task<bool> MovePrivateMessageAsync(string privateMessageId, string srcFolderId, string dstFolderId)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Moving private message {0} from folder {1} to folder {2}...",
+                privateMessageId,
+                srcFolderId,
+                dstFolderId));
+
             List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>()
             {
                 new KeyValuePair<string, string>(privateMessageId, srcFolderId)
             };
 
-            return MoveAllPrivateMessagesAsync(list, dstFolderId);
+            bool success = await MoveAllPrivateMessagesAsync(list, dstFolderId);
+            Logger.Default.AddEntry(LogLevel.INFO, "[MovePM] Completed.");
+            return success;
         }
 
         public async Task<PrivateMessageFolderEditor> EditPrivateMessageFoldersAsync()
         {
+            Logger.Default.AddEntry(LogLevel.INFO, "Creating edit private message folders form...");
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[EditPMFolder] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("private.php");
             endpoint.AddParameter("action", "editfolders");
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[EditPMFolder] Fetching html...");
             var doc = await endpoint.GetHtmlAsync(this.Client);
-            var result = Task.Run(() => { return PrivateMessageParser.ParseEditFolderPage(doc); });
+
+            var result = Task.Run(() => {
+                Logger.Default.AddEntry(LogLevel.INFO, "[EditPMFolder] Parsing html...");
+                var parsed = PrivateMessageParser.ParseEditFolderPage(doc);
+                Logger.Default.AddEntry(LogLevel.INFO, "[EditPMFolder] Completed.");
+                return parsed;
+            });
+                
             return await result;
         }
 
-        public Task<bool> SaveChangesAsync(PrivateMessageFolderEditor editor)
+        public async Task<bool> SaveChangesAsync(PrivateMessageFolderEditor editor)
         {
-            return editor.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "Submitting private message folder changes...");
+            var success = await editor.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[SavePMFolderEdit] Completed.");
+            return success;
         }
 
         public async Task<INewThreadRequest> BeginNewThreadAsync(string forumid)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Creating new thread form for forum {0}...", forumid));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[NewThread] Creating web request...");
             var request = new HttpGetRequestBuilder("newthread.php");
             request.AddParameter("forumid", forumid);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[NewThread] Fetching html...");
             var doc = await request.GetHtmlAsync(this.Client);
             var result = Task.Run(() => 
             {
+                Logger.Default.AddEntry(LogLevel.INFO, "[NewThread] Parsing html...");
                 var form = NewThreadRequest.ParseNewThreadRequest(doc);
                 form.ForumId = forumid;
+                Logger.Default.AddEntry(LogLevel.INFO, "[NewThread] Completed.");
                 return form;
             });
             return await result;
         }
 
-        public Task<bool> SubmitAsync(INewThreadRequest request)
+        public async Task<bool> SubmitAsync(INewThreadRequest request)
         {
-            return request.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "Submitting new thread request...");
+            var success = await request.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[SubmitNewThread] Completed.");
+            return success;
         }
 
         public async Task<string> PreviewAsync(INewThreadRequest request)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, "Submitting new thread preview request...");
+
             request.IsPreview = true;
             var doc = await request.CreateHttpRequestBuilder().GetHtmlAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[NewThreadPreview] Completed.");
             return doc.DocumentNode.OuterHtml;
         }
 
         private static async Task<IEnumerable<ForumMetadata>> GetForumDescriptionsAsync(IEnumerable<ForumMetadata> forums, HttpClient client)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, "Fetching forum description html...");
             var htmlDocument = await client.GetHtmlAsync("/");
-            return forums.ParseForumDescription(htmlDocument);
+            Logger.Default.AddEntry(LogLevel.INFO, "[ForumDesc] Parsing html...");
+            var result = forums.ParseForumDescription(htmlDocument);
+            Logger.Default.AddEntry(LogLevel.INFO, "[ForumDesc] Completed.");
+            return result;
         }
 
     }
