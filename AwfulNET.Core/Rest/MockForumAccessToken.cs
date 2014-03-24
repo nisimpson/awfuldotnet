@@ -1,4 +1,5 @@
-﻿using AwfulNET.Core.Parsing;
+﻿using AwfulNET.Core.Common;
+using AwfulNET.Core.Parsing;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,7 @@ namespace AwfulNET.Core.Rest
 
         private HtmlDocument CreateHtmlDocument(string html)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, "Creating Mock Document...");
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(html);
             return doc;

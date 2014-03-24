@@ -141,10 +141,14 @@
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
         
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.3*"/>
+            <RowDefinition Height="0.7*"/>
+        </Grid.RowDefinitions>
+        
         <!--Pivot Control-->
 		<phone:Pivot x:Name="mainPivot"
-                     Canvas.ZIndex="10"
-                     Opacity="0.1"
+                     Grid.Row="1"
 			HeaderTemplate="{StaticResource pivotHeaderTemplate}"
 			Title="{Binding Converter={StaticResource uppercaseConverter}, Source={StaticResource ApplicationTitle}}"
 			SelectionChanged="mainPivot_SelectionChanged">

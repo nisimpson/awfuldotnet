@@ -10,6 +10,7 @@ using Microsoft.Phone.Shell;
 using AwfulNET.Common;
 using AwfulNET.Phone.Common;
 using AwfulNET.Phone;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.Common
 {
@@ -19,7 +20,15 @@ namespace AwfulNET.Common
         {
             InitializeComponent();
             LoggingOverlayViewModel context = new LoggingOverlayViewModel();
+            context.Context.Entries.CollectionChanged += Entries_CollectionChanged;
             this.DataContext = context;
+        }
+
+        void Entries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IList<LogEntry> list = sender as IList<LogEntry>;
+            try { this.logEntryListView.ScrollTo(list.Last()); }
+            catch (Exception) { }
         }
     }
 
