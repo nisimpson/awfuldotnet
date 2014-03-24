@@ -114,7 +114,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, "Getting user features...");
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[UserFeatures] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[UserFeatures] Creating web request...");
             var endpoint = new HttpGetRequestBuilder("member.php");
 
             Logger.Default.AddEntry(LogLevel.INFO, "[UserFeatures] Fetching html...");
@@ -135,7 +135,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, "Getting user settings...");
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[UserSettings] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[UserSettings] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("member.php");
             endpoint.AddParameter("action", "editoptions");
 
@@ -157,7 +157,7 @@ namespace AwfulNET.Core.Rest
 
             List<TagMetadata> list = null;
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[GetSmilies] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetSmilies] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("misc.php");
             endpoint.AddParameter("action", "showsmilies");
 
@@ -220,7 +220,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, "Using deep forum list method.");
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[DeepForum] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[DeepForum] Creating web request...");
             var endpoint = new HttpGetRequestBuilder("forumdisplay.php");
             endpoint.AddParameter("forumid", "1");
 
@@ -241,7 +241,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, "Using shallow forum list method.");
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[ShallowForum] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[ShallowForum] Creating web request...");
             var endpoint = new HttpGetRequestBuilder("index.php");
 
             Logger.Default.AddEntry(LogLevel.INFO, "[ShallowForum] Fetching html...");
@@ -263,7 +263,7 @@ namespace AwfulNET.Core.Rest
             // http://forums.somethingawful.com/newreply.php?action=newreply&threadid=3545394
             HtmlDocument formDocument = null;
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[ReplyForm] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[ReplyForm] Creating web request...");
             HttpGetRequestBuilder request = new HttpGetRequestBuilder("newreply.php");
             request.AddParameter("action", "newreply");
             request.AddParameter("threadid", threadid);
@@ -286,7 +286,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting bookmarks page {0}...", pagenumber));
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Creating web request...");
             StringBuilder endpoint = new StringBuilder("/bookmarkthreads.php?");
             endpoint.AppendFormat("pagenumber={0}", pagenumber);
 
@@ -311,7 +311,7 @@ namespace AwfulNET.Core.Rest
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting forum {0}, page {1} with {2} filter...",
                 forumID, pagenumber, filter == null ? "no" : filter.ToString()));
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[ForumPage] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[ForumPage] Creating web request...");
             StringBuilder endpoint = new StringBuilder("forumdisplay.php?");
             endpoint.AppendFormat("forumid={0}", forumID);
             endpoint.AppendFormat("&daysprune={0}", 15);
@@ -340,7 +340,7 @@ namespace AwfulNET.Core.Rest
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Clearing all marked posts from thread {0}...", threadID));
 
             // TODO: Use httppostrequestbuilder.
-            Logger.Default.AddEntry(LogLevel.INFO, "[ClearAllMarked] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[ClearAllMarked] Creating web request...");
             StringBuilder endpoint = new StringBuilder("/threaddisplay.php?");
             FormUrlEncodedContent postData = new FormUrlEncodedContent(new[]
             {
@@ -361,7 +361,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting thread {0}, page {1}...", threadID, pageNumber));
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[ThreadPage1] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[ThreadPage1] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("showthread.php");
             endpoint.AddParameter("threadid", threadID);
             endpoint.AddParameter("pagenumber", pageNumber);
@@ -409,7 +409,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting thread {0} page with last post...", threadID));
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[LastPost] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[LastPost] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("showthread.php");
             endpoint.AddParameter("threadid", threadID);
             endpoint.AddParameter("goto", "lastpost");
@@ -429,7 +429,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting thread {0} page with new post...", threadID));
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[NewPost] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[NewPost] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("showthread.php");
             endpoint.AddParameter("threadid", threadID);
             endpoint.AddParameter("goto", "newpost");
@@ -451,7 +451,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Quoting post {0}", postId));
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[Quote] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[Quote] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("newreply.php");
             endpoint.AddParameter("action", "newreply");
             endpoint.AddParameter("postid", postId);
@@ -480,7 +480,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Creating edit post {0} form...", postId));
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[EditPost] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[EditPost] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("editpost.php");
             endpoint.AddParameter("action", "editpost");
             endpoint.AddParameter("postid", postId);
@@ -503,7 +503,7 @@ namespace AwfulNET.Core.Rest
         {
             Logger.Default.AddEntry(LogLevel.INFO, "Submitting thread form...");
 
-            Logger.Default.AddEntry(LogLevel.INFO, "[SubmitThreadForm] Creating endpoint...");
+            Logger.Default.AddEntry(LogLevel.INFO, "[SubmitThreadForm] Creating web request...");
             var endpoint = form.CreateHttpRequestBuilder();
 
             Logger.Default.AddEntry(LogLevel.INFO, "[SubmitThreadForm] Submitting request...");
@@ -515,44 +515,79 @@ namespace AwfulNET.Core.Rest
             return response;
         }
 
-        public Task<bool> RateAsync(string threadid, int rating)
+        public async Task<bool> RateAsync(string threadid, int rating)
         {
-            if (rating < MIN_RATING || rating > MAX_RATING)
-                throw new ArgumentOutOfRangeException(string.Format(
-                    "Rating must be between {0} and {1}.", MIN_RATING, MAX_RATING));
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Rating thread {0} with rating {1}...", threadid, rating));
 
+            if (rating < MIN_RATING || rating > MAX_RATING)
+            {
+                var ex = new ArgumentOutOfRangeException(string.Format("Rating must be between {0} and {1}.", MIN_RATING, MAX_RATING));
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[Rate] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("threadrate.php");
             endpoint.AddParameter("vote", rating);
             endpoint.AddParameter("threadid", threadid);
-            return endpoint.SendAndConfirmAsync(this.Client);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[Rate] Submitting request...");
+            var success = await endpoint.SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[Rate] Completed.");
+            return success;
         }
 
-        public Task<bool> MarkAsReadAsync(string threadid, string threadIndex)
+        public async Task<bool> MarkAsReadAsync(string threadid, string threadIndex)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Marking thread {0} post index {1} as read...", threadid, threadIndex));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[Mark] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("showthread.php");
             endpoint.AddParameter("action", "setseen");
             endpoint.AddParameter("threadid", threadid);
             endpoint.AddParameter("index", threadIndex);
-            return endpoint.SendAndConfirmAsync(this.Client);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[Mark] Submitting request...");
+            var success = await endpoint.SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[Mark] Completed.");
+            return success;
         }
 
         public async Task<ThreadPageMetadata> RefreshAsync(string threadid, int pagenumber)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Refreshing thread {0} page {1}...", threadid, pagenumber));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[ThreadRefresh] Creating web request...");
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("showthread.php");
             endpoint.AddParameter("threadid", threadid);
             endpoint.AddParameter("pagenumber", pagenumber);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[ThreadRefresh] Fetching html...");
             var doc = await endpoint.GetHtmlAsync(this.Client);
-            var result = Task.Run(() => { return ThreadPageParser.ParseThreadPage(doc); });
+
+            var result = Task.Run(() => {
+                Logger.Default.AddEntry(LogLevel.INFO, "[ThreadRefresh] Parsing html...");
+                var parsed = ThreadPageParser.ParseThreadPage(doc);
+                Logger.Default.AddEntry(LogLevel.INFO, "[ThreadRefresh] Completed.");
+                return parsed;
+            });
             return await result;
         }
 
-        public Task<bool> AddToBookmarkAsync(string threadid)
+        public async Task<bool> AddToBookmarkAsync(string threadid)
         {
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("Adding thread {0} to bookmarks...", threadid));
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[BookmarkAdd] Creating web request...");
             HttpPostRequestBuilder endpoint = new HttpPostRequestBuilder("bookmarkthreads.php");
             endpoint.AddParameter("json", "1");
             endpoint.AddParameter("action", "cat_toggle");
             endpoint.AddParameter("threadid", threadid);
-            return endpoint.SendAndConfirmAsync(this.Client);
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[BookmarkAdd] Submitting request...");
+            var success = await endpoint.SendAndConfirmAsync(this.Client);
+            Logger.Default.AddEntry(LogLevel.INFO, "[BookmarkAdd] Completed.");
+            return success;
         }
 
         public Task<bool> RemoveFromBookmarkAsync(string threadid)
