@@ -176,6 +176,9 @@
     </Compile>
     <Compile Include="Common\ContextMenu\AwfulContextMenu.cs" />
     <Compile Include="Common\IProgressFactory.cs" />
+    <Compile Include="Common\LoggingOverlay\LoggingOverlay.xaml.cs">
+      <DependentUpon>LoggingOverlay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\SettingsModelFactory.cs" />
     <Compile Include="Common\StorageModelFactory.cs" />
     <Compile Include="Common\WP8HttpClient.cs" />
@@ -257,6 +260,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Common\HtmlTextBox\HtmlTextBoxControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\LoggingOverlay\LoggingOverlay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
