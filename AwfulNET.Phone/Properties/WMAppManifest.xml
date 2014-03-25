@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{9693fab1-cb08-4024-9ff0-e507d37a19d8}" Title="Awful. (Beta)" RuntimeType="Silverlight" Version="3.0.0.0" Genre="apps.normal" Author="Nathan Simpson" Description="Mobile Posting for the 1%." Publisher="Microsoft" PublisherID="{2d8b1b01-ed40-49d4-8f90-17a5a37f3dc4}">
+  <App xmlns="" ProductID="{9693fab1-cb08-4024-9ff0-e507d37a19d8}" Title="Awful. (Dev)" RuntimeType="Silverlight" Version="3.0.0.0" Genre="apps.normal" Author="Nathan Simpson" Description="Mobile Posting for the 1%. THIS IS THE DEV VERSION. HOT!" Publisher="Microsoft" PublisherID="{2d8b1b01-ed40-49d4-8f90-17a5a37f3dc4}">
     <IconPath IsRelative="true" IsResource="false">Assets\Logo.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
