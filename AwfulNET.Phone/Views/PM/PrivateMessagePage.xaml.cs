@@ -128,7 +128,8 @@ namespace AwfulNET.Phone.Views.PM
            // add thread to linked threads
             var thread = new ThreadDataItemFromPage(threadPage, token.Token);
             App.Main.AddLinkedThread(thread);
-            NavigationService.Navigate(new Uri("/ThreadPage.xaml?id=" + thread.UniqueID, UriKind.RelativeOrAbsolute));
+            string uri = string.Format("/ThreadPage.xaml?id={0}&page={1}", thread.UniqueID, thread.CurrentPage.Value);
+            NavigationService.Navigate(new Uri(uri, UriKind.RelativeOrAbsolute));
         }
 
         #endregion
