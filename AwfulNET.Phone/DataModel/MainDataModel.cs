@@ -24,6 +24,9 @@ namespace AwfulNET.DataModel
         [Obsolete]
         private IForumAccessToken token;
 
+        // Threads that have been linked to via other means (private messages, etc.) go here.
+        private List<ThreadDataItem> linkedThreads;
+
         private PrivateMessageFolderIndex messages;
         private ArticleDataGroup articles;
         private BookmarkDataGroup bookmarks;
@@ -52,6 +55,8 @@ namespace AwfulNET.DataModel
             this.bookmarks.Subtitle = "Threads you've bookmarked go here.";
             this.bookmarks.DataType = DATATYPE_MENU;
             this.bookmarks.Group = this;
+
+            this.linkedThreads = new List<ThreadDataItem>();
            
             this.forums = new ForumsIndexGroup(new ForumsIndexFeed(StorageModelFactory.GetStorageModel()), pinned);
             this.forums.Title = "Forums Index";
@@ -103,12 +108,20 @@ namespace AwfulNET.DataModel
             return main;
         }
 
+        internal void AddLinkedThread(ThreadDataItem thread)
+        {
+            linkedThreads.Add(thread);
+        }
+
         internal ThreadDataItem GetThreadDataByID(string id)
         {
             var selected = bookmarks.Items.SingleOrDefault(item => item.UniqueID.Equals(id));
             if (selected == null)
                 selected = forums.Items.SelectMany(group => (group as ICommonDataGroup).Items)
                     .FirstOrDefault(item => item.UniqueID.Equals(id));
+
+            if (selected == null)
+                selected = linkedThreads.FirstOrDefault(thread => thread.UniqueID.Equals(id));
 
             if (selected == null)
                 throw new ArgumentException("Unknown item with id: " + id);

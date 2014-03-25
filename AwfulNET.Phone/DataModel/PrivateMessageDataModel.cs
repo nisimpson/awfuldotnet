@@ -7,6 +7,7 @@ using AwfulNET.Core.Feeds;
 using AwfulNET.Common;
 using AwfulNET.Views;
 using System.IO;
+using AwfulNET.Core.Rest;
 
 namespace AwfulNET.DataModel
 {
@@ -138,7 +139,7 @@ namespace AwfulNET.DataModel
             List<PrivateMessageItem> result = new List<PrivateMessageItem>();
             int count = 0;
             foreach (var item in items)
-                result.Add(new PrivateMessageItem(item) { Index = count++ });
+                result.Add(new PrivateMessageItem(item, feed.Token) { Index = count++ });
 
             return result;
         }
@@ -182,12 +183,18 @@ namespace AwfulNET.DataModel
     {
         private bool isBusy = false;
         private bool imageSet = false;
+        private IForumAccessToken myToken;
         private PrivateMessageMetadata metadata;
+        private readonly WebViewScriptRequestHandler requestHandler;
         
-        public PrivateMessageItem(PrivateMessageMetadata metadata) 
+        public PrivateMessageItem(PrivateMessageMetadata metadata, IForumAccessToken token) 
             : base(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, null)
         {
             this.DataType = MainDataModel.DATATYPE_PM;
+            this.myToken = token;
+            this.requestHandler = new WebViewScriptRequestHandler();
+            this.requestHandler.AddEndpoint("item", OnThreadRequest);
+            this.requestHandler.AddEndpoint("thread", OnThreadRequest);
             UpdateModel(metadata);
         }
 
@@ -231,6 +238,61 @@ namespace AwfulNET.DataModel
             imageSet = true;
             return ICON_BASE + filename;
         }
+
+        #region WebViewHandler
+
+        // Open new item page.
+        private async Task OnThreadRequest(string scriptValue, string endpoint, dynamic json, IWebViewPage page)
+        {
+            int count = json.args;
+            Task<ThreadPageMetadata> task = null;
+            switch (count)
+            {
+                case 1:
+                    string threadid = json.threadId;
+                    task = this.myToken.GetNewPostAsync(threadid);
+                    break;
+                case 2:
+                    task = OnThreadRequest(endpoint, json, page);
+                    break;
+
+                case 3:
+                    string thread = json.thread;
+                    int pageNumber = json.page;
+                    task = this.myToken.GetThreadPageAsync(thread, pageNumber);
+                    break;
+            }
+
+            // creating a progress token on the spot, would rather have it passed in as a parameter...
+            var progress = IProgressFactory.GenerateProgressToken();
+            progress.Report("Please wait...");
+
+            ThreadPageMetadata threadPage = await task;
+
+            progress.Report(null);
+
+            // make sure we're out of the invokescript scope
+            (page as IPrivateMessageView).OnNavigateToThreadPage(threadPage);
+
+        }
+
+        // Loads a thread page with the target url.
+        private Task<ThreadPageMetadata> OnThreadRequest(string endpoint, dynamic json, IWebViewPage page)
+        {
+            string type = json.type;
+            Task<ThreadPageMetadata> task = null;
+            switch (type)
+            {
+                case "url":
+                    string url = json.url;
+                    task = this.myToken.GetThreadPageAsync(new Uri(url, UriKind.RelativeOrAbsolute));
+                    break;
+            }
+
+            return task;
+        }
+
+        #endregion WebViewHandler
 
         #region IWebViewModel<string>
 

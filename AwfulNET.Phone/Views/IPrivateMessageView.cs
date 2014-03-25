@@ -10,5 +10,6 @@ namespace AwfulNET.Views
     interface IPrivateMessageView : IWebViewPage
     {
         void NotifyAppBarCommands();
+        void OnNavigateToThreadPage(ThreadPageMetadata threadPage);
     }
 }
