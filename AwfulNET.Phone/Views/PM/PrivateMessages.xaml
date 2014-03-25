@@ -81,7 +81,7 @@
                             <ContentControl Content="{Binding}"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Top"
-                                    ContentTemplate="{StaticResource listViewItem72pxTemplate}" />
+                                    ContentTemplate="{StaticResource listViewMessageItemTemplate}" />
                         </common:DataTypeTemplate>
                     </common:DataTypeTemplateSelector.Items>
                 </common:DataTypeTemplateSelector>
@@ -91,7 +91,12 @@
                 <phone:LongListSelector.ItemTemplate>
                     <DataTemplate>
                         <common:VariableContentControl Style="{StaticResource listViewItemStyle}" Tap="currentItem_Tap"
-                                ContentTemplateSelector="{StaticResource itemTemplateSelector}" Content="{Binding}" />
+                                                       toolkit:TiltEffect.IsTiltEnabled="True"
+                                ContentTemplateSelector="{StaticResource itemTemplateSelector}" Content="{Binding}">
+                            <toolkit:ContextMenuService.ContextMenu>
+                                <toolkit:ContextMenu Opened="ContextMenu_Opened" />
+                            </toolkit:ContextMenuService.ContextMenu>
+                        </common:VariableContentControl>
                     </DataTemplate>
                 </phone:LongListSelector.ItemTemplate>
             </phone:LongListSelector>

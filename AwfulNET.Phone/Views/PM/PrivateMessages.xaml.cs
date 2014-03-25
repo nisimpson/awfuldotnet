@@ -145,6 +145,23 @@ namespace AwfulNET.Phone.Views.PM
         {
             NavigationService.Navigate(uri);
         }
+
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            ContextMenu menu = sender as ContextMenu;
+            IContentViewModel content = menu.DataContext as IContentViewModel;
+            AwfulContextMenu toMenu = new AwfulContextMenu();
+            bool isOpen = content.OnContextMenuOpening("item", toMenu, this, IProgressFactory.GenerateProgressToken());
+            if (isOpen)
+            {
+                var menuItems = toMenu.ToContextMenu(menu);
+                menu.IsOpen = true;
+            }
+            else
+            {
+                menu.IsOpen = false;
+            }
+        }
     }
 
     public sealed class PrivateMessagesViewModel : CommonDataModel, IListViewModel

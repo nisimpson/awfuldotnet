@@ -183,6 +183,7 @@ namespace AwfulNET.DataModel
     {
         private bool isBusy = false;
         private bool imageSet = false;
+        private bool statusSet = false;
         private IForumAccessToken myToken;
         private PrivateMessageMetadata metadata;
         private readonly WebViewScriptRequestHandler requestHandler;
@@ -200,6 +201,26 @@ namespace AwfulNET.DataModel
 
         public PrivateMessageMetadata Metadata { get { return this.metadata; } }
 
+        private string date = string.Empty;
+        public string Date
+        {
+            get { return this.date; }
+            set { SetProperty(ref this.date, value); }
+        }
+
+        private string status = string.Empty;
+        public string Status
+        {
+            get { return this.status; }
+            set
+            {
+                if (SetProperty(ref this.status, value))
+                    OnPropertyChanged("IsOld");
+            }
+        }
+
+        public bool IsOld { get { return this.status == "OLD"; } }
+
         public int Index { get; set; }
 
         private string FormatDescription(PrivateMessageMetadata metadata)
@@ -208,9 +229,9 @@ namespace AwfulNET.DataModel
             if (string.IsNullOrEmpty(metadata.RawText))
                 return "loading preview...";
 
-            string result = metadata.RawText.Replace("\t", "");
+            string result = metadata.RawText.Replace("\t", string.Empty);
             result = result.Replace("\n", " ");
-            result = result.Replace("\r", " ");
+            result = result.Replace("\r", string.Empty);
 
             return result;
         }
@@ -222,9 +243,48 @@ namespace AwfulNET.DataModel
             this.UniqueID = metadata.PrivateMessageId;
             this.Subtitle = metadata.From;
             this.Description = FormatDescription(metadata);
-            
+            this.Date = FormatDate(metadata);
+
+            if (!statusSet)
+            {
+                this.Status = FormatStatus(metadata);
+                statusSet = true;
+            }
+
             if (!imageSet)
                 this.SetImage(this.FormatIconImageSource(metadata));
+        }
+
+        private string FormatStatus(PrivateMessageMetadata metadata)
+        {
+            switch(metadata.Status)
+            {
+                case PrivateMessageMetadata.MessageStatus.Cancelled:
+                    return "X";
+
+                case PrivateMessageMetadata.MessageStatus.Forwarded:
+                    return "FWD:";
+
+                case PrivateMessageMetadata.MessageStatus.New:
+                    return "NEW";
+
+                case PrivateMessageMetadata.MessageStatus.Read:
+                    return "OLD";
+
+                case PrivateMessageMetadata.MessageStatus.Replied:
+                    return "RE:";
+
+                case PrivateMessageMetadata.MessageStatus.Unknown:
+                    return "?";
+            }
+
+            return null;
+        }
+
+        private string FormatDate(PrivateMessageMetadata metadata)
+        {
+            return string.Format("{0} {1}",
+                metadata.PostDate.Value.ToShortDateString(), metadata.PostDate.Value.ToShortTimeString());
         }
 
         private const string ICON_BASE = "http://raw.github.com/Awful/thread-tags/master/";
@@ -353,18 +413,73 @@ namespace AwfulNET.DataModel
             progress.Report(null);
         }
 
-        // No context menus here.
         public bool OnContextMenuOpening(string type, IContextMenu menu, object state, IProgress<string> progress)
         {
-            return false;
+            bool open = false;
+            if (type.Equals("item"))
+            {  
+                AwfulContextMenuItem reply = new AwfulContextMenuItem();
+                reply.Header = "reply";
+                reply.Command = new RelayCommand(() => { ShowNewMessageForm(state); });
+                reply.Icon = "MailReply";
+                menu.Items.Add(reply);
+
+                AwfulContextMenuItem fwd = new AwfulContextMenuItem();
+                fwd.Header = "forward";
+                fwd.Command = new RelayCommand(() => { ShowNewMessageForm(state, true); });
+                fwd.Icon = "MailForward";
+                menu.Items.Add(fwd);
+
+                AwfulContextMenuItem delete = new AwfulContextMenuItem();
+                delete.Header = "delete...";
+                delete.Command = new RelayCommand(async () => { await DeleteMessageAsync(state, progress); });
+                delete.Icon = "MailDelete";
+                menu.Items.Add(delete);
+
+                open = true;
+            }
+
+            return open;
         }
 
-        // No context menus here.
         public Task<bool> OnContextMenuOpeningAsync(string type, IContextMenu menu, object state, IProgress<string> progress)
         {
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            tcs.SetResult(false);
-            return tcs.Task;
+            return Task.Run(() => OnContextMenuOpening(type, menu, state, progress));
+        }
+
+        private void ShowNewMessageForm(object state, bool isForward = false)
+        {
+            (state as IApplicationPage)
+                .Navigate(new Uri(string.Format("/Views/PM/NewMessageView.xaml?id={0}{1}",
+                    this.UniqueID, isForward ? "&fwd=true" : string.Empty), 
+                    UriKind.RelativeOrAbsolute));
+        }
+
+        private async Task DeleteMessageAsync(object state, IProgress<string> progress)
+        {
+            ConfirmDialogMessage confirm = new ConfirmDialogMessage("Are you sure?", "Delete Message");
+            NotificationService.Default.Notify(this, confirm);
+            bool result = await confirm.ConfirmAsync;
+            if (result)
+            {
+                bool success = false;
+                progress.Report("Deleting message...");
+                try { success = await metadata.DeleteAsync(this.myToken); }
+                catch (Exception)
+                {
+                    success = false;
+                    DialogMessage dialog = new DialogMessage("The request could not be made at this time. Please try again later.", "Oops! Something went wrong.");
+                    NotificationService.Default.Notify(this, dialog);
+                }
+                finally { progress.Report(null); }
+
+                if (success)
+                {
+                    PrivateMessageGroup group = this.Group as PrivateMessageGroup;
+                    await group.OnRefreshAsync(state, progress);
+                    progress.Report(null);
+                }
+            }
         }
 
         public bool CanRefresh()
