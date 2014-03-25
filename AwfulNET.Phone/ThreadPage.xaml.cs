@@ -61,11 +61,12 @@ namespace AwfulNET.Phone
         {
             string id = null;
             TaskCompletionSource<IWebViewModel<string>> tcs = new TaskCompletionSource<IWebViewModel<string>>();
-            if (NavigationContext.QueryString.ContainsKey("id"))
+            var query = NavigationContext.QueryString;
+            if (query.ContainsKey("id"))
             {
-                id = NavigationContext.QueryString["id"];
+                id = query["id"];
                 int pageNumber = 0;
-                if (int.TryParse(NavigationContext.QueryString["page"], out pageNumber))
+                if (query.ContainsKey("page") && int.TryParse(query["page"], out pageNumber))
                 {
                     try
                     {

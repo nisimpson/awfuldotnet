@@ -743,6 +743,7 @@
                 fixLongLinks(element);
                 youTubeFix(element);
                 attachImageEvents(element);
+                mapNavigation();
             }
         };
 

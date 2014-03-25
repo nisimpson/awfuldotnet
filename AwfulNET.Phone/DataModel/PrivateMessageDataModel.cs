@@ -298,16 +298,14 @@ namespace AwfulNET.DataModel
 
         public Task OnScriptNotifyAsync(object state, string value)
         {
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            tcs.SetResult(true);
-            return tcs.Task;
+            return OnScriptNotifyAsync(state, IProgressFactory.GenerateProgressToken(), value);
         }
 
-        public Task OnScriptNotifyAsync(object state, IProgress<string> progress, string value)
+        public async Task OnScriptNotifyAsync(object state, IProgress<string> progress, string value)
         {
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            tcs.SetResult(true);
-            return tcs.Task;
+            progress.Report("Please wait...");
+            try { await this.requestHandler.OnWebViewScriptNotify(value, state as IWebViewPage); }
+            finally { progress.Report(null); }
         }
 
         public async Task OnSelectedAsync(object state, IProgress<string> progress)

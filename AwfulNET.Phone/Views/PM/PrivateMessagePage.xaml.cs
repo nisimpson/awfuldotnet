@@ -125,10 +125,11 @@ namespace AwfulNET.Phone.Views.PM
             AccessTokenMessage token = new AccessTokenMessage();
             NotificationService.Default.Notify(this, token);
 
-           // add thread to linked threads
+            // add thread to linked threads
             var thread = new ThreadDataItemFromPage(threadPage, token.Token);
             App.Main.AddLinkedThread(thread);
-            NavigationService.Navigate(new Uri("/ThreadPage.xaml?id=" + thread.UniqueID, UriKind.RelativeOrAbsolute));
+            string uri = string.Format("/ThreadPage.xaml?id={0}&page={1}", thread.UniqueID, thread.CurrentPage.Value);
+            NavigationService.Navigate(new Uri(uri, UriKind.RelativeOrAbsolute));
         }
 
         #endregion
