@@ -101,7 +101,10 @@ namespace AwfulNET.Core.Parsing
                 {
                     var forum = CreateForumMetadata(node);
                     if (forum != null)
+                    {
+                        Logger.Default.AddEntry(LogLevel.INFO, "[ForumParser] Forum -> " + forum.ForumName);
                         forums.Add(forum);
+                    }
                 }
             }
 
@@ -362,12 +365,13 @@ namespace AwfulNET.Core.Parsing
         // TODO: Remember to sort thread data by new posts
         private static IList<ThreadMetadata> GenerateThreadData(ForumPageMetadata page, IEnumerable<HtmlNode> threadsInfo)
         {
-            //Logger.AddEntry("AwfulForumPage - Generating thread data...");
+            Logger.Default.AddEntry(LogLevel.INFO, "Generating thread data from page...");
 
             List<ThreadMetadata> data = new List<ThreadMetadata>();
             foreach (var node in threadsInfo)
             {
                 var thread = ThreadParser.ParseThread(node);
+                Logger.Default.AddEntry(LogLevel.INFO, "[ForumParser] Thread -> " + thread.Title);
                 data.Add(thread);
             }
 
