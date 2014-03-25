@@ -8,4 +8,4 @@ AppPackages
 *.db
 *.user
 
-/AwfulNET.Phone.WP7/packages
+packages
