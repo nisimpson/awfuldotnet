@@ -25,6 +25,7 @@
                 <apu:AppBar Id="0">
                     <apu:AppBarButton Command="{Binding SyncCommand}" Text="sync"
                                       IconUri="Assets/AppBar/sync.png"/>
+                    <apu:AppBarButton Command="{Binding NewCommand}" Text="new" IconUri="Assets/AppBar/message-add.png" />
                     <apu:AppBar.MenuItems>
                         <apu:AppBarMenuItem Command="{Binding ShowFoldersCommand}" Text="folders..." />
                     </apu:AppBar.MenuItems>

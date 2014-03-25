@@ -22,6 +22,7 @@ namespace AwfulNET.Phone.Views.PM
         private readonly RelayCommand sync;
         private readonly RelayCommand showFolders;
         private readonly RelayCommand showCurrent;
+        private readonly RelayCommand newCommand;
 
         public PrivateMessages()
         {
@@ -37,8 +38,16 @@ namespace AwfulNET.Phone.Views.PM
             showCurrent = new RelayCommand(ShowCurrentFolderView);
             context.ShowCurrentFolderCommand = showCurrent;
 
+            newCommand = new RelayCommand(NavigateToNewMessageView);
+            context.NewCommand = newCommand;
+
             this.DataContext = context;
             isNewInstance = true;
+        }
+
+        private void NavigateToNewMessageView()
+        {
+            NavigationService.Navigate(new Uri("/Views/PM/NewMessageView.xaml", UriKind.RelativeOrAbsolute));
         }
 
         private bool isCurrentFolderView = true;
@@ -156,6 +165,7 @@ namespace AwfulNET.Phone.Views.PM
         }
 
         public ICommand SyncCommand { get; set; }
+        public ICommand NewCommand { get; set; }
         public ICommand ShowFoldersCommand { get; set; }
         public ICommand ShowCurrentFolderCommand { get; set; }
 
