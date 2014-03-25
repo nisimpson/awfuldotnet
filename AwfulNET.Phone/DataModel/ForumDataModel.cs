@@ -200,7 +200,7 @@ namespace AwfulNET.DataModel
                         this.feed = this.createFeed();
                         this.InitializeFeed(feed);
                     }
-                    return this.feed.UpdateAsync();
+                    return this.feed.PullAsync();
                 }, progress);
             else
             {
@@ -220,8 +220,12 @@ namespace AwfulNET.DataModel
                             this.InitializeFeed(feed);
                         }
                         ReportProgress(progress, "Refreshing forums index...");
-                        return this.feed.PullAsync();
+                        return this.feed.UpdateAsync();
                     }, progress);
+            else
+            {
+                SetOnItemsReady(true);
+            }
         }
 
         #endregion IListViewModel
