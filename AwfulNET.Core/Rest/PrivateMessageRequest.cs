@@ -44,6 +44,14 @@ namespace AwfulNET.Core.Rest
         [DataMember]
         public List<TagMetadata> TagOptions { get; set; }
 
+        public PrivateMessageRequest()
+        {
+            PrivateMessageId = string.Empty;
+            To = string.Empty;
+            Subject = string.Empty;
+            Body = string.Empty;
+        }
+
         private const string SEND_MESSAGE_ACTION_VALUE = "dosend";
         private const string SEND_MESSAGE_SUBMIT_VALUE = "Send Message";
 
