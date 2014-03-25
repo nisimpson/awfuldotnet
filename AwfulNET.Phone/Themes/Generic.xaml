@@ -228,6 +228,102 @@
             </StackPanel>
         </Grid>
     </DataTemplate>
+    <DataTemplate x:Key="listViewMessageItemTemplate">
+        <Grid xmlns:common="clr-namespace:AwfulNET.Common">
+            <Grid.Resources>
+                <Storyboard x:Key="open72pxAnimation">
+                    <DoubleAnimationUsingKeyFrames
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)"
+                            Storyboard.TargetName="imageBorder">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="120">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <CircleEase EasingMode="EaseOut" />
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                            <EasingDoubleKeyFrame.EasingFunction>
+                                <CircleEase EasingMode="EaseOut" />
+                            </EasingDoubleKeyFrame.EasingFunction>
+                        </EasingDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                            Storyboard.TargetName="imageBorder">
+                        <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                        <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
+                    </DoubleAnimationUsingKeyFrames>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                            Storyboard.TargetName="imageBorder">
+                        <DiscreteObjectKeyFrame KeyTime="0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Visible</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                        <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Visible</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+                <Storyboard x:Key="fail72pxAnimation">
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                            Storyboard.TargetName="imageBorder">
+                        <DiscreteObjectKeyFrame KeyTime="0">
+                            <DiscreteObjectKeyFrame.Value>
+                                <Visibility>Collapsed</Visibility>
+                            </DiscreteObjectKeyFrame.Value>
+                        </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                </Storyboard>
+            </Grid.Resources>
+            <StackPanel>
+                <Grid>
+                    <Grid.Resources>
+                        <common:StringToVisibility x:Key="stringToVisibility" />
+                        <common:BooleanToOpacityConverter x:Key="booleanToOpacity" />
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Top">
+                        <TextBlock x:Name="titleText" Text="{Binding Title}" VerticalAlignment="Center"
+                                Style="{StaticResource PhoneTextTitle3Style}" TextWrapping="Wrap"
+                                TextTrimming="WordEllipsis" />
+                        <TextBlock x:Name="subtitleText" Text="{Binding Subtitle}"
+                                Style="{StaticResource PhoneTextAccentStyle}" TextTrimming="WordEllipsis"
+                                TextWrapping="NoWrap" />
+                        <TextBlock x:Name="dateText" Text="{Binding Date}" Style="{StaticResource PhoneTextNormalStyle}"
+                                FontWeight="Bold" TextWrapping="NoWrap" />
+                        <TextBlock x:Name="descriptionText" Text="{Binding Description}"
+                                Style="{StaticResource PhoneTextSmallStyle}" TextWrapping="Wrap"
+                                TextTrimming="WordEllipsis" MaxHeight="75" />
+                    </StackPanel>
+                    <StackPanel x:Name="imagePanel" Grid.Column="1">
+                        <Border x:Name="newPostCountBorder" Width="72" Margin="0,6,0,-4"
+                                Background="{StaticResource PhoneAccentBrush}"
+                                Visibility="{Binding Status, Converter={StaticResource stringToVisibility}, TargetNullValue=Collapsed}">
+                            <TextBlock x:Name="statusText" Foreground="White" Text="{Binding Status}"
+                                    FontWeight="SemiBold" TextAlignment="Center" />
+                        </Border>
+                        <Border x:Name="imageBorder" VerticalAlignment="Top" Height="72" Width="72"
+                                Background="{StaticResource PhoneChromeBrush}" BorderThickness="1"
+                                BorderBrush="{StaticResource PhoneBorderBrush}" Margin="0,6"
+                                RenderTransformOrigin="0.5,0.5" Opacity="0">
+                            <Border.RenderTransform>
+                                <CompositeTransform />
+                            </Border.RenderTransform>
+                            <Image x:Name="itemImage" Source="{Binding Image}" Margin="-1" Opacity="0.8"
+                                    Stretch="UniformToFill"
+                                    common:UIExtensions.ImageOpenedStoryboard="{StaticResource open72pxAnimation}"
+                                    common:UIExtensions.ImageFailedStoryboard="{StaticResource fail72pxAnimation}" />
+                        </Border>
+                    </StackPanel>
+
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
     <DataTemplate x:Key="listViewItem96pxTemplate">
 		<Grid xmlns:common="clr-namespace:AwfulNET.Common">
 			<Grid.Resources>

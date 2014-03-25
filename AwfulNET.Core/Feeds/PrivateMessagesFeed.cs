@@ -84,6 +84,9 @@ namespace AwfulNET.Core.Feeds
             if (items.Count == 0 || refresh)
                 await items.RefreshAsync(Token);
 
+            foreach (var item in items)
+                item.FolderId = items.Folder.FolderId;
+
             return items;
         }
 

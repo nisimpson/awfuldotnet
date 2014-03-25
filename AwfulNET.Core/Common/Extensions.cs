@@ -365,10 +365,12 @@ namespace AwfulNET
             return token.RemoveFromBookmarkAsync(thread.ThreadID);
         }
 
-        public static Task<PrivateMessageMetadata> RefreshAsync(this PrivateMessageMetadata message,
+        public static async Task<PrivateMessageMetadata> RefreshAsync(this PrivateMessageMetadata message,
             IForumAccessToken token)
         {
-            return token.RefreshAsync(message.PrivateMessageId);
+            var result = await token.RefreshAsync(message.PrivateMessageId);
+            result.FolderId = message.FolderId;
+            return result;
         }
 
         public static Task<ForumPageMetadata> RefreshAsync(this ForumPageMetadata page, IForumAccessToken token)
@@ -433,6 +435,12 @@ namespace AwfulNET
             await Task.WhenAll(tasks);
             success = true;
             return success;
+        }
+
+        public static Task<bool> DeleteAsync(this PrivateMessageMetadata message,
+            IForumAccessToken token)
+        {
+            return DeleteAllAsync(new List<PrivateMessageMetadata>() { message }, token);
         }
 
         public static Task<bool> MoveAllAsync(this IEnumerable<PrivateMessageMetadata> messages,
