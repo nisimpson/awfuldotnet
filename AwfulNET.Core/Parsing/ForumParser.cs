@@ -87,7 +87,11 @@ namespace AwfulNET.Core.Parsing
 
             var title = parent.Descendants("title").FirstOrDefault();
             if (title != null && title.InnerText.ToLower().Contains("banned"))
-                throw new BannedAccountException("Cannot parse forums using a banned account.");
+            {
+                var ex = new BannedAccountException("Cannot parse forums using a banned account.");
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
            
             var selectNode = parent.Descendants("select")
                 .Where(node => node.GetAttributeValue("name", "").Equals("forumid"))

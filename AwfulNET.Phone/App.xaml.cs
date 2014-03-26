@@ -141,7 +141,11 @@ namespace AwfulNET.Phone
         // Notify sender of network status.
         private void OnNetworkDetectionMessage(INotification<NetworkDetectionMessage> obj)
         {
+#if OFFLINE
+            obj.Value.IsNetworkActive = true;
+#else
             obj.Value.IsNetworkActive = DeviceNetworkInformation.IsNetworkAvailable;
+#endif
         }
 
         // Show a message box with OK/Cancel buttons; confirm on OK.
