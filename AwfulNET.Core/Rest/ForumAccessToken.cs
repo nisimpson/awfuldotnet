@@ -287,12 +287,11 @@ namespace AwfulNET.Core.Rest
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting bookmarks page {0}...", pagenumber));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Creating web request...");
-            StringBuilder endpoint = new StringBuilder("/bookmarkthreads.php?");
-            endpoint.AppendFormat("pagenumber={0}", pagenumber);
+            HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("bookmarkthreads.php");
+            endpoint.AddParameter("pagenumber", pagenumber);
 
-            // TODO: Use HttpGetRequestBuilder here.
             Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Fetching html...");
-            var htmlDoc = await this.Client.GetHtmlAsync(endpoint.ToString());
+            var htmlDoc = await endpoint.GetHtmlAsync(this.Client);
 
             Task<ForumPageMetadata> task = Task.Run(() =>
             {
@@ -316,6 +315,15 @@ namespace AwfulNET.Core.Rest
                 forumID, pagenumber, filter == null ? "no" : filter.ToString()));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[ForumPage] Creating web request...");
+            HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("forumdisplay.php");
+            endpoint.AddParameter("forumid", forumID);
+            endpoint.AddParameter("daysprune", 15);
+            endpoint.AddParameter("perpage", 40);
+            endpoint.AddParameter("posticon", 0);
+            endpoint.AddParameter("sortorder", "desc");
+            endpoint.AddParameter("pagenumber", pagenumber);
+
+            /*
             StringBuilder endpoint = new StringBuilder("forumdisplay.php?");
             endpoint.AppendFormat("forumid={0}", forumID);
             endpoint.AppendFormat("&daysprune={0}", 15);
@@ -323,10 +331,11 @@ namespace AwfulNET.Core.Rest
             endpoint.AppendFormat("&posticon={0}", 0);
             endpoint.AppendFormat("&sortorder={0}", "desc");
             endpoint.AppendFormat("&pagenumber={0}", pagenumber);
+            */
 
-            // TODO: Use HttpGetRequestBuilder.
             Logger.Default.AddEntry(LogLevel.INFO, "[ForumPage] Fetching html...");
-            var htmlDoc = await this.Client.GetHtmlAsync(endpoint.ToString());
+            //var htmlDoc = await this.Client.GetHtmlAsync(endpoint.ToString());
+            var htmlDoc = await endpoint.GetHtmlAsync(this.Client);
 
             Task<ForumPageMetadata> task = Task.Run(() =>
                 {
