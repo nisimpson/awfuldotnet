@@ -55,7 +55,7 @@ namespace AwfulNET.Core.Common
         public override string ToString()
         {
             return string.Format("[{0}][{1}]: {2}",
-                timestamp,
+                timestamp.ToString("{0:yyyyMMdd_HHmm}"),
                 level,
                 message);
         }
