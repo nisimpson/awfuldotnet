@@ -299,6 +299,10 @@ namespace AwfulNET.Core.Rest
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Parsing html...");
                 var page = ForumParser.ParseForumPage(htmlDoc);
                 page.ForumID = "bookmarks";
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Page results:");
+                Logger.Default.AddEntry(LogLevel.INFO, "----------------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, page.ToString());
+                Logger.Default.AddEntry(LogLevel.INFO, "----------------------------");
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Completed.");
                 return page;
             });
