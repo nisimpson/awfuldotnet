@@ -12,6 +12,7 @@ using AwfulNET.Phone.Common;
 using AwfulNET.Phone;
 using AwfulNET.Core.Common;
 using Microsoft.Phone.Tasks;
+using System.Threading.Tasks;
 
 namespace AwfulNET.Common
 {
@@ -43,9 +44,17 @@ namespace AwfulNET.Common
 
         void Entries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            IList<LogEntry> list = sender as IList<LogEntry>;
-            try { this.logEntryListView.ScrollTo(list.Last()); }
-            catch (Exception) { }
+            Task.Delay(10).ContinueWith(task =>
+                {
+                    IList<LogEntry> list = sender as IList<LogEntry>;
+                    try
+                    {
+                        UpdateLayout();
+                        this.LayoutRoot.ScrollToVerticalOffset(this.LayoutRoot.ExtentHeight);
+                    }
+                    catch (Exception) { }
+
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 
