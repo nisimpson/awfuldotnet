@@ -33,6 +33,10 @@ body {
             margin-right: 6px;
         }
 
+        #threadView article > header .post-avatar-container {
+            margin-top: 6px;
+        }
+
         #threadView article > header .date-container {
             margin-top: 6px;
         }

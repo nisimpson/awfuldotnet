@@ -123,11 +123,13 @@ namespace AwfulNET.Core.Parsing
                 post.ShowIcon = post.PostIconUri == null ? false : true;
 
                 // post avatar text
-                var avatarTextNode = titleNode.Descendants()
-                    .Where(node => string.IsNullOrEmpty(node.InnerText))
+                var avatarTextNode = titleNode.DescendantsAndSelf()
+                    .Where(node => !string.IsNullOrWhiteSpace(node.InnerText))
                     .FirstOrDefault();
 
-                post.PostAvatarText = avatarTextNode == null ? string.Empty : avatarTextNode.InnerText;
+                post.PostAvatarText = avatarTextNode == null
+                    ? string.Empty
+                    : avatarTextNode.InnerText.Trim();
             }
 
             return post;

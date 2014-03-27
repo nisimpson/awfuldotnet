@@ -79,7 +79,7 @@
             /*IE 11*/
             display: -ms-grid;
             -ms-grid-columns: auto 1fr;
-            -ms-grid-rows: minmax(180px, auto) auto;
+            -ms-grid-rows: minmax(180px, auto) auto auto;
         }
 
             #threadView article > header .text {
@@ -91,12 +91,14 @@
                 }
 
                 #threadView article > header .avatar-text-container {
-                    -ms-grid-column: 2;
+                    margin-top: 4px;
+                    -ms-grid-column-span: 2;
+                    -ms-grid-row: 2;
                 }
 
                 #threadView article > header .date-container {
                     margin-top: 4px;
-                    -ms-grid-row: 2;
+                    -ms-grid-row: 3;
                     -ms-grid-column-span: 2;
                 }
 
