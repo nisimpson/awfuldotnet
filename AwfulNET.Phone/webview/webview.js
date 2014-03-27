@@ -69,6 +69,11 @@
         self.thread = thread;
         self.isIgnored = ko.observable(post.IsIgnored);
 
+        self.toggleAvatarText = function () {
+            var value = self.showAvatarText();
+            self.showAvatarText(!value);
+        };
+
         // post options
         self.options = ko.observableArray([
             {

@@ -42,6 +42,7 @@
                         <header>
                             <img class="av" src="/"
                                  data-bind="visible: post.showAvatar,
+                                            click: toggleAvatarText,
                                             attr: { src: post.avatar }" />
 
                             <h2 class="text author-container article-title win-type-ellipsis">
