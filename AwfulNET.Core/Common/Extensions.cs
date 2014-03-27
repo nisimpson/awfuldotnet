@@ -206,12 +206,24 @@ namespace AwfulNET
             NetworkDetectionMessage networkStatus = new NetworkDetectionMessage() { IsNetworkActive = true };
             NotificationService.Default.Notify<NetworkDetectionMessage>(client, networkStatus);
             if (!networkStatus.IsNetworkActive)
-                throw new WebException("The request failed. Please check your connection settings and try again.", 
+                throw new WebException("The request failed. Please check your connection settings and try again.",
                     WebExceptionStatus.RequestCanceled);
+            
 
             HttpResponseMessage result = null;
-            try { result = await client.GetAsync(requestUri); }
-            catch (Exception ex) { throw new TimeoutException("The request timed out.", ex); }
+            try 
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] " + requestUri);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync");
+                result = await client.GetAsync(requestUri); 
+            }
+            catch (Exception ex) 
+            { 
+                var timeout = new TimeoutException("The request timed out.", ex);
+                Logger.Default.AddEntry(LogLevel.WARNING, timeout);
+            }
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Completed.");
             return result;
         }
 
@@ -248,14 +260,24 @@ namespace AwfulNET
             string html = null;
             try
             {
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
                 var bytes = await content.ReadAsByteArrayAsync();
                 html = western.GetString(bytes, 0, bytes.Length);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
             }
-            catch (Exception ex) { throw ex; }
+            catch (Exception ex) 
+            {
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex; 
+            }
 
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Creating html document...");
             doc = new HtmlDocument();
             doc.LoadHtml(html);
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Disposing content resource...");
             content.Dispose();
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
             return doc;
         }
 

@@ -11,24 +11,50 @@ using AwfulNET.Common;
 using AwfulNET.Phone.Common;
 using AwfulNET.Phone;
 using AwfulNET.Core.Common;
+using Microsoft.Phone.Tasks;
+using System.Threading.Tasks;
 
 namespace AwfulNET.Common
 {
     public partial class LoggingOverlay : UserControl
     {
+        LoggingOverlayViewModel context;
         public LoggingOverlay()
         {
             InitializeComponent();
-            LoggingOverlayViewModel context = new LoggingOverlayViewModel();
+            context = new LoggingOverlayViewModel();
             context.Context.Entries.CollectionChanged += Entries_CollectionChanged;
             this.DataContext = context;
+
+            this.LayoutRoot.DoubleTap += LayoutRoot_DoubleTap;
+        }
+
+        void LayoutRoot_DoubleTap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            try
+            {
+                var email = new EmailComposeTask();
+                email.To = "bootlegrobot@outlook.com";
+                email.Subject = "Awful. (Hotfix): " + App.CurrentAccount.Username;
+                email.Body = context.Context.WriteAsString();
+                email.Show();
+            }
+            catch (Exception) { }
         }
 
         void Entries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            IList<LogEntry> list = sender as IList<LogEntry>;
-            try { this.logEntryListView.ScrollTo(list.Last()); }
-            catch (Exception) { }
+            Task.Delay(10).ContinueWith(task =>
+                {
+                    IList<LogEntry> list = sender as IList<LogEntry>;
+                    try
+                    {
+                        UpdateLayout();
+                        this.LayoutRoot.ScrollToVerticalOffset(this.LayoutRoot.ExtentHeight);
+                    }
+                    catch (Exception) { }
+
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 

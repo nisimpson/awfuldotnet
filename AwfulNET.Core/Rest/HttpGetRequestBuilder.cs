@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AwfulNET;
 using AwfulNET.Core;
+using AwfulNET.Core.Common;
 
 namespace System.Net.Http
 {
@@ -58,9 +59,12 @@ namespace System.Net.Http
             return builder.ToString();
         }
 
-        public Task<HttpResponseMessage> SendRequestAsync(HttpClient client)
+        public async Task<HttpResponseMessage> SendRequestAsync(HttpClient client)
         {
-            return client.GetAsyncEx(builder.ToString());
+            Logger.Default.AddEntry(LogLevel.INFO, "[HttpGet] Sending request...");
+            var result = await client.GetAsyncEx(builder.ToString());
+            Logger.Default.AddEntry(LogLevel.INFO, "[HttpGet] Completed.");
+            return result;
         }
 
         public void AddParameter(string name, Func<string> toString)
