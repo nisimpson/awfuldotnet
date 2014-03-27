@@ -44,15 +44,15 @@
                                  data-bind="visible: post.showAvatar,
                                             attr: { src: post.avatar }" />
 
-                            <h2 class="text article-title win-type-ellipsis">
+                            <h2 class="text author-container article-title win-type-ellipsis">
                                 <span class="author" data-bind="text: post.author"></span>
                             </h2>
 
-                            <h4 class="text article-subtitle" data-bind="visible: post.showAvatarText">
+                            <h4 class="text avatar-text-container article-subtitle" data-bind="visible: post.showAvatarText">
                                 <span class="avatar-text" data-bind="text: post.avatarText"></span>
                             </h4>
 
-                            <h4 class="text article-subtitle win-type-ellipsis">
+                            <h4 class="text date-container article-subtitle win-type-ellipsis">
                                 <span class="date" data-bind="text: post.formattedDate"></span>
                             </h4>
                         </header>

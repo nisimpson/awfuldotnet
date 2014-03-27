@@ -86,11 +86,15 @@
                 -ms-grid-row-align: start;
             }
 
-                #threadView article > header .article-title {
+                #threadView article > header .author-container {
                     -ms-grid-column: 2;
                 }
 
-                #threadView article > header .article-subtitle {
+                #threadView article > header .avatar-text-container {
+                    -ms-grid-column: 2;
+                }
+
+                #threadView article > header .date-container {
                     margin-top: 4px;
                     -ms-grid-row: 2;
                     -ms-grid-column-span: 2;

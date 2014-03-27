@@ -65,6 +65,7 @@
         self.content = ko.observable(post.PostBody);           // post content; contains unsanitized html.
         self.avatar = ko.observable(post.PostIconUri);
         self.avatarText = ko.observable(post.PostAvatarText);
+        self.showAvatarText = ko.observable(true);
         self.thread = thread;
         self.isIgnored = ko.observable(post.IsIgnored);
 
