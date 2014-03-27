@@ -18,7 +18,7 @@ namespace AwfulNET.Core.Parsing
         {
             ThreadPostMetadata post = new ThreadPostMetadata()
                 .ParseIsIgnored(postNode)
-                .ParseIcon(postNode)
+                .ParseIconAndAvatarText(postNode)
                 .ParseAuthor(postNode)
                 .ParseContent(postNode)
                 .ParsePostDate(postNode)
@@ -107,25 +107,27 @@ namespace AwfulNET.Core.Parsing
             return post;
         }
 
-        private static ThreadPostMetadata ParseIcon(this ThreadPostMetadata post, HtmlNode postNode)
+        private static ThreadPostMetadata ParseIconAndAvatarText(this ThreadPostMetadata post, HtmlNode postNode)
         {
-            try
-            {
-                var uriString = postNode.Descendants()
-                   .Where(node => node.GetAttributeValue("class", "").Equals("title"))
-                   .First()
-                   .Descendants("img")
-                   .First()
-                   .GetAttributeValue("src", "");
+            var titleNode = postNode.Descendants()
+                .Where(node => node.GetAttributeValue("class", string.Empty).Contains("title"))
+                .FirstOrDefault();
 
-                post.PostIconUri = new Uri(uriString, UriKind.Absolute);
-                post.ShowIcon = true;
-            }
-
-            catch (Exception)
+            if (titleNode != null)
             {
-                post.PostIconUri = null;
-                post.ShowIcon = false;
+                // post avatar image
+                var uriNode = titleNode.Descendants("img").FirstOrDefault();
+                post.PostIconUri = uriNode == null
+                    ? null
+                    : new Uri(uriNode.GetAttributeValue("src", string.Empty), UriKind.Absolute);
+                post.ShowIcon = post.PostIconUri == null ? false : true;
+
+                // post avatar text
+                var avatarTextNode = titleNode.Descendants()
+                    .Where(node => string.IsNullOrEmpty(node.InnerText))
+                    .FirstOrDefault();
+
+                post.PostAvatarText = avatarTextNode == null ? string.Empty : avatarTextNode.InnerText;
             }
 
             return post;
