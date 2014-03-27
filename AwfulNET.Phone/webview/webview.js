@@ -64,6 +64,7 @@
         self.isEditable = post.IsEditable;                     // flags the post as editable (meaning this is the current user's post).
         self.content = ko.observable(post.PostBody);           // post content; contains unsanitized html.
         self.avatar = ko.observable(post.PostIconUri);
+        self.avatarText = ko.observable(post.PostAvatarText);
         self.thread = thread;
         self.isIgnored = ko.observable(post.IsIgnored);
 
