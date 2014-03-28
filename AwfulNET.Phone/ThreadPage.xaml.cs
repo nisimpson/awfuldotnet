@@ -70,7 +70,13 @@ namespace AwfulNET.Phone
                 {
                     try
                     {
-                        this.viewmodel = new ThreadPageViewModel(GetThread(id, pageNumber), this, this.progress);
+                        var thread = GetThread(id, pageNumber);
+                        if (!mainDataModel.TabHistory.Contains(thread))
+                            mainDataModel.TabHistory.Push(thread);
+
+                        this.viewmodel = new ThreadPageViewModel(
+                            thread, mainDataModel.TabHistory, this, this.progress);
+
                         tcs.SetResult(viewmodel);
                     }
                     catch (Exception)
@@ -209,7 +215,7 @@ namespace AwfulNET.Phone
                 AccessTokenMessage message = new AccessTokenMessage();
                 NotificationService.Default.Notify(this, message);
                 var tab = new ThreadDataItemFromPage(threadPage, message.Token);
-                this.viewmodel.Threads.Add(tab);
+                this.viewmodel.AddTab(tab);
                 this.tabsListView.SelectedItem = tab;
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -518,11 +524,13 @@ namespace AwfulNET.Phone
         private State currentState;
         private IThreadViewPage page;
         private IProgress<string> progress;
-        private ObservableCollection<ThreadDataItem> threads = new ObservableCollection<ThreadDataItem>();
+        private ObservableCollection<ThreadDataItem> threads;
+        private Stack<ThreadDataItem> history;
 
-        public ThreadPageViewModel(ThreadDataItem initial, IThreadViewPage page, IProgress<string> progress )
+        public ThreadPageViewModel(ThreadDataItem initial, Stack<ThreadDataItem> history, IThreadViewPage page, IProgress<string> progress)
         {
-            this.threads.Add(initial);
+            this.history = history;
+            this.threads = new ObservableCollection<ThreadDataItem>(history);
             this.currentThread = initial;
             this.page = page;
             this.progress = progress;
@@ -638,6 +646,12 @@ namespace AwfulNET.Phone
         public int LastPage
         {
             get { return CurrentThread.LastPage; }
+        }
+
+        internal void AddTab(ThreadDataItem tab)
+        {
+            history.Push(tab);
+            threads.Add(tab);
         }
     }
 }

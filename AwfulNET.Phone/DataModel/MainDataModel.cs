@@ -25,7 +25,7 @@ namespace AwfulNET.DataModel
         private IForumAccessToken token;
 
         // Threads that have been linked to via other means (private messages, etc.) go here.
-        private List<ThreadDataItem> linkedThreads;
+        private Stack<ThreadDataItem> tabHistory;
 
         private PrivateMessageFolderIndex messages;
         private ArticleDataGroup articles;
@@ -38,6 +38,7 @@ namespace AwfulNET.DataModel
         public ForumsIndexGroup Forums { get { return forums; } }
         public PinnedForumsGroup Pinned { get { return pinned; } }
         public PrivateMessageFolderIndex Messages { get { return messages; } }
+        public Stack<ThreadDataItem> TabHistory { get { return this.tabHistory; } }
 
         public MainDataModel() : base(false, false)
         {
@@ -56,7 +57,7 @@ namespace AwfulNET.DataModel
             this.bookmarks.DataType = DATATYPE_MENU;
             this.bookmarks.Group = this;
 
-            this.linkedThreads = new List<ThreadDataItem>();
+            this.tabHistory = new Stack<ThreadDataItem>();
            
             this.forums = new ForumsIndexGroup(new ForumsIndexFeed(StorageModelFactory.GetStorageModel()), pinned);
             this.forums.Title = "Forums Index";
@@ -110,7 +111,7 @@ namespace AwfulNET.DataModel
 
         internal void AddLinkedThread(ThreadDataItem thread)
         {
-            linkedThreads.Add(thread);
+            tabHistory.Push(thread);
         }
 
         internal ThreadDataItem GetThreadDataByID(string id)
@@ -121,7 +122,7 @@ namespace AwfulNET.DataModel
                     .FirstOrDefault(item => item.UniqueID.Equals(id));
 
             if (selected == null)
-                selected = linkedThreads.FirstOrDefault(thread => thread.UniqueID.Equals(id));
+                selected = tabHistory.FirstOrDefault(thread => thread.UniqueID.Equals(id));
 
             if (selected == null)
                 throw new ArgumentException("Unknown item with id: " + id);
