@@ -109,7 +109,7 @@ namespace AwfulNET.DataModel
             return main;
         }
 
-        internal void AddLinkedThread(ThreadDataItem thread)
+        internal void AddToHistory(ThreadDataItem thread)
         {
             tabHistory.Push(thread);
         }

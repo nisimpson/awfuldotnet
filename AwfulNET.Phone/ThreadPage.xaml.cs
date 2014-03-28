@@ -70,12 +70,12 @@ namespace AwfulNET.Phone
                 {
                     try
                     {
-                        var thread = GetThread(id, pageNumber);
-                        if (!mainDataModel.TabHistory.Contains(thread))
-                            mainDataModel.TabHistory.Push(thread);
-
+                        var thread = GetThread(id, pageNumber);                        
                         this.viewmodel = new ThreadPageViewModel(
                             thread, mainDataModel.TabHistory, this, this.progress);
+
+                        if (!query.ContainsKey("notab"))
+                            this.viewmodel.AddTab(thread);
 
                         tcs.SetResult(viewmodel);
                     }
