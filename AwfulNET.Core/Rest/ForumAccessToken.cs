@@ -284,6 +284,12 @@ namespace AwfulNET.Core.Rest
 
         public async Task<ForumPageMetadata> GetBookmarkPageAsync(int pagenumber = 1)
         {
+            bool isActive = this.IsActiveAccount;
+            Logger.Default.AddEntry(LogLevel.INFO, string.Format("[GetBookmarks] Is this a valid account? {0}", isActive));
+
+            if (!isActive)
+                throw new InactiveAccountException("Bookmarks are for active members only.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting bookmarks page {0}...", pagenumber));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[GetBookmarks] Creating web request...");

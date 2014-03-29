@@ -14,6 +14,7 @@ using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Phone.Tasks;
 using Microsoft.Phone.Controls;
 using System.Collections.ObjectModel;
+using AwfulNET.Core.Common;
 #else
 using AwfulNET.WinRT;
 #endif
@@ -47,7 +48,7 @@ namespace AwfulNET.DataModel
 
         #region IObserver
 
-        private void OnError(Exception obj)
+        protected virtual void OnError(Exception obj)
         {
             this.IsBusy = false;
             SetOnItemsReady(false);
@@ -274,6 +275,20 @@ namespace AwfulNET.DataModel
             : base(feed)
         {
             this.bookmarksFeed = feed;
+        }
+
+        protected override void OnError(Exception obj)
+        {
+            if (obj is InactiveAccountException)
+            {
+                EmptyText = "In order to view bookmarks, please login with your SA account.";
+                ItemsSource = null;
+                Items.Clear();
+                SetOnItemsReady(false);
+                return;
+            }
+ 	        
+            base.OnError(obj);
         }
 
         protected override void OnPinChanged(ThreadDataGroup group)

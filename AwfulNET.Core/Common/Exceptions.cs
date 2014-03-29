@@ -11,4 +11,9 @@ namespace AwfulNET.Core.Common
        public BannedAccountException(string message) : base(message) { }
        public BannedAccountException(Exception inner) : base("This account has been banned.", inner) { }
    }
+
+   public sealed class InactiveAccountException : Exception
+   {
+       public InactiveAccountException(string message) : base(message) { }
+   }
 }
