@@ -264,6 +264,10 @@ namespace AwfulNET
                 var bytes = await content.ReadAsByteArrayAsync();
                 html = western.GetString(bytes, 0, bytes.Length);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html start:");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
+                Logger.Default.AddEntry(LogLevel.INFO, html);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
             }
             catch (Exception ex) 
