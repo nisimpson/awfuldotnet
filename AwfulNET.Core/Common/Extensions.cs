@@ -215,8 +215,33 @@ namespace AwfulNET
             {
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] " + requestUri);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync");
-                result = await client.GetAsync(requestUri); 
+                
+                result = await client.GetAsync(requestUri);
+                result.EnsureSuccessStatusCode();
+
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] StatusCode: " + result.StatusCode);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpResponse Start:");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] -------------------");
+
+                var enumerator = result.Headers.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    string key = enumerator.Current.Key;
+                    StringBuilder builder = new StringBuilder();
+                    foreach(var value in enumerator.Current.Value)
+                        builder.AppendFormat("{0}, ", value);
+
+                    Logger.Default.AddEntry(LogLevel.INFO, string.Format("[{0}]: {1}", key, builder.ToString()));
+                }
+
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] --------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpResponse End.");
             }
+            catch (HttpRequestException hre)
+            {
+                Logger.Default.AddEntry(LogLevel.WARNING, hre);
+            }
+
             catch (Exception ex) 
             { 
                 var timeout = new TimeoutException("The request timed out.", ex);
@@ -266,7 +291,6 @@ namespace AwfulNET
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html start:");
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
-                Logger.Default.AddEntry(LogLevel.INFO, html);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
             }
@@ -281,6 +305,7 @@ namespace AwfulNET
             doc.LoadHtml(html);
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Disposing content resource...");
             content.Dispose();
+
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
             return doc;
         }

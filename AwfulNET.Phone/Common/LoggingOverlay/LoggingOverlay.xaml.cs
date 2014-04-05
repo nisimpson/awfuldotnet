@@ -26,7 +26,21 @@ namespace AwfulNET.Common
             context.Context.Entries.CollectionChanged += Entries_CollectionChanged;
             this.DataContext = context;
 
-            this.LayoutRoot.DoubleTap += LayoutRoot_DoubleTap;
+            this.DoubleTap += LayoutRoot_DoubleTap;
+            this.Tap += LoggingOverlay_Tap;
+        }
+
+        void LoggingOverlay_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            IList<LogEntry> list = context.Context.Entries as IList<LogEntry>;
+            FrameworkElement selector = this.logEntryListView as FrameworkElement;
+            try
+            {
+                UpdateLayout();
+                (selector as LongListSelector).ScrollTo(list.Last());
+
+            }
+            catch (Exception) { }
         }
 
         void LayoutRoot_DoubleTap(object sender, System.Windows.Input.GestureEventArgs e)
@@ -44,17 +58,7 @@ namespace AwfulNET.Common
 
         void Entries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Task.Delay(10).ContinueWith(task =>
-                {
-                    IList<LogEntry> list = sender as IList<LogEntry>;
-                    try
-                    {
-                        UpdateLayout();
-                        this.LayoutRoot.ScrollToVerticalOffset(this.LayoutRoot.ExtentHeight);
-                    }
-                    catch (Exception) { }
-
-                }, TaskScheduler.FromCurrentSynchronizationContext());
+           
         }
     }
 

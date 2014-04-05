@@ -43,7 +43,7 @@ namespace AwfulNET
             {
                 CookieContainer = cookieContainer,
                 UseCookies = true,
-                AllowAutoRedirect = true
+                AllowAutoRedirect = false
             };
 
             if (cookies != null)

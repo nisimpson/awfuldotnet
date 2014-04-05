@@ -9,23 +9,17 @@
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     d:DesignHeight="480" d:DesignWidth="480">
-    
-    <ScrollViewer x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}"
-                  HorizontalScrollBarVisibility="Visible">
+
+    <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
         <Border Padding="0,12">
-            <ItemsControl x:Name="logEntryListView" ItemsSource="{Binding Context.Entries}">
-                <ItemsControl.ItemTemplate>
+            <phone:LongListSelector x:Name="logEntryListView" ItemsSource="{Binding Context.Entries}">
+                <phone:LongListSelector.ItemTemplate>
                     <DataTemplate>
                         <TextBlock TextWrapping="NoWrap" Text="{Binding Message}"
                                 Style="{StaticResource PhoneTextNormalStyle}" />
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+                </phone:LongListSelector.ItemTemplate>
+            </phone:LongListSelector>
         </Border>
-    </ScrollViewer>
+    </Grid>
 </UserControl>

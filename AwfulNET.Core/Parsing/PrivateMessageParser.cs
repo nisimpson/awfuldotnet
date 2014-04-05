@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 
 using AwfulNET.Core.Rest;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.Core.Parsing
 {
@@ -46,6 +47,17 @@ namespace AwfulNET.Core.Parsing
             List<PrivateMessageFolderMetadata> folders = new List<PrivateMessageFolderMetadata>();
             // get select option nodes
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
+
             var selectNode = top.Descendants("select")
                 .Where(node => node.GetAttributeValue("name", string.Empty).Equals("folderid"))
                 .FirstOrDefault();
@@ -78,6 +90,16 @@ namespace AwfulNET.Core.Parsing
         public static ICollection<TagMetadata> ParseNewPrivateMessageIcons(HtmlDocument doc)
         {
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var iconArray = top.Descendants(NEW_MESSAGE_ICON_TAG)
                 .Where(node => node.GetAttributeValue("class", string.Empty).Equals(NEW_MESSAGE_POSTICON))
                 .ToArray();
@@ -114,6 +136,16 @@ namespace AwfulNET.Core.Parsing
         {
             List<PrivateMessageMetadata> messages = new List<PrivateMessageMetadata>();
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var messagesNode = top.Descendants("table").FirstOrDefault();
             var messageTable = messagesNode.Descendants("tr").ToArray();
 
@@ -162,6 +194,16 @@ namespace AwfulNET.Core.Parsing
         {
             var pmRequest = new PrivateMessageRequest();
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var inputArray = top.Descendants("input").ToArray();
 
             string toUser = GetInputValue(inputArray, NEW_MESSAGE_TOUSER);
@@ -185,6 +227,17 @@ namespace AwfulNET.Core.Parsing
 
         private static List<TagMetadata> ParseFormTagOptions(HtmlDocument doc)
         {
+            var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var tagNodes = doc.DocumentNode.Descendants("div")
                 .Where(node => node.GetAttributeValue("class", string.Empty).Equals("posticon"));
 
@@ -220,6 +273,15 @@ namespace AwfulNET.Core.Parsing
         {
             var pm = new PrivateMessageMetadata();
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
 
             // **** PARSE BODY *****
             var postBodyNode = top.Descendants("td")
@@ -287,6 +349,16 @@ namespace AwfulNET.Core.Parsing
         {
             PrivateMessageFolderMetadata folder = null;
             var top = htmlDocument.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(htmlDocument);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var currentFolderNode = top.Descendants("div")
                 .Where(node => node.GetAttributeValue("class", string.Empty).Equals("breadcrumbs"))
                 .FirstOrDefault();
@@ -322,6 +394,16 @@ namespace AwfulNET.Core.Parsing
         {
             PrivateMessageFolderEditor request = null;
             var top = htmlDocument.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(htmlDocument);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var inputArray = top.Descendants("input");
             if (inputArray != null)
             {
