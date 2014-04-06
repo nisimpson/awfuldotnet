@@ -297,10 +297,22 @@ namespace AwfulNET.DataModel
             }
         }
 
+        private RelayCommand toggleStyleCommand = null;
+        public RelayCommand ToggleStyleCommand { get { return this.toggleStyleCommand; } }
+
         public BookmarkDataGroup(BookmarksFeed feed)
             : base(feed)
         {
             this.bookmarksFeed = feed;
+            this.toggleStyleCommand = new RelayCommand(ToggleStyle);
+        }
+
+        private void ToggleStyle()
+        {
+            if (this.sortStyle == SortStyle.Awful)
+                this.SortingStyle = SortStyle.Classic;
+            else
+                this.SortingStyle = SortStyle.Awful;
         }
 
         private void SortItems(SortStyle value)

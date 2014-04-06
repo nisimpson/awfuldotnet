@@ -164,6 +164,7 @@
                     </Grid.RowDefinitions>
                     <Grid Margin="0, -24, 0, 24">
                         <TextBlock x:Name="BookmarkListSortStatus" Style="{StaticResource PhoneTextTitle3Style}"
+                                   common:UIExtensions.TapCommand="{Binding ToggleStyleCommand}"
                                    Foreground="{StaticResource PhoneSubtleBrush}">
                             <Run Text="using" />
                             <Run Text=" " />
