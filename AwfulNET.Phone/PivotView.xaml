@@ -58,7 +58,6 @@
 		<Grid.Resources>
 
             <!-- jump list template and style -->
-
 			<DataTemplate x:Key="listViewItemTemplate">
 				<Grid toolkit:TiltEffect.IsTiltEnabled="True">
 					<toolkit:ContextMenuService.ContextMenu>
@@ -159,7 +158,22 @@
 				d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=datamodel:SampleDataGroup}"
 				Header="{Binding Title}">
 				<Grid>
-					<ContentControl Style="{StaticResource listContentStyle}" Content="{Binding}" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="0, -24, 0, 24">
+                        <TextBlock x:Name="BookmarkListSortStatus" Style="{StaticResource PhoneTextTitle3Style}"
+                                   Foreground="{StaticResource PhoneSubtleBrush}">
+                            <Run Text="using" />
+                            <Run Text=" " />
+                            <Run Text="{Binding SortStyle, FallbackValue='awful style'}"
+                                    Foreground="{StaticResource PhoneAccentBrush}" />
+                            <Run Text=" " />
+                            <Run Text="sorting" />
+                        </TextBlock>
+                    </Grid>
+					<ContentControl Grid.Row="1" Style="{StaticResource listContentStyle}" Content="{Binding}" />
 				</Grid>
 			</phone:PivotItem>
 
