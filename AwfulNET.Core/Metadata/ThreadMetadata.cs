@@ -48,6 +48,10 @@ namespace AwfulNET
         public string IconUri { get; set; }
         [DataMember]
         public BookmarkColorCategory ColorCategory { get; set; }
+        [DataMember]
+        public DateTime KilledByDate { get; set; }
+        [DataMember]
+        public string KilledBy { get; set; }
 
         public bool Equals(ThreadMetadata other)
         {

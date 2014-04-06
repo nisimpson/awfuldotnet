@@ -14,6 +14,7 @@ using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.Phone.Tasks;
 using Microsoft.Phone.Controls;
 using System.Collections.ObjectModel;
+using AwfulNET.Core.Common;
 #else
 using AwfulNET.WinRT;
 #endif
@@ -59,14 +60,23 @@ namespace AwfulNET.DataModel
             HandleError(obj);
         }
 
+        // Handle any processing of the thread metadata list here (i.e. sorting)
+        protected virtual IEnumerable<ThreadMetadata> ProcessThreadCollection(ThreadMetadataCollection obj)
+        {
+            return obj;
+        }
+
         private IEnumerable<ICommonDataModel> ProcessItems(ThreadMetadataCollection obj)
         {
-            foreach (var item in obj)
+            var processed = ProcessThreadCollection(obj);
+
+            foreach (var item in processed)
             {
                 ThreadDataItem data = new ThreadDataItem(item, this.feed.Token);
                 data.Group = this;
                 this.Items.Add(data);
             }
+
             return this.Items;
         }
 
@@ -270,10 +280,56 @@ namespace AwfulNET.DataModel
     {
         private readonly BookmarksFeed bookmarksFeed;
 
+        public enum SortStyle
+        {
+            Awful = 0,
+            Classic
+        }
+
+        private SortStyle sortStyle = SortStyle.Awful;
+        public SortStyle SortingStyle
+        {
+            get { return this.sortStyle; }
+            set
+            {
+                if (SetProperty(ref this.sortStyle, value))
+                    this.SortItems(value);
+            }
+        }
+
         public BookmarkDataGroup(BookmarksFeed feed)
             : base(feed)
         {
             this.bookmarksFeed = feed;
+        }
+
+        private void SortItems(SortStyle value)
+        {
+            IOrderedEnumerable<ICommonDataModel> sorted = null;
+            if (value == SortStyle.Awful)
+            {
+                sorted = this.Items.OrderBy((model) => { return (model as ThreadDataItem).Thread; },
+                    CompareThreadByNewPost.Instance);
+            }
+            else
+            {
+                sorted = this.Items.OrderBy((model) => { return (model as ThreadDataItem).Thread; },
+                    CompareThreadByKilledByDate.Instance);
+            }
+
+            this.Items.Clear();
+            foreach (var item in sorted)
+                this.Items.Add(item);
+        }
+
+        protected override IEnumerable<ThreadMetadata> ProcessThreadCollection(ThreadMetadataCollection obj)
+        {
+            if (this.SortingStyle == SortStyle.Awful)
+                obj.Sort(CompareThreadByNewPost.Instance);
+            else
+                obj.Sort(CompareThreadByKilledByDate.Instance);
+
+            return obj;
         }
 
         protected override void OnPinChanged(ThreadDataGroup group)
@@ -303,7 +359,6 @@ namespace AwfulNET.DataModel
             SetOnItemsReady(true);
             return false;   // return false because we don't want to navigate to list view.
         }
-
     }
 
     public class ThreadDataItem : CommonDataModel,

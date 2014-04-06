@@ -52,7 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\AsyncObserver.cs" />
-    <Compile Include="Common\CompareThreadByNewPost.cs" />
+    <Compile Include="Common\ThreadComparers.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\Exceptions.cs" />
     <Compile Include="Common\Extensions.cs" />

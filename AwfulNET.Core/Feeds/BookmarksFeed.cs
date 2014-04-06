@@ -17,7 +17,8 @@ namespace AwfulNET.Core.Feeds
 
         protected override Task<ThreadMetadataCollection> OnItemsCreated(ThreadMetadataCollection collection)
         {
-            collection.Sort(CompareThreadByNewPost.Instance);
+            // we're going to sort later.
+            //collection.Sort(CompareThreadByNewPost.Instance);
             return base.OnItemsCreated(collection);
         }
 

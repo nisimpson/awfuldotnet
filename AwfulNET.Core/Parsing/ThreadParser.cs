@@ -22,6 +22,7 @@ namespace AwfulNET.Core.Parsing
                 .ParseRating(node)
                 .ParseSticky(node)
                 .ParseColorCategory(node)
+                .ParseKilledBy(node)
                 .ParseIconUri(node);
 
             thread.LastUpdated = DateTime.Now;
@@ -31,6 +32,46 @@ namespace AwfulNET.Core.Parsing
         private const string COLOR_CATEGORY0 = "bm0";
         private const string COLOR_CATEGORY1 = "bm1";
         private const string COLOR_CATEGORY2 = "bm2";
+
+        private const string LASTPOST_CLASS = "lastpost";
+        private const string LASTPOST_DATE = "date";
+        private const string LASTPOST_AUTHOR = "author";
+
+        // Parses the killed by (last post) author and post date of the thread.
+        private static ThreadMetadata ParseKilledBy(this ThreadMetadata thread, HtmlNode node)
+        {
+            try
+            {
+                HtmlNode lastpost = node.Descendants()
+                    .Where(n => n.GetAttributeValue("class", string.Empty).Equals(LASTPOST_CLASS))
+                    .FirstOrDefault();
+
+                HtmlNode date = lastpost.Descendants()
+                    .Where(n => n.GetAttributeValue("class", string.Empty).Equals(LASTPOST_DATE))
+                    .FirstOrDefault();
+
+                HtmlNode killedBy = lastpost.Descendants()
+                    .Where(n => n.GetAttributeValue("class", string.Empty).Equals(LASTPOST_AUTHOR))
+                    .FirstOrDefault();
+
+                DateTime killedByDate = default(DateTime);
+                DateTime.TryParse(date.InnerText, out killedByDate);
+
+                 thread.KilledBy = WebUtility.HtmlDecode(killedBy.InnerText.Trim());
+                 thread.KilledByDate = killedByDate;
+            }
+
+            catch (Exception ex)
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[KilledBy] Parse killed by failed. Setting default values and skipping.");
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+
+                thread.KilledBy = "Unknown";
+                thread.KilledByDate = DateTime.Now;
+            }
+
+            return thread;
+        }
 
         private static ThreadMetadata ParseColorCategory(this ThreadMetadata thread, HtmlNode node)
         {

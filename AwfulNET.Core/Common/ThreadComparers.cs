@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AwfulNET.Core.Common
 {
-    internal class CompareThreadByNewPost : IComparer<ThreadMetadata>
+    public class CompareThreadByNewPost : IComparer<ThreadMetadata>
     {
         private static CompareThreadByNewPost instance;
         public static CompareThreadByNewPost Instance
@@ -54,6 +54,21 @@ namespace AwfulNET.Core.Common
             }
 
             return score;
+        }
+    }
+
+    public class CompareThreadByKilledByDate : IComparer<ThreadMetadata>
+    {
+        public static readonly CompareThreadByKilledByDate Instance = new CompareThreadByKilledByDate();
+
+        private CompareThreadByKilledByDate() { }
+
+        public int Compare(ThreadMetadata x, ThreadMetadata y)
+        {
+            if (object.ReferenceEquals(x, y))
+                return 0;
+
+            return x.KilledByDate.CompareTo(y.KilledByDate);
         }
     }
 }
