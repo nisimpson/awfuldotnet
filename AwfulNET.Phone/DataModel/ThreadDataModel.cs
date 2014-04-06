@@ -317,16 +317,24 @@ namespace AwfulNET.DataModel
 
         private void SortItems(SortStyle value)
         {
-            IOrderedEnumerable<ICommonDataModel> sorted = null;
+            IEnumerable<ICommonDataModel> sorted = null;
             if (value == SortStyle.Awful)
             {
-                sorted = this.Items.OrderBy((model) => { return (model as ThreadDataItem).Thread; },
-                    CompareThreadByNewPost.Instance);
+                sorted = this.Items.OrderBy<ICommonDataModel, ThreadMetadata>((model) =>
+                {
+                    return (model as ThreadDataItem).Thread;
+                },
+
+                CompareThreadByNewPost.Instance).ToList();
             }
             else
             {
-                sorted = this.Items.OrderBy((model) => { return (model as ThreadDataItem).Thread; },
-                    CompareThreadByKilledByDate.Instance);
+                sorted = this.Items.OrderBy<ICommonDataModel, ThreadMetadata>((model) =>
+                {
+                    return (model as ThreadDataItem).Thread;
+                },
+
+                CompareThreadByKilledByDate.Instance).ToList();
             }
 
             this.Items.Clear();

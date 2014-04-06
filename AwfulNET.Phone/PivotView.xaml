@@ -158,19 +158,19 @@
 				d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=datamodel:SampleDataGroup}"
 				Header="{Binding Title}">
 				<Grid>
+                    <Grid.Resources>
+                        <common:SortStyleTextConverter x:Key="SortStyleConverter" />
+                    </Grid.Resources>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid Margin="0, -24, 0, 24">
                         <TextBlock x:Name="BookmarkListSortStatus" Style="{StaticResource PhoneTextTitle3Style}"
-                                   common:UIExtensions.TapCommand="{Binding ToggleStyleCommand}"
-                                   Foreground="{StaticResource PhoneSubtleBrush}">
-                            <Run Text="using" />
-                            <Run Text=" " />
-                            <Run Text="{Binding SortStyle, FallbackValue='awful style'}"
+                                common:UIExtensions.TapCommand="{Binding ToggleStyleCommand}"
+                                Foreground="{StaticResource PhoneSubtleBrush}">
+                            <Run Text="{Binding SortingStyle, Converter={StaticResource SortStyleConverter}, FallbackValue='awful style'}"
                                     Foreground="{StaticResource PhoneAccentBrush}" />
-                            <Run Text=" " />
                             <Run Text="sorting" />
                         </TextBlock>
                     </Grid>
