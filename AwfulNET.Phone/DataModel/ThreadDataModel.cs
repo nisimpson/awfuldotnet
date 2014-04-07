@@ -280,6 +280,8 @@ namespace AwfulNET.DataModel
     {
         private readonly BookmarksFeed bookmarksFeed;
 
+        private static readonly ISettingsModel Settings = SettingsModelFactory.GetSettingsModel();
+
         public enum SortStyle
         {
             Awful = 0,
@@ -293,7 +295,11 @@ namespace AwfulNET.DataModel
             set
             {
                 if (SetProperty(ref this.sortStyle, value))
+                {
                     this.SortItems(value);
+                    Settings.AddOrUpdate("BookmarkSortStyle", (int)value);
+                    Settings.SaveSettings();
+                }
             }
         }
 
@@ -305,6 +311,7 @@ namespace AwfulNET.DataModel
         {
             this.bookmarksFeed = feed;
             this.toggleStyleCommand = new RelayCommand(ToggleStyle, CanToggleStyle);
+            this.sortStyle = (SortStyle)Settings.GetValueOrDefault<int>("BookmarkSortStyle", (int)SortStyle.Awful);
         }
 
         private bool CanToggleStyle()
@@ -490,7 +497,7 @@ namespace AwfulNET.DataModel
 
         private string FormatDescription(ThreadMetadata metadata)
         {
-            // rated 4 <> 299 new posts
+            // rated 4 <> 299 new posts <> killed by author
             StringBuilder builder = new StringBuilder();
             if (metadata.Rating != 0)
             {
