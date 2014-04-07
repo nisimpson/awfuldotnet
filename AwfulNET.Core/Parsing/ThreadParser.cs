@@ -23,6 +23,7 @@ namespace AwfulNET.Core.Parsing
                 .ParseSticky(node)
                 .ParseColorCategory(node)
                 .ParseKilledBy(node)
+                .ParseIsClosed(node)
                 .ParseIconUri(node);
 
             thread.LastUpdated = DateTime.Now;
@@ -36,6 +37,25 @@ namespace AwfulNET.Core.Parsing
         private const string LASTPOST_CLASS = "lastpost";
         private const string LASTPOST_DATE = "date";
         private const string LASTPOST_AUTHOR = "author";
+
+        private const string CLOSED_CLASS = "closed";
+
+        private static ThreadMetadata ParseIsClosed(this ThreadMetadata thread, HtmlNode node)
+        {
+            try
+            {
+                string nodeClass = node.GetAttributeValue("class", string.Empty);
+                thread.IsClosed = nodeClass.Contains(CLOSED_CLASS);
+            }
+            catch(Exception ex)
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[ThreadParse] ParseIsClosed failed. Skipping...");
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                thread.IsClosed = false;
+            }
+
+            return thread;
+        }
 
         // Parses the killed by (last post) author and post date of the thread.
         private static ThreadMetadata ParseKilledBy(this ThreadMetadata thread, HtmlNode node)

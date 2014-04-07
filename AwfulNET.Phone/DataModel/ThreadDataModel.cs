@@ -444,7 +444,7 @@ namespace AwfulNET.DataModel
             this.myToken = token;
             this.thread = thread;
             this.UniqueID = thread.ThreadID;
-            this.Title = thread.Title;
+            this.Title = FormatTitle(thread);
             this.Subtitle = FormatSubtitle(thread);
             this.Description = FormatDescription(thread);
             this.DataType = MainDataModel.DATATYPE_THREAD;
@@ -464,6 +464,13 @@ namespace AwfulNET.DataModel
         }
 
         #region Common Members
+
+        private string FormatTitle(ThreadMetadata thread)
+        {
+            return string.Format("{0}{1}", thread.Title, thread.IsClosed
+                ? " [CLOSED]"
+                : string.Empty);
+        }
 
         private const string ICON_BASE = "http://raw.github.com/Awful/thread-tags/master/";
         private string FormatIconImageSource(ThreadMetadata thread)
