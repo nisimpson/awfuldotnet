@@ -491,21 +491,11 @@ namespace AwfulNET.DataModel
                 builder.Append(" " + "\u2022" + " ");
             }
 
-            /* Post count information won't be shown in the description.
-             * Let's remove it later.
-             * 
-            if (!metadata.IsNew)
-            {
-                builder.Append(metadata.NewPostCount > 0 ?
-                    string.Format("{0} new {1}", metadata.NewPostCount,
-                    metadata.NewPostCount > 1 ? "posts \u2022 " : "post \u2022 ") :
-                    "no new posts " + "\u2022" + " ");
-            }
-            */
-
             builder.AppendFormat("{0} {1}",
                    metadata.PageCount,
                    metadata.PageCount == 1 ? "page" : "pages");
+
+            builder.AppendFormat(" \u2022 killed by {0}", metadata.KilledBy);
 
             return builder.ToString();
         }

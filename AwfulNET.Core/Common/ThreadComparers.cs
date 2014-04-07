@@ -68,7 +68,7 @@ namespace AwfulNET.Core.Common
             if (object.ReferenceEquals(x, y))
                 return 0;
 
-            return x.KilledByDate.CompareTo(y.KilledByDate);
+            return y.KilledByDate.CompareTo(x.KilledByDate);
         }
     }
 }
