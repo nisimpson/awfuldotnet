@@ -167,6 +167,7 @@
                     </Grid.RowDefinitions>
                     <Grid Margin="0, -24, 0, 24">
                         <TextBlock x:Name="BookmarkListSortStatus" Style="{StaticResource PhoneTextTitle3Style}"
+                                   toolkit:TiltEffect.IsTiltEnabled="True"
                                 common:UIExtensions.TapCommand="{Binding ToggleStyleCommand}"
                                 Foreground="{StaticResource PhoneSubtleBrush}">
                             <Run Text="{Binding SortingStyle, Converter={StaticResource SortStyleConverter}, FallbackValue='awful style'}"

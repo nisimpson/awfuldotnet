@@ -43,7 +43,9 @@ namespace AwfulNET.Common
         {
             FrameworkElement element = sender as FrameworkElement;
             ICommand command = GetTapCommand(element);
-            command.Execute(element.DataContext);
+            
+            if (command.CanExecute(element.DataContext))
+                command.Execute(element.DataContext);
         }
 
         public static ICommand GetTapCommand(FrameworkElement element)

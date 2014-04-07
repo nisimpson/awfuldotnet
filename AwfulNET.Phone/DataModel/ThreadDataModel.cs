@@ -304,7 +304,12 @@ namespace AwfulNET.DataModel
             : base(feed)
         {
             this.bookmarksFeed = feed;
-            this.toggleStyleCommand = new RelayCommand(ToggleStyle);
+            this.toggleStyleCommand = new RelayCommand(ToggleStyle, CanToggleStyle);
+        }
+
+        private bool CanToggleStyle()
+        {
+            return !this.IsBusy;
         }
 
         private void ToggleStyle()
