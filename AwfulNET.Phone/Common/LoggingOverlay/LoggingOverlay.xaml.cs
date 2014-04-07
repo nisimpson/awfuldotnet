@@ -22,12 +22,18 @@ namespace AwfulNET.Common
         public LoggingOverlay()
         {
             InitializeComponent();
+            NotificationService.Default.Register<string>(OnHtmlNotify);
             context = new LoggingOverlayViewModel();
             context.Context.Entries.CollectionChanged += Entries_CollectionChanged;
             this.DataContext = context;
 
             this.DoubleTap += LayoutRoot_DoubleTap;
             this.Tap += LoggingOverlay_Tap;
+        }
+
+        private void OnHtmlNotify(INotification<string> obj)
+        {
+            Deployment.Current.Dispatcher.BeginInvoke(() => { this.HtmlBrowser.NavigateToString(obj.Value); });
         }
 
         void LoggingOverlay_Tap(object sender, System.Windows.Input.GestureEventArgs e)

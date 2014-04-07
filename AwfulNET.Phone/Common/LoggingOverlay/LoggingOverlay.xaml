@@ -12,14 +12,17 @@
 
     <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
         <Border Padding="0,12">
-            <phone:LongListSelector x:Name="logEntryListView" ItemsSource="{Binding Context.Entries}">
-                <phone:LongListSelector.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock TextWrapping="NoWrap" Text="{Binding Message}"
-                                Style="{StaticResource PhoneTextNormalStyle}" />
-                    </DataTemplate>
-                </phone:LongListSelector.ItemTemplate>
-            </phone:LongListSelector>
+            <Grid>
+                <phone:WebBrowser x:Name="HtmlBrowser" />
+                <phone:LongListSelector Visibility="Collapsed" x:Name="logEntryListView" ItemsSource="{Binding Context.Entries}">
+                    <phone:LongListSelector.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock TextWrapping="NoWrap" Text="{Binding Message}"
+                                    Style="{StaticResource PhoneTextNormalStyle}" />
+                        </DataTemplate>
+                    </phone:LongListSelector.ItemTemplate>
+                </phone:LongListSelector>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

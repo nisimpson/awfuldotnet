@@ -288,9 +288,13 @@ namespace AwfulNET
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
                 var bytes = await content.ReadAsByteArrayAsync();
                 html = western.GetString(bytes, 0, bytes.Length);
+               
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html start:");
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
+
+                NotificationService.Default.Notify<string>(content, html);
+
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
             }
