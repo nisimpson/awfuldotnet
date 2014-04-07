@@ -330,7 +330,7 @@ namespace AwfulNET.DataModel
                     return (model as ThreadDataItem).Thread;
                 },
 
-                CompareThreadByNewPost.Instance).ToList();
+                CompareThreadByWeightScore.Instance).ToList();
             }
             else
             {
@@ -350,7 +350,7 @@ namespace AwfulNET.DataModel
         protected override IEnumerable<ThreadMetadata> ProcessThreadCollection(ThreadMetadataCollection obj)
         {
             if (this.SortingStyle == SortStyle.Awful)
-                obj.Sort(CompareThreadByNewPost.Instance);
+                obj.Sort(CompareThreadByWeightScore.Instance);
             else
                 obj.Sort(CompareThreadByKilledByDate.Instance);
 

@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace AwfulNET.Core.Common
 {
-    public class CompareThreadByNewPost : IComparer<ThreadMetadata>
+    public class CompareThreadByWeightScore : IComparer<ThreadMetadata>
     {
-        private static CompareThreadByNewPost instance;
-        public static CompareThreadByNewPost Instance
+        private static CompareThreadByWeightScore instance;
+        public static CompareThreadByWeightScore Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new CompareThreadByNewPost();
+                    instance = new CompareThreadByWeightScore();
 
                 return instance;
             }
         }
 
-        private CompareThreadByNewPost() { }
+        private CompareThreadByWeightScore() { }
 
         public int Compare(ThreadMetadata x, ThreadMetadata y)
         {
@@ -38,11 +38,17 @@ namespace AwfulNET.Core.Common
         private int ComputeScore(ThreadMetadata x)
         {
             /// ranking is as follows:
+            /// 0) closed threads
             /// 1) old threads with new posts
             /// 2) new threads
             /// 3) old threads with no new posts 
 
-            int score = 0; // baseline; new threads wil have a score of 0
+            // baseline; new threads wil have a score of 0
+            int score = 0;
+
+            // closed threads have the lowest possible value
+            if (x.IsClosed)
+                score = int.MinValue;
 
             if (!x.IsNew)
             {
