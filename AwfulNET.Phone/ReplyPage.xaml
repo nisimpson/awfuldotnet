@@ -19,6 +19,7 @@
             <shell:ApplicationBarIconButton Text="send" IconUri="/assets/icon.png" />
             <shell:ApplicationBarIconButton Text="cancel" IconUri="/assets/icon.png" />
             <shell:ApplicationBarIconButton Text="upload" IconUri="/assets/icon.png" />
+            <shell:ApplicationBarIconButton Text="tags" IconUri="dummy" />
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="clear" />
             </shell:ApplicationBar.MenuItems>
@@ -27,6 +28,8 @@
     </phone:PhoneApplicationPage.ApplicationBar>
 
     <i:Interaction.Behaviors>
+        <apu:AppBarItemNavigation Id="tags" Text="tags" IconUri="/Assets/AppBar/tags.png" Type="Button" TargetPage="/Views/Etc/TagsPage.xaml" />
+        
         <apu:AppBarItemCommand Type="Button" Id="send" Command="{Binding SubmitFormCommand}" Text="send"
                 IconUri="/Assets/AppBar/check.png" />
         <apu:AppBarItemCommand Type="Button" Id="cancel" Command="{Binding PostForm.GoBackCommand}" Text="cancel"

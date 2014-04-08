@@ -22,9 +22,7 @@ namespace AwfulNET.Phone.Common
         {
             InitializeComponent();
             this.MainPivot.SelectionChanged += MainPivot_SelectionChanged;
-            context = this.SelectorViewModel;
-            context.SelectTagCommand = new RelayCommand<object>(SelectTag);
-            this.DataContext = context;
+            context = this.LayoutRoot.DataContext as SmileyTagSelectorViewModel;
         }
 
         private async void MainPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -49,14 +47,23 @@ namespace AwfulNET.Phone.Common
                     TagSelected(this, EventArgs.Empty);
             }
         }
+
+        private void OnSelectItemCommandExecute(object sender, ExecuteEventArgs args)
+        {
+            SelectTag(args.Parameter);
+        }
+
+        private void OnSearchCommandExecuteRaised(object sender, ExecuteEventArgs args)
+        {
+            string text = args.Parameter as string;
+            context.Smilies.ItemsSource = context.Smilies.Filter(text);
+        }
     }
 
     public sealed class SmileyTagSelectorViewModel : BindableBase
     {
         private static readonly SmileyTagGroup smilies = new SmileyTagGroup();
         public SmileyTagGroup Smilies { get { return smilies; } }
-
-        public ICommand SelectTagCommand { get; set; }
 
         public string Title { get { return "select to copy code"; } }
     }

@@ -24,6 +24,7 @@ namespace AwfulNET.DataModel
     {
         private static readonly SmiliesFeed feed = new SmiliesFeed();
         private IDisposable unsubscriber;
+        private IProgress<string> progress;
 
         public SmileyTagGroup() : base()
         {
@@ -33,11 +34,18 @@ namespace AwfulNET.DataModel
         private void OnCompleted()
         {
             this.isBusy = false;
+
+            if (this.progress != null)
+                this.progress.Report(null);
         }
 
         private void OnError(Exception obj)
         {
             this.isBusy = false;
+
+            if (this.progress != null)
+                this.progress.Report(null);
+
             this.Items.Clear();
             this.EmptyText = "Oops, something went wrong. Please try again later.";
         }
@@ -51,7 +59,9 @@ namespace AwfulNET.DataModel
                 {
                     Title = item.Value,
                     Tag = item.Value,
-                    ImagePath = item.TagUri
+                    Subtitle = item.Title,
+                    ImagePath = item.TagUri,
+                    Code = item.Value
                 };
 
                 Items.Add(model);
@@ -59,6 +69,11 @@ namespace AwfulNET.DataModel
             }
 
             this.isBusy = false;
+
+            if (this.progress != null)
+                this.progress.Report(null);
+
+            this.ItemsSource = this.Items;
         }
 
         private string empty = string.Empty;
@@ -68,9 +83,11 @@ namespace AwfulNET.DataModel
             set { SetProperty(ref this.empty, value); }
         }
 
+        private System.Collections.IEnumerable itemsSource;
         public System.Collections.IEnumerable ItemsSource
         {
-            get { return this.Items; }
+            get { return this.itemsSource; }
+            set { SetProperty(ref this.itemsSource, value); }
         }
 
         public bool IsJumpList
@@ -99,6 +116,8 @@ namespace AwfulNET.DataModel
            if (!this.isBusy && this.Items.Count == 0)
            {
                this.isBusy = true;
+               this.progress = progress;
+               this.progress.Report("fetching smilies...");
                await feed.PullAsync();
            }
         }
@@ -123,6 +142,32 @@ namespace AwfulNET.DataModel
         public Task OnRefreshAsync(object state, IProgress<string> progress)
         {
             throw new InvalidOperationException("smiley data group cannot refresh.");
+        }
+
+        internal System.Collections.IEnumerable Filter(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return this.Items;
+
+            else if (this.Items.Count > 0)
+            {
+                var selected = this.Items
+                    .Where(item => { return FilterTag(item as CodeTagDataModel, text); })
+                    .ToList();
+
+                return selected;
+            }
+
+            return null;
+        }
+
+        private bool FilterTag(CodeTagDataModel tag, string text)
+        {
+            text = text.ToLower();
+
+            return tag.Title.ToLower().Contains(text) ||
+                tag.Code.ToLower().Contains(text) ||
+                tag.Subtitle.ToLower().Contains(text);
         }
     }
 
