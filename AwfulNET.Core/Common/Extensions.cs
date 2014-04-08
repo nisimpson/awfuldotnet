@@ -214,28 +214,22 @@ namespace AwfulNET
             try 
             {
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] " + requestUri);
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync");
-                
-                result = await client.GetAsync(requestUri);
-                result.EnsureSuccessStatusCode();
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync...");
 
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] StatusCode: " + result.StatusCode);
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpResponse Start:");
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] -------------------");
+                result = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead);
 
-                var enumerator = result.Headers.GetEnumerator();
-                while (enumerator.MoveNext())
-                {
-                    string key = enumerator.Current.Key;
-                    StringBuilder builder = new StringBuilder();
-                    foreach(var value in enumerator.Current.Value)
-                        builder.AppendFormat("{0}, ", value);
-
-                    Logger.Default.AddEntry(LogLevel.INFO, string.Format("[{0}]: {1}", key, builder.ToString()));
-                }
-
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Done.");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Http request header:");
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] --------------------");
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpResponse End.");
+                Logger.Default.AddEntry(LogLevel.INFO, result.RequestMessage.ToString());
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] --------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] StatusCode: " + result.StatusCode);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Http response header:");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] ---------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, result.ToString());
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] ---------------------");
+
+                result.EnsureSuccessStatusCode();
             }
             catch (HttpRequestException hre)
             {
@@ -286,17 +280,14 @@ namespace AwfulNET
             try
             {
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
+                
                 var bytes = await content.ReadAsByteArrayAsync();
                 html = western.GetString(bytes, 0, bytes.Length);
                
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html start:");
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
 
                 NotificationService.Default.Notify<string>(content, html);
-
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] -----------");
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
             }
             catch (Exception ex) 
             {
@@ -305,9 +296,12 @@ namespace AwfulNET
             }
 
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Creating html document...");
+            
             doc = new HtmlDocument();
             doc.LoadHtml(html);
+            
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Disposing content resource...");
+            
             content.Dispose();
 
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");

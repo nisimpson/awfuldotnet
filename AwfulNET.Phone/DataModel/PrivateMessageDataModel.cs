@@ -7,6 +7,7 @@ using AwfulNET.Core.Feeds;
 using AwfulNET.Common;
 using AwfulNET.Views;
 using System.IO;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.DataModel
 {
@@ -39,11 +40,20 @@ namespace AwfulNET.DataModel
                 }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private void OnError(Exception obj)
+        private void OnError(Exception ex)
         {
             this.IsBusy = false;
             SetOnItemsReady(false);
-            NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(obj.Message, "Oops! Something went wrong."));
+
+            string msg = ex.Message;
+
+#if DEBUG
+            msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+            Logger.Default.AddEntry(LogLevel.WARNING, ex);
+
+            NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(msg, "Oops! Something went wrong."));
             Items.Clear();
         }
 
@@ -103,11 +113,20 @@ namespace AwfulNET.DataModel
             SetOnItemsReady(true);
         }
 
-        private void OnError(Exception obj)
+        private void OnError(Exception ex)
         {
             this.IsBusy = false;
             SetOnItemsReady(false);
-            NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(obj.Message, "Oops! Something went wrong."));
+
+            string msg = ex.Message;
+
+#if DEBUG
+            msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+            Logger.Default.AddEntry(LogLevel.WARNING, ex);
+
+            NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(msg, "Oops! Something went wrong."));
             this.Items.Clear();
         }
 

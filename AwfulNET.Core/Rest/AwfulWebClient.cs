@@ -102,7 +102,9 @@ namespace AwfulNET
             content.Headers.Add("Origin", "http://forums.somethingawful.com");
          
             var response = await loginClient.PostAsync("/account.php", content);
-            response.EnsureSuccessStatusCode();
+            
+            // don't ensure success code. the server might return a 302, but with proper cookies.
+            //response.EnsureSuccessStatusCode();
            
             ForumAccessToken user = new ForumAccessToken();
             user.Username = username;
