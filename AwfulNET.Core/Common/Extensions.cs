@@ -299,12 +299,33 @@ namespace AwfulNET
             
             doc = new HtmlDocument();
             doc.LoadHtml(html);
-            
+
+            try
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html snippet (1000 char max):");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] --------------------");
+
+                var htmlNode = doc.DocumentNode.Descendants("html").First();
+
+                foreach (var node in htmlNode.ChildNodes)
+                {
+                    string outer = node.OuterHtml;
+                    if (!string.IsNullOrWhiteSpace(outer))
+                    {
+                        Logger.Default.AddEntry(LogLevel.INFO, outer.Substring(0, Math.Min(1000, outer.Length)));
+                        Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] <truncating>");
+                    }
+                }
+
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] --------------------");
+            }
+            catch (Exception) { }
+
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Disposing content resource...");
-            
             content.Dispose();
 
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
+
             return doc;
         }
 

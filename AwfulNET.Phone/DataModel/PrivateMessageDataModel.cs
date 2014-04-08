@@ -214,7 +214,7 @@ namespace AwfulNET.DataModel
 
         private string FormatDescription(PrivateMessageMetadata metadata)
         {
-            // grab the inner text from the message; strip any new lines.
+            // grab the outer text from the message; strip any new lines.
             if (string.IsNullOrEmpty(metadata.RawText))
                 return "loading preview...";
 

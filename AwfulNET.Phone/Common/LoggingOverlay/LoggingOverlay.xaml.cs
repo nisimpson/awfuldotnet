@@ -66,6 +66,25 @@ namespace AwfulNET.Common
         {
            
         }
+
+        private void SwitchView()
+        {
+            if (this.HtmlBrowser.Visibility == System.Windows.Visibility.Visible)
+            {
+                this.HtmlBrowser.Visibility = System.Windows.Visibility.Collapsed;
+                this.logEntryListView.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                this.logEntryListView.Visibility = System.Windows.Visibility.Collapsed;
+                this.HtmlBrowser.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        private void ToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            SwitchView();
+        }
     }
 
     public class LoggingOverlayViewModel : BindableBase

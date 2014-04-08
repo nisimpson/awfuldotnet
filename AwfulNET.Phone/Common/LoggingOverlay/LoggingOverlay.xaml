@@ -11,8 +11,12 @@
     d:DesignHeight="480" d:DesignWidth="480">
 
     <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneChromeBrush}">
-        <Border Padding="0,12">
+        <Border Padding="0,12,0,0">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <phone:WebBrowser x:Name="HtmlBrowser" />
                 <phone:LongListSelector Visibility="Collapsed" x:Name="logEntryListView" ItemsSource="{Binding Context.Entries}">
                     <phone:LongListSelector.ItemTemplate>
@@ -22,6 +26,8 @@
                         </DataTemplate>
                     </phone:LongListSelector.ItemTemplate>
                 </phone:LongListSelector>
+                
+                <Button x:Name="ToggleButton" Grid.Row="1" Content="Switch" Click="ToggleButton_Click" />
             </Grid>
         </Border>
     </Grid>
