@@ -479,7 +479,7 @@ namespace AwfulNET.DataModel
                 : string.Empty);
         }
 
-        private const string ICON_BASE = "http://raw.github.com/Awful/thread-tags/master/";
+        private const string ICON_BASE = "https://raw.githubusercontent.com/Awful/thread-tags/master/";
         private string FormatIconImageSource(ThreadMetadata thread)
         {
             if (string.IsNullOrEmpty(thread.IconUri))

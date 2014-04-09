@@ -43,7 +43,8 @@ namespace AwfulNET
             {
                 CookieContainer = cookieContainer,
                 UseCookies = true,
-                AllowAutoRedirect = true
+                AllowAutoRedirect = true,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
 
             if (cookies != null)

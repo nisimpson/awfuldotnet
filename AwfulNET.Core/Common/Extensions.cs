@@ -215,7 +215,7 @@ namespace AwfulNET
             {
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] " + requestUri);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync");
-                result = await client.GetAsync(requestUri); 
+                result = await client.GetAsync(requestUri, HttpCompletionOption.ResponseContentRead); 
             }
             catch (Exception ex) 
             { 
@@ -260,8 +260,8 @@ namespace AwfulNET
             string html = null;
             try
             {
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
                 var bytes = await content.ReadAsByteArrayAsync();
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
                 html = western.GetString(bytes, 0, bytes.Length);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
