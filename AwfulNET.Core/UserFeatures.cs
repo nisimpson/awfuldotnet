@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using AwfulNET.Core.Common;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,17 @@ namespace AwfulNET.Core
 
         internal static UserFeatures FromHtmlDocument(HtmlDocument html)
         {
+            var top = html.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(html);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             UserFeatures features = new UserFeatures();
 
             // grab <div class="standard"> node

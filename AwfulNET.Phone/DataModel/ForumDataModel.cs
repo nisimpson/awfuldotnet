@@ -84,13 +84,21 @@ namespace AwfulNET.DataModel
             SetOnItemsReady(true);
         }
 
-        private void OnError(Exception obj)
+        private void OnError(Exception ex)
         {
             this.IsBusy = false;
             SetOnItemsReady(false);
+
+            string msg = "An error occured while loading the forums.";
+
+#if DEBUG
+            msg = string.Format("An error occured while loading the forums.\n\n{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+            Logger.Default.AddEntry(LogLevel.WARNING, ex);
+
             NotificationService.Default.Notify<DialogMessage>(this,
-                new DialogMessage("An error occurred while loading the forums.",
-                    "Oops, something went wrong."));
+                new DialogMessage(msg, "Oops, something went wrong."));
 
             this.Items.Clear();
         }

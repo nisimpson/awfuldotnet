@@ -45,6 +45,14 @@ namespace AwfulNET.Core.Parsing
                 if (title != null && title.InnerText.ToLower().Contains("banned"))
                     throw new BannedAccountException("Cannot parse forums using a banned account.");
 
+                var body = parent.Descendants("body").FirstOrDefault();
+                if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+                {
+                    var ex = new SpecialMessageException(doc);
+                    Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                    throw ex;
+                }
+
                 // get all unique links off the page with hrefs containing "forumdisplay.php"
                 // and with nonempty class attributes
                 var forumAnchors = parent.Descendants("a")
@@ -89,6 +97,14 @@ namespace AwfulNET.Core.Parsing
             if (title != null && title.InnerText.ToLower().Contains("banned"))
             {
                 var ex = new BannedAccountException("Cannot parse forums using a banned account.");
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
+            var body = parent.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
                 Logger.Default.AddEntry(LogLevel.WARNING, ex);
                 throw ex;
             }
@@ -214,6 +230,16 @@ namespace AwfulNET.Core.Parsing
         public static IEnumerable<ForumMetadata> ParseForumDescription(this IEnumerable<ForumMetadata> forums,
             HtmlDocument doc)
         {
+            var parent = doc.DocumentNode;
+
+            var body = parent.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             // first, place each forum into a dictionary, with the name as the key, and the forum as the value.
             var forumMap = forums.ToDictionary<ForumMetadata, string>(forum => forum.ForumName);
 
@@ -246,6 +272,7 @@ namespace AwfulNET.Core.Parsing
 
         public static ForumPageMetadata ParseForumPage(HtmlDocument doc)
         {
+
             var top = doc.DocumentNode;
             var page = new ForumPageMetadata();
             int pageNumber = -1;
@@ -254,6 +281,15 @@ namespace AwfulNET.Core.Parsing
             var title = top.Descendants("title").FirstOrDefault();
             if (title != null && title.InnerText.ToLower().Contains("banned"))
                 throw new BannedAccountException("Cannot parse using a banned account.");
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
 
             // first, let's find the forum id
             var formNode = top.Descendants("form")

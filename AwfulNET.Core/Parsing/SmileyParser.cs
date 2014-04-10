@@ -1,4 +1,5 @@
 ﻿
+using AwfulNET.Core.Common;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,17 @@ namespace AwfulNET.Core.Parsing
 
         public static List<TagMetadata> ParseSmiliesFromHtml(HtmlDocument doc)
         {
+            var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             List<TagMetadata> list = null;
             try
             {

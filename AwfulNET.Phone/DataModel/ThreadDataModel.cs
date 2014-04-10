@@ -126,10 +126,18 @@ namespace AwfulNET.DataModel
             }
         }
 
-        private void HandleError(Exception obj)
+        private void HandleError(Exception ex)
         {
+            string msg = ex.Message;
+
+#if DEBUG
+            msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+            Logger.Default.AddEntry(LogLevel.WARNING, ex);
+
             NotificationService.Default.Notify<DialogMessage>(this,
-                new DialogMessage(obj.Message, "Oops, something went wrong."));
+                new DialogMessage(msg, "Oops, something went wrong."));
         }
 
         #endregion Common Members
@@ -828,7 +836,12 @@ namespace AwfulNET.DataModel
                     }
                     catch (Exception ex)
                     {
-                        toast = new ToastMessage(ex.Message, "Oops, something went wrong.");
+                        string msg = ex.Message;
+#if DEBUG
+                        msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+                        Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                        toast = new ToastMessage(msg, "Oops, something went wrong.");
                     }
 
                     NotificationService.Default.Notify<ToastMessage>(this, toast);

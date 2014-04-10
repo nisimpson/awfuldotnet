@@ -9,6 +9,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using AwfulNET.Common;
 using Windows.ApplicationModel.Store;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.Phone
 {
@@ -37,12 +38,17 @@ namespace AwfulNET.Phone
                     MessageBox.Show("Donation complete. Thanks again!", "Success!", MessageBoxButton.OK);
                 }
             }
-            catch (Exception) 
-            { 
-                MessageBox.Show(
-                    "Could not complete the donation process at this time. Please try again later.",
-                    "Oops! Something went wrong.", 
-                    MessageBoxButton.OK); 
+            catch (Exception ex) 
+            {
+                string msg = "Could not complete the donation process at this time. Please try again later.";
+
+#if DEBUG
+                msg = string.Format("{0}\n\n{1}\n\n{2}", msg, ex.Message, ex.StackTrace);
+#endif
+
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                MessageBox.Show(msg, "Oops! Something went wrong.", MessageBoxButton.OK); 
+
             }
             finally { progress.Report(null); }
         }
