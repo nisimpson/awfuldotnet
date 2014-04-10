@@ -150,7 +150,10 @@ namespace System.Net.Http
         public static async Task<HtmlDocument> GetHtmlAsync(this IHttpRequestBuilder builder, HttpClient client)
         {
             var result = await builder.SendRequestAsync(client);
-            result.EnsureSuccessStatusCode();
+            if (result.StatusCode == HttpStatusCode.NoContent)
+                throw new HttpRequestException("404 Not Found");
+
+            //result.EnsureSuccessStatusCode();
             HtmlDocument doc = await result.ToHtmlAsync();
             return doc;
         }

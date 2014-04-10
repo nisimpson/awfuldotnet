@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace AwfulNET.Core.Common
 {
+    public sealed class InactiveAccountException : Exception
+    {
+        public InactiveAccountException() : base() { }
+        public InactiveAccountException(string message) : base(message){ }
+        public InactiveAccountException(string message, Exception inner) : base(message, inner) { }
+    }
+
    public sealed class BannedAccountException : Exception
    {
        public BannedAccountException(string message) : base(message) { }

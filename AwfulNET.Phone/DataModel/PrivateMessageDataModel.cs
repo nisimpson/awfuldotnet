@@ -8,6 +8,7 @@ using AwfulNET.Common;
 using AwfulNET.Views;
 using System.IO;
 using AwfulNET.Core.Common;
+using AwfulNET.Core.Rest;
 
 namespace AwfulNET.DataModel
 {
