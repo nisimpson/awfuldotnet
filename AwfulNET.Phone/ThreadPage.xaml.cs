@@ -13,6 +13,7 @@ using AwfulNET.Views;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.Phone
 {
@@ -288,8 +289,15 @@ namespace AwfulNET.Phone
             try { await task; }
             catch (Exception ex)
             {
+                string msg = ex.Message;
+
+#if DEBUG
+                msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
                 result = false;
-                MessageBox.Show(ex.Message, "Oops, Something Went Wrong.", MessageBoxButton.OK);
+                MessageBox.Show(msg, "Oops, Something Went Wrong.", MessageBoxButton.OK);
             }
 
             return result;

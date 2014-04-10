@@ -214,9 +214,26 @@ namespace AwfulNET
             try 
             {
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] " + requestUri);
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync");
-                result = await client.GetAsync(requestUri); 
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync...");
+
+                result = await client.GetAsync(requestUri, HttpCompletionOption.ResponseContentRead);
+
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Done.");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Http request header:");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] --------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, result.RequestMessage.ToString());
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] --------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] StatusCode: " + result.StatusCode);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Http response header:");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] ---------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, result.ToString());
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] ---------------------");
             }
+            catch (HttpRequestException hre)
+            {
+                Logger.Default.AddEntry(LogLevel.WARNING, hre);
+            }
+
             catch (Exception ex) 
             { 
                 var timeout = new TimeoutException("The request timed out.", ex);
@@ -260,11 +277,15 @@ namespace AwfulNET
             string html = null;
             try
             {
-                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
                 var bytes = await content.ReadAsByteArrayAsync();
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
                 html = western.GetString(bytes, 0, bytes.Length);
+               
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
+
+                // Uncomment to attach to debugger
+                //NotificationService.Default.Notify<string>(content, html);
             }
             catch (Exception ex) 
             {
@@ -273,11 +294,36 @@ namespace AwfulNET
             }
 
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Creating html document...");
+            
             doc = new HtmlDocument();
             doc.LoadHtml(html);
+
+            try
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html snippet (1000 char max):");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] --------------------");
+
+                var htmlNode = doc.DocumentNode.Descendants("html").First();
+
+                foreach (var node in htmlNode.ChildNodes)
+                {
+                    string outer = node.OuterHtml;
+                    if (!string.IsNullOrWhiteSpace(outer))
+                    {
+                        Logger.Default.AddEntry(LogLevel.INFO, outer.Substring(0, Math.Min(1000, outer.Length)));
+                        Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] <truncating>");
+                    }
+                }
+
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] --------------------");
+            }
+            catch (Exception) { }
+
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Disposing content resource...");
             content.Dispose();
+
             Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
+
             return doc;
         }
 

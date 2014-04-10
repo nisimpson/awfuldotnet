@@ -37,6 +37,8 @@ namespace AwfulNET
         [DataMember]
         public bool IsNew { get; set; }
         [DataMember]
+        public bool IsClosed { get; set; }
+        [DataMember]
         public bool IsSticky { get; set; }
         [DataMember]
         public bool IsBookmarked { get; set; }
@@ -48,6 +50,10 @@ namespace AwfulNET
         public string IconUri { get; set; }
         [DataMember]
         public BookmarkColorCategory ColorCategory { get; set; }
+        [DataMember]
+        public DateTime KilledByDate { get; set; }
+        [DataMember]
+        public string KilledBy { get; set; }
 
         public bool Equals(ThreadMetadata other)
         {

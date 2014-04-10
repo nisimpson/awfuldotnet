@@ -22,11 +22,31 @@ namespace AwfulNET.Common
         public LoggingOverlay()
         {
             InitializeComponent();
+            NotificationService.Default.Register<string>(OnHtmlNotify);
             context = new LoggingOverlayViewModel();
             context.Context.Entries.CollectionChanged += Entries_CollectionChanged;
             this.DataContext = context;
 
-            this.LayoutRoot.DoubleTap += LayoutRoot_DoubleTap;
+            this.DoubleTap += LayoutRoot_DoubleTap;
+            this.Tap += LoggingOverlay_Tap;
+        }
+
+        private void OnHtmlNotify(INotification<string> obj)
+        {
+            Deployment.Current.Dispatcher.BeginInvoke(() => { this.HtmlBrowser.NavigateToString(obj.Value); });
+        }
+
+        void LoggingOverlay_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            IList<LogEntry> list = context.Context.Entries as IList<LogEntry>;
+            FrameworkElement selector = this.logEntryListView as FrameworkElement;
+            try
+            {
+                UpdateLayout();
+                (selector as LongListSelector).ScrollTo(list.Last());
+
+            }
+            catch (Exception) { }
         }
 
         void LayoutRoot_DoubleTap(object sender, System.Windows.Input.GestureEventArgs e)
@@ -44,17 +64,26 @@ namespace AwfulNET.Common
 
         void Entries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Task.Delay(10).ContinueWith(task =>
-                {
-                    IList<LogEntry> list = sender as IList<LogEntry>;
-                    try
-                    {
-                        UpdateLayout();
-                        this.LayoutRoot.ScrollToVerticalOffset(this.LayoutRoot.ExtentHeight);
-                    }
-                    catch (Exception) { }
+           
+        }
 
-                }, TaskScheduler.FromCurrentSynchronizationContext());
+        private void SwitchView()
+        {
+            if (this.HtmlBrowser.Visibility == System.Windows.Visibility.Visible)
+            {
+                this.HtmlBrowser.Visibility = System.Windows.Visibility.Collapsed;
+                this.logEntryListView.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                this.logEntryListView.Visibility = System.Windows.Visibility.Collapsed;
+                this.HtmlBrowser.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        private void ToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            SwitchView();
         }
     }
 

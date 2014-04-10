@@ -154,10 +154,8 @@ namespace AwfulNET.Core.Rest
         public async Task<IEnumerable<TagMetadata>> GetSmiliesAsync()
         {
             Logger.Default.AddEntry(LogLevel.INFO, "Getting smilies list...");
-
-            List<TagMetadata> list = null;
-
             Logger.Default.AddEntry(LogLevel.INFO, "[GetSmilies] Creating web request...");
+
             HttpGetRequestBuilder endpoint = new HttpGetRequestBuilder("misc.php");
             endpoint.AddParameter("action", "showsmilies");
 
@@ -171,9 +169,8 @@ namespace AwfulNET.Core.Rest
                 Logger.Default.AddEntry(LogLevel.INFO, "[GetSmilies] Completed.");
                 return parsed;
             });
-        
-            list.AddRange(await smilies);
-            return list;
+
+            return await smilies;
         }
 
         public Task<bool> SaveUserSettingsAsync(UserSettings settings)

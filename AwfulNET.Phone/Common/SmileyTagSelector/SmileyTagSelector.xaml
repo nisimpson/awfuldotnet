@@ -1,0 +1,146 @@
+﻿<UserControl x:Class="AwfulNET.Phone.Common.SmileyTagSelector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:AwfulNET.Phone.Common"
+             xmlns:common="clr-namespace:AwfulNET.Common"
+             xmlns:datamodel="clr-namespace:AwfulNET.DataModel"
+             xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+             mc:Ignorable="d"
+            
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    d:DesignHeight="800" d:DesignWidth="480">
+    
+    <UserControl.Resources>
+        <common:EventCommand x:Key="SelectItemCommand" ExecuteRaised="OnSelectItemCommandExecute" />
+        <common:EventCommand x:Key="SearchCommand" ExecuteRaised="OnSearchCommandExecuteRaised" />
+        <local:SmileyTagSelectorViewModel x:Key="SelectorViewModel" />
+    </UserControl.Resources>
+
+    <Grid x:Name="LayoutRoot" DataContext="{StaticResource SelectorViewModel}"
+            Background="{StaticResource PhoneChromeBrush}">
+        <phone:Pivot x:Name="MainPivot" Title="{Binding Title, Converter={StaticResource uppercaseConverter}, FallbackValue='tap to select'}">
+            <phone:Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontSize="{StaticResource PhoneFontSizeExtraLarge}"
+                               Margin="0,12,0,0"/>
+                </DataTemplate>
+            </phone:Pivot.HeaderTemplate>
+            
+            <phone:Pivot.Resources>
+                <!-- code tags -->
+                <datamodel:CodeTagCollection x:Key="CodeTags">
+                    <datamodel:CodeTagCollection.Items>
+
+                        <datamodel:CodeTagDataModel Title="Url" Tag="[url]" Code="[url]TAPHERETOREPLACE[/url]" />
+
+                        <datamodel:CodeTagDataModel Title="Img" Tag="[img]" Code="[img]TAPHERETOREPLACE[/img]" />
+
+                        <datamodel:CodeTagDataModel Title="Video" Tag="[video]" Code="[video]TAPHERETOREPLACE[/video]" />
+
+                        <datamodel:CodeTagDataModel Title="Quote" Tag="[quote]" Code="[quote]TAPHERETOREPLACE[/quote]" />
+
+                        <datamodel:CodeTagDataModel Title="Spoiler" Tag="[spoiler]"
+                                Code="[spoiler]TAPHERETOREPLACE[/spoiler]" />
+
+                        <datamodel:CodeTagDataModel Title="List" Tag="[list]" Code="[list]TAPHERETOREPLACE[/list]" />
+
+                        <datamodel:CodeTagDataModel Title="Bold" Tag="[b]" Code="[b]TAPHERETOREPLACE[/b]" />
+
+                        <datamodel:CodeTagDataModel Title="Italic" Tag="[i]" Code="[i]TAPHERETOREPLACE[/i]" />
+
+                        <datamodel:CodeTagDataModel Title="Underline" Tag="[u]" Code="[u]TAPHERETOREPLACE[/u]" />
+
+                        <datamodel:CodeTagDataModel Title="Strikethrough" Tag="[s]" Code="[s]TAPHERETOREPLACE[/s]" />
+
+                        <datamodel:CodeTagDataModel Title="Fixed" Tag="[fixed]" Code="[fixed]TAPHERETOREPLACE[/fixed]" />
+
+                        <datamodel:CodeTagDataModel Title="Super" Tag="[super]" Code="[super]TAPHERETOREPLACE[/super]" />
+
+                        <datamodel:CodeTagDataModel Title="Sub" Tag="[sub]" Code="[sub]TAPHERETOREPLACE[/sub]" />
+
+                        <datamodel:CodeTagDataModel Title="Pre" Tag="[pre]" Code="[pre]TAPHERETOREPLACE[/pre]" />
+
+                        <datamodel:CodeTagDataModel Title="Code" Tag="[code]" Code="[code]TAPHERETOREPLACE[/code]" />
+
+                        <datamodel:CodeTagDataModel Title="PHP" Tag="[php]" Code="[php]TAPHERETOREPLACE[/php]" />
+
+                    </datamodel:CodeTagCollection.Items>
+                </datamodel:CodeTagCollection>
+
+                <DataTemplate x:Key="SmileyItemTemplate">
+                    <Border Padding="4" common:UIExtensions.TapCommand="{StaticResource SelectItemCommand}">
+                        <Grid toolkit:TiltEffect.IsTiltEnabled="True" Background="{StaticResource PhoneAccentBrush}">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image x:Name="SmileyImage" Source="{Binding Image}" MaxWidth="50" />
+                                <TextBlock x:Name="SmileyValue" Text="{Binding Title, FallbackValue='foo'}"
+                                           TextAlignment="Center"
+                                           FontSize="{StaticResource PhoneFontSizeSmall}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+                
+                <DataTemplate x:Key="TagItemTemplate">
+                    <StackPanel toolkit:TiltEffect.IsTiltEnabled="True"
+                                common:UIExtensions.TapCommand="{StaticResource SelectItemCommand}" Orientation="Horizontal" Margin="12,0,0,12">
+                        <Border Background="{StaticResource PhoneAccentBrush}" Height="80" Width="80" 
+                                >
+                            <TextBlock Text="{Binding Tag, FallbackValue='[s]'}"
+                                       VerticalAlignment="Center"
+                                       TextAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="{Binding Title, FallbackValue='Strikethrough'}"
+                                   VerticalAlignment="Center"
+                                   Style="{StaticResource PhoneTextTitle2Style}" />
+                    </StackPanel>
+                </DataTemplate>
+            </phone:Pivot.Resources>
+            
+            <!-- pivot item one: tags -->
+            <phone:PivotItem Header="tags" DataContext="{StaticResource CodeTags}">
+
+                <phone:LongListSelector x:Name="TagsListView" ItemTemplate="{StaticResource TagItemTemplate}"
+                        ItemsSource="{Binding Items}" />
+            </phone:PivotItem>
+            
+            <!-- pivot item two: smilies -->
+            <phone:PivotItem Header="smilies"
+                             DataContext="{Binding Smilies}"
+                             d:DataContext="{d:DesignInstance Type=datamodel:SampleDataGroup, IsDesignTimeCreatable=True}">
+                
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="0,0,40,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBox x:Name="SmileySearchBox" Margin="0,0,-16,0"
+                                 AcceptsReturn="False"/>
+                        <Button x:Name="SearchTextButton" Background="{StaticResource PhoneAccentBrush}" Margin="0"
+                                Content="&#xe1a3;" FontFamily="Segoe UI Symbol" Command="{StaticResource SearchCommand}"
+                                CommandParameter="{Binding Text, ElementName=SmileySearchBox}" BorderThickness="0"
+                                Padding="0" Width="72" Grid.Column="1" />
+
+                    </Grid>
+                    
+                    <phone:LongListSelector Grid.Row="1" x:Name="SmiliesGridView" GridCellSize="100,100" LayoutMode="Grid"
+                            Margin="8,0,0,0" ItemTemplate="{StaticResource SmileyItemTemplate}"
+                            ItemsSource="{Binding ItemsSource}" />
+
+                </Grid>
+                
+            </phone:PivotItem>
+        </phone:Pivot>
+    </Grid>
+</UserControl>

@@ -14,6 +14,7 @@ using Microsoft.Phone.Tasks;
 using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.Phone
 {
@@ -101,6 +102,13 @@ namespace AwfulNET.Phone
 
         private void NotifyFailureAndTryAgain(Exception ex)
         {
+            string msg = ex.Message;
+
+#if DEBUG
+            msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+            Logger.Default.AddEntry(LogLevel.WARNING, ex);
             MessageBox.Show(ex.Message, "Oops, something went wrong.", MessageBoxButton.OK);
         }
 

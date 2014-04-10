@@ -60,14 +60,23 @@ namespace AwfulNET.DataModel
             HandleError(obj);
         }
 
+        // Handle any processing of the thread metadata list here (i.e. sorting)
+        protected virtual IEnumerable<ThreadMetadata> ProcessThreadCollection(ThreadMetadataCollection obj)
+        {
+            return obj;
+        }
+
         private IEnumerable<ICommonDataModel> ProcessItems(ThreadMetadataCollection obj)
         {
-            foreach (var item in obj)
+            var processed = ProcessThreadCollection(obj);
+
+            foreach (var item in processed)
             {
                 ThreadDataItem data = new ThreadDataItem(item, this.feed.Token);
                 data.Group = this;
                 this.Items.Add(data);
             }
+
             return this.Items;
         }
 
@@ -117,10 +126,18 @@ namespace AwfulNET.DataModel
             }
         }
 
-        private void HandleError(Exception obj)
+        private void HandleError(Exception ex)
         {
+            string msg = ex.Message;
+
+#if DEBUG
+            msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+            Logger.Default.AddEntry(LogLevel.WARNING, ex);
+
             NotificationService.Default.Notify<DialogMessage>(this,
-                new DialogMessage(obj.Message, "Oops, something went wrong."));
+                new DialogMessage(msg, "Oops, something went wrong."));
         }
 
         #endregion Common Members
@@ -271,10 +288,88 @@ namespace AwfulNET.DataModel
     {
         private readonly BookmarksFeed bookmarksFeed;
 
+        private static readonly ISettingsModel Settings = SettingsModelFactory.GetSettingsModel();
+
+        public enum SortStyle
+        {
+            Awful = 0,
+            Classic
+        }
+
+        private SortStyle sortStyle = SortStyle.Awful;
+        public SortStyle SortingStyle
+        {
+            get { return this.sortStyle; }
+            set
+            {
+                if (SetProperty(ref this.sortStyle, value))
+                {
+                    this.SortItems(value);
+                    Settings.AddOrUpdate("BookmarkSortStyle", (int)value);
+                    Settings.SaveSettings();
+                }
+            }
+        }
+
+        private RelayCommand toggleStyleCommand = null;
+        public RelayCommand ToggleStyleCommand { get { return this.toggleStyleCommand; } }
+
         public BookmarkDataGroup(BookmarksFeed feed)
             : base(feed)
         {
             this.bookmarksFeed = feed;
+            this.toggleStyleCommand = new RelayCommand(ToggleStyle, CanToggleStyle);
+            this.sortStyle = (SortStyle)Settings.GetValueOrDefault<int>("BookmarkSortStyle", (int)SortStyle.Awful);
+        }
+
+        private bool CanToggleStyle()
+        {
+            return !this.IsBusy;
+        }
+
+        private void ToggleStyle()
+        {
+            if (this.sortStyle == SortStyle.Awful)
+                this.SortingStyle = SortStyle.Classic;
+            else
+                this.SortingStyle = SortStyle.Awful;
+        }
+
+        private void SortItems(SortStyle value)
+        {
+            IEnumerable<ICommonDataModel> sorted = null;
+            if (value == SortStyle.Awful)
+            {
+                sorted = this.Items.OrderBy<ICommonDataModel, ThreadMetadata>((model) =>
+                {
+                    return (model as ThreadDataItem).Thread;
+                },
+
+                CompareThreadByWeightScore.Instance).ToList();
+            }
+            else
+            {
+                sorted = this.Items.OrderBy<ICommonDataModel, ThreadMetadata>((model) =>
+                {
+                    return (model as ThreadDataItem).Thread;
+                },
+
+                CompareThreadByKilledByDate.Instance).ToList();
+            }
+
+            this.Items.Clear();
+            foreach (var item in sorted)
+                this.Items.Add(item);
+        }
+
+        protected override IEnumerable<ThreadMetadata> ProcessThreadCollection(ThreadMetadataCollection obj)
+        {
+            if (this.SortingStyle == SortStyle.Awful)
+                obj.Sort(CompareThreadByWeightScore.Instance);
+            else
+                obj.Sort(CompareThreadByKilledByDate.Instance);
+
+            return obj;
         }
 
         protected override void OnError(Exception obj)
@@ -318,7 +413,6 @@ namespace AwfulNET.DataModel
             SetOnItemsReady(true);
             return false;   // return false because we don't want to navigate to list view.
         }
-
     }
 
     public class ThreadDataItem : CommonDataModel,
@@ -379,7 +473,7 @@ namespace AwfulNET.DataModel
             this.myToken = token;
             this.thread = thread;
             this.UniqueID = thread.ThreadID;
-            this.Title = thread.Title;
+            this.Title = FormatTitle(thread);
             this.Subtitle = FormatSubtitle(thread);
             this.Description = FormatDescription(thread);
             this.DataType = MainDataModel.DATATYPE_THREAD;
@@ -400,7 +494,14 @@ namespace AwfulNET.DataModel
 
         #region Common Members
 
-        private const string ICON_BASE = "http://raw.github.com/Awful/thread-tags/master/";
+        private string FormatTitle(ThreadMetadata thread)
+        {
+            return string.Format("{0}{1}", thread.Title, thread.IsClosed
+                ? " [CLOSED]"
+                : string.Empty);
+        }
+
+        private const string ICON_BASE = "https://raw.githubusercontent.com/Awful/thread-tags/master/";
         private string FormatIconImageSource(ThreadMetadata thread)
         {
             if (string.IsNullOrEmpty(thread.IconUri))
@@ -418,7 +519,7 @@ namespace AwfulNET.DataModel
 
         private string FormatDescription(ThreadMetadata metadata)
         {
-            // rated 4 <> 299 new posts
+            // rated 4 <> 299 new posts <> killed by author
             StringBuilder builder = new StringBuilder();
             if (metadata.Rating != 0)
             {
@@ -426,21 +527,11 @@ namespace AwfulNET.DataModel
                 builder.Append(" " + "\u2022" + " ");
             }
 
-            /* Post count information won't be shown in the description.
-             * Let's remove it later.
-             * 
-            if (!metadata.IsNew)
-            {
-                builder.Append(metadata.NewPostCount > 0 ?
-                    string.Format("{0} new {1}", metadata.NewPostCount,
-                    metadata.NewPostCount > 1 ? "posts \u2022 " : "post \u2022 ") :
-                    "no new posts " + "\u2022" + " ");
-            }
-            */
-
             builder.AppendFormat("{0} {1}",
                    metadata.PageCount,
                    metadata.PageCount == 1 ? "page" : "pages");
+
+            builder.AppendFormat(" \u2022 killed by {0}", metadata.KilledBy);
 
             return builder.ToString();
         }
@@ -759,7 +850,12 @@ namespace AwfulNET.DataModel
                     }
                     catch (Exception ex)
                     {
-                        toast = new ToastMessage(ex.Message, "Oops, something went wrong.");
+                        string msg = ex.Message;
+#if DEBUG
+                        msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+                        Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                        toast = new ToastMessage(msg, "Oops, something went wrong.");
                     }
 
                     NotificationService.Default.Notify<ToastMessage>(this, toast);
