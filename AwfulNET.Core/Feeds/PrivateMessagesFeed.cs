@@ -1,4 +1,5 @@
 ﻿using AwfulNET.Common;
+using AwfulNET.Core.Common;
 using AwfulNET.Core.Rest;
 using System;
 using System.Collections.Generic;

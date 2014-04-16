@@ -43,18 +43,26 @@ namespace AwfulNET.DataModel
 
         private void OnError(Exception ex)
         {
-            this.IsBusy = false;
-            SetOnItemsReady(false);
+            if (ex is InactiveAccountException)
+            {
+                EmptyText = "In order to view private messages, please login with your SA account.";
+            }
 
-            string msg = ex.Message;
+            else
+            {
+                EmptyText = string.Empty;
+                string msg = ex.Message;
 
 #if DEBUG
-            msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+                msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
 #endif
 
-            Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(msg, "Oops! Something went wrong."));
+            }
 
-            NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(msg, "Oops! Something went wrong."));
+            ItemsSource = null;
+            SetOnItemsReady(false);
             Items.Clear();
         }
 
@@ -127,7 +135,16 @@ namespace AwfulNET.DataModel
 
             Logger.Default.AddEntry(LogLevel.WARNING, ex);
 
-            NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(msg, "Oops! Something went wrong."));
+            if (ex is SpecialMessageException)
+            {
+                this.EmptyText = "A registered account is required to receive private messages.";
+            }
+
+            else
+            {
+                NotificationService.Default.Notify<DialogMessage>(this, new DialogMessage(msg, "Oops! Something went wrong."));
+            }
+
             this.Items.Clear();
         }
 

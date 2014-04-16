@@ -35,6 +35,8 @@
                     <apu:AppBarButton Command="{Binding ShowCurrentFolderCommand}" Text="close"
                             IconUri="Assets/AppBar/cancel.png" />
                 </apu:AppBar>
+                <!-- id 2: hide app bar -->
+                <apu:AppBar Id="2" IsVisible="False" />
             </apu:SwitchAppBarAction>
         </apu:StateChangedTrigger>
     </i:Interaction.Triggers>
@@ -49,7 +51,7 @@
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel x:Name="TitlePanel"  Grid.Row="0" Margin="12,17,0,28">
             <TextBlock Text="{Binding Title, FallbackValue='PRIVATE MESSAGES'}" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock Text="{Binding Subtitle, FallbackValue='inbox'}" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock Text="{Binding Subtitle, FallbackValue='inbox'}" Visibility="{Binding ShowContent, Converter={StaticResource booleanToVisibility}}" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
@@ -87,7 +89,8 @@
                 </common:DataTypeTemplateSelector>
             </Grid.Resources>
 
-            <phone:LongListSelector x:Name="itemListView" ItemsSource="{Binding Source.ItemsSource}">
+            <phone:LongListSelector x:Name="itemListView" ItemsSource="{Binding Source.ItemsSource}"
+                                    Visibility="{Binding ShowContent, Converter={StaticResource booleanToVisibility}}">
                 <phone:LongListSelector.ItemTemplate>
                     <DataTemplate>
                         <common:VariableContentControl Style="{StaticResource listViewItemStyle}" Tap="currentItem_Tap"
@@ -100,6 +103,10 @@
                     </DataTemplate>
                 </phone:LongListSelector.ItemTemplate>
             </phone:LongListSelector>
+
+            <TextBlock Visibility="{Binding ShowEmpty, Converter={StaticResource booleanToVisibility}}"
+                    Text="{Binding EmptyText}" TextWrapping="Wrap" Style="{StaticResource PhoneTextGroupHeaderStyle}"
+                    Foreground="{StaticResource PhoneSubtleBrush}" />
         </Grid>
     </Grid>
 

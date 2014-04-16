@@ -624,6 +624,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<PrivateMessageMetadata> RefreshAsync(string privateMessageId)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Refreshing private message {0}", privateMessageId));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPM] Creating web request...");
@@ -647,6 +650,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<IPrivateMessageRequest> CreateNewPrivateMessageAsync()
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, "Creating new private message form...");
 
             Logger.Default.AddEntry(LogLevel.INFO, "[NewPM] Creating web request...");
@@ -669,6 +675,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<IPrivateMessageRequest> GetReplyRequestAsync(string privateMessageId)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Creating private message {0} reply form...", privateMessageId));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[ReplyPM] Creating web request...");
@@ -695,6 +704,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<IPrivateMessageRequest> GetForwardRequestAsync(string privateMessageId)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Creating private message {0} forward form...", privateMessageId));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[ForwardPM] Creating web request...");
@@ -722,6 +734,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<bool> SendMessageAsync(IPrivateMessageRequest request)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, "Sending private message request...");
 
             var success = await request.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
@@ -731,6 +746,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<IEnumerable<PrivateMessageFolderMetadata>> GetPrivateMessageFoldersAsync(bool loadInbox = true)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Getting private message folders. Load inbox? {0}", loadInbox));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[GetPMFolders] Creating web request...");
@@ -767,6 +785,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<PrivateMessageFolderMetadata> RefreshPrivateMessageFolderAsync(string folderId)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Refreshing private message folder {0}", folderId));
 
             Logger.Default.AddEntry(LogLevel.INFO, "[RefreshPMFolder] Creating web request...");
@@ -794,6 +815,9 @@ namespace AwfulNET.Core.Rest
             string apiAction,
             string apiValue)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, "Generating private message api call...");
 
             Logger.Default.AddEntry(LogLevel.INFO, "[PMApi] Creating web request...");
@@ -829,6 +853,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<bool> DeletePrivateMessageAsync(string privateMessageId, string folderId)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Deleting private message {0} from folder {1}...", privateMessageId, folderId));
 
             var list = new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(privateMessageId, folderId) };
@@ -841,6 +868,9 @@ namespace AwfulNET.Core.Rest
         public async Task<bool> MoveAllPrivateMessagesAsync(IEnumerable<KeyValuePair<string, string>> pairs,
             string destinationFolderId)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Moving private messages to folder {0}", destinationFolderId));
 
             var first = pairs.First();
@@ -852,6 +882,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<bool> MovePrivateMessageAsync(string privateMessageId, string srcFolderId, string dstFolderId)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, string.Format("Moving private message {0} from folder {1} to folder {2}...",
                 privateMessageId,
                 srcFolderId,
@@ -869,6 +902,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<PrivateMessageFolderEditor> EditPrivateMessageFoldersAsync()
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, "Creating edit private message folders form...");
 
             Logger.Default.AddEntry(LogLevel.INFO, "[EditPMFolder] Creating web request...");
@@ -890,6 +926,9 @@ namespace AwfulNET.Core.Rest
 
         public async Task<bool> SaveChangesAsync(PrivateMessageFolderEditor editor)
         {
+            if (!this.IsActiveAccount)
+                throw new InactiveAccountException("Only registered accounts are allowed to view private messages.");
+
             Logger.Default.AddEntry(LogLevel.INFO, "Submitting private message folder changes...");
             var success = await editor.CreateHttpRequestBuilder().SendAndConfirmAsync(this.Client);
             Logger.Default.AddEntry(LogLevel.INFO, "[SavePMFolderEdit] Completed.");

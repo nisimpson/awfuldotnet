@@ -169,7 +169,8 @@ namespace AwfulNET.Phone.Views.PM
         public enum States
         {
             CurrentFolder = 0,
-            AllFolders
+            AllFolders,
+            Hide
         }
 
         private readonly PrivateMessageFolderIndex index;
@@ -193,11 +194,6 @@ namespace AwfulNET.Phone.Views.PM
             set { SetProperty(ref currentState, value); }
         }
 
-        public string EmptyText
-        {
-            get { return string.Empty; }
-        }
-
         private IListViewModel source;
         public IListViewModel Source { get { return this.source; } set { SetProperty(ref this.source, value); } }
 
@@ -219,6 +215,24 @@ namespace AwfulNET.Phone.Views.PM
         public bool HasMoreItems
         {
             get { return false; }
+        }
+
+        private bool showContent = true;
+        public bool ShowContent
+        {
+            get { return this.showContent; }
+            set { if (SetProperty(ref this.showContent, value))
+                OnPropertyChanged("ShowEmpty");
+            }
+        }
+
+        public bool ShowEmpty { get { return !ShowContent; } }
+
+        private string emptyText = string.Empty;
+        public string EmptyText
+        {
+            get { return this.emptyText; }
+            set { SetProperty(ref this.emptyText, value); }
         }
 
         public void SetCurrentFolder(PrivateMessageGroup folder)
@@ -245,11 +259,29 @@ namespace AwfulNET.Phone.Views.PM
         {
             if (currentFolder == null)
             {
+                // load up our forums (inbox included)
                 await this.index.OnSelectedAsync(state, progress);
-                SetCurrentFolder(this.index.Items[0] as PrivateMessageGroup);  
+
+                try
+                {
+                    SetCurrentFolder(this.index.Items[0] as PrivateMessageGroup);
+                }
+                catch (Exception)
+                {
+                    // if we get here, then there was a problem loading the inbox.
+                    this.EmptyText = index.EmptyText;
+                    this.ShowContent = index.ShowContent;
+                    this.CurrentState = States.Hide;
+                    return;
+                }
             }
 
-            await this.currentFolder.OnSelectedAsync(state, progress);
+            try { await this.currentFolder.OnSelectedAsync(state, progress); }
+            catch (Exception)
+            {
+                this.EmptyText = this.currentFolder.EmptyText;
+                this.ShowContent = this.currentFolder.ShowContent;
+            }
         }
 
         public bool OnContextMenuOpening(string type, IContextMenu menu, object state, IProgress<string> progress)
