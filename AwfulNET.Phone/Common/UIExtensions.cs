@@ -29,43 +29,42 @@ namespace AwfulNET.Common
             typeof(ICommand),
             typeof(UIExtensions),
             new PropertyMetadata(null, new PropertyChangedCallback(OnTapCommandChanged)));
-
+#if WINDOWS_PHONE
         private static void OnTapCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = d as FrameworkElement;
-#if WINDOWS_PHONE
-            if (e.NewValue != null)
+         FrameworkElement element = d as FrameworkElement;
+                    if (e.NewValue != null)
             {
                 element.Tap += element_Tap;
             }
             else
                 element.Tap -= element_Tap;
+        }
+        static void element_Tap(object sender, GestureEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            ICommand command = GetTapCommand(element);
+            
+            if (command.CanExecute(element.DataContext))
+                command.Execute(element.DataContext);
+        }
 #endif
 #if NETFX_CORE
-                if (e.NewValue != null)
+        private static void OnTapCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            FrameworkElement element = d as FrameworkElement;
+            if (e.NewValue != null)
             {
                 element.Tapped += element_Tap;
             }
             else
                 element.Tapped -= element_Tap;
         }
-#endif
-#if NETFX_CORE
         private static void element_Tap(object sender, TappedRoutedEventArgs e)
         {
             FrameworkElement element = sender as FrameworkElement;
             ICommand command = GetTapCommand(element);
 
-            if (command.CanExecute(element.DataContext))
-                command.Execute(element.DataContext);
-        }
-#endif
-#if WINDOWS_PHONE
-        static void element_Tap(object sender, GestureEventArgs e)
-        {
-            FrameworkElement element = sender as FrameworkElement;
-            ICommand command = GetTapCommand(element);
-            
             if (command.CanExecute(element.DataContext))
                 command.Execute(element.DataContext);
         }
