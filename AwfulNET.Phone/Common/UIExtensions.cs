@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using Windows.UI.Xaml.Input;
 #if WINDOWS_PHONE
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -31,14 +33,34 @@ namespace AwfulNET.Common
         private static void OnTapCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             FrameworkElement element = d as FrameworkElement;
+#if WINDOWS_PHONE
             if (e.NewValue != null)
             {
                 element.Tap += element_Tap;
             }
             else
                 element.Tap -= element_Tap;
+#endif
+#if NETFX_CORE
+                if (e.NewValue != null)
+            {
+                element.Tapped += element_Tap;
+            }
+            else
+                element.Tapped -= element_Tap;
         }
+#endif
+#if NETFX_CORE
+        private static void element_Tap(object sender, TappedRoutedEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            ICommand command = GetTapCommand(element);
 
+            if (command.CanExecute(element.DataContext))
+                command.Execute(element.DataContext);
+        }
+#endif
+#if WINDOWS_PHONE
         static void element_Tap(object sender, GestureEventArgs e)
         {
             FrameworkElement element = sender as FrameworkElement;
@@ -47,7 +69,7 @@ namespace AwfulNET.Common
             if (command.CanExecute(element.DataContext))
                 command.Execute(element.DataContext);
         }
-
+#endif
         public static ICommand GetTapCommand(FrameworkElement element)
         {
             return element.GetValue(TapCommandProperty) as ICommand;

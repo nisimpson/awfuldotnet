@@ -320,7 +320,7 @@ namespace AwfulNET.DataModel
         private string FormatDate(PrivateMessageMetadata metadata)
         {
             return string.Format("{0} {1}",
-                metadata.PostDate.Value.ToShortDateString(), metadata.PostDate.Value.ToShortTimeString());
+                metadata.PostDate.Value.ToString(), metadata.PostDate.Value.ToString());
         }
 
         private const string ICON_BASE = "http://raw.github.com/Awful/thread-tags/master/";
