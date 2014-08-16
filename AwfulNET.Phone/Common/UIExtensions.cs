@@ -20,6 +20,45 @@ namespace AwfulNET.Common
 {
     public class UIExtensions : DependencyObject
     {
+        #region TapCommand
+
+        public static readonly DependencyProperty TapCommandProperty =
+            DependencyProperty.RegisterAttached("TapCommand",
+            typeof(ICommand),
+            typeof(UIExtensions),
+            new PropertyMetadata(null, new PropertyChangedCallback(OnTapCommandChanged)));
+
+        private static void OnTapCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            FrameworkElement element = d as FrameworkElement;
+            if (e.NewValue != null)
+            {
+                element.Tap += element_Tap;
+            }
+            else
+                element.Tap -= element_Tap;
+        }
+
+        static void element_Tap(object sender, GestureEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            ICommand command = GetTapCommand(element);
+            
+            if (command.CanExecute(element.DataContext))
+                command.Execute(element.DataContext);
+        }
+
+        public static ICommand GetTapCommand(FrameworkElement element)
+        {
+            return element.GetValue(TapCommandProperty) as ICommand;
+        }
+
+        public static void SetTapCommand(FrameworkElement element, ICommand value)
+        {
+            element.SetValue(TapCommandProperty, value);
+        }
+
+#endregion TapCommand
 
         #region CollapseOnEmpty
 

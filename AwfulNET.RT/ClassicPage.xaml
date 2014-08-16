@@ -272,10 +272,23 @@
                 </AppBarButton>
             </common:AppBarButtonContainer.PrimaryCommands>
         </common:AppBarButtonContainer>
+        
+        <!-- Command Bar for private message content -->
+        <common:AppBarButtonContainer x:Key="MessageCommandBar">
+            <common:AppBarButtonContainer.PrimaryCommands>
+                <AppBarButton x:Name="messageReplyButton" Label="reply" Icon="MailReply" 
+                              Flyout="{StaticResource MessageFormFlyout}"
+                              Click="messageReplyButton_Click"/>
+                <AppBarButton x:Name="messageForwardButton" Label="forward" Icon="MailForward"
+                        Flyout="{StaticResource MessageFormFlyout}" Click="messageForwardButton_Click" />
+            </common:AppBarButtonContainer.PrimaryCommands>
+        </common:AppBarButtonContainer>
 
     </Page.Resources>
     <Page.BottomAppBar>
-        <CommandBar Background="{ThemeResource HomePageAccentBrush}" Opened="OnBottomAppBarOpened" Closed="OnBottomAppBarClosed" />
+        <CommandBar Background="{ThemeResource HomePageAccentBrush}" Opened="OnBottomAppBarOpened"
+                Closed="OnBottomAppBarClosed">
+        </CommandBar>
     </Page.BottomAppBar>
 
     <!--
@@ -404,6 +417,26 @@
                                                         Style="{StaticResource ItemTextStyle}"
                                                         Foreground="{ThemeResource HomePageAccentBrush}" />
                                             </StackPanel>
+                                        </ContentControl>
+                                    </DataTemplate>
+                                </common:DataTypeTemplate.DataTemplate>
+                            </common:DataTypeTemplate>
+                            <common:DataTypeTemplate DataType="folder">
+                                <common:DataTypeTemplate.DataTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Style="{StaticResource listViewItemStyle}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Title}" Margin="0,0,0,6"
+                                                        Style="{StaticResource SubheaderTextStyle}" />
+                                                <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="&#xE188;" 
+                                                           FontFamily="Segoe UI Symbol"
+                                                           Margin="12,0,0,0"
+                                                           Style="{StaticResource SubheaderTextBlockStyle}"/>
+                                            </Grid>
                                         </ContentControl>
                                     </DataTemplate>
                                 </common:DataTypeTemplate.DataTemplate>

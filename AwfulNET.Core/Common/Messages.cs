@@ -9,7 +9,7 @@ namespace AwfulNET.Common
 {
     public sealed class AccessTokenMessage
     {
-        public ForumAccessToken Token { get; set; }
+        public IForumAccessToken Token { get; set; }
         public AccessTokenMessage()
         {
             this.Token = null;

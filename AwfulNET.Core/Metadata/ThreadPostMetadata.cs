@@ -15,6 +15,8 @@ namespace AwfulNET
         [DataMember]
         public DateTime PostDate { get; set; }
         [DataMember]
+        public string PostAvatarText { get; set; }
+        [DataMember]
         public Uri PostIconUri { get; set; }
         [DataMember]
         public bool ShowIcon { get; set; }

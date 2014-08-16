@@ -21,7 +21,7 @@ namespace AwfulNET.Core.Feeds
         /// Gets the access token used by the feed.
         /// </summary>
         [IgnoreDataMember]
-        public ForumAccessToken Token 
+        public IForumAccessToken Token 
         { 
             get 
             {

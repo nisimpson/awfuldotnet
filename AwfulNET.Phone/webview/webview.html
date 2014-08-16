@@ -16,6 +16,7 @@
         <div id="placeholderView" data-bind="if: displayPlaceholder" style="visibility:hidden; background-color: transparent">
             Hello, World! If things go well, you'll never see me.
         </div>
+        
         <!-- Thread template-->
         <div id="threadView" data-bind="if: displayThread">
             <header class="header" data-bind="with: thread">
@@ -41,13 +42,18 @@
                         <header>
                             <img class="av" src="/"
                                  data-bind="visible: post.showAvatar,
+                                            click: toggleAvatarText,
                                             attr: { src: post.avatar }" />
 
-                            <h2 class="text article-title win-type-ellipsis">
+                            <h2 class="text author-container article-title win-type-ellipsis">
                                 <span class="author" data-bind="text: post.author"></span>
                             </h2>
 
-                            <h4 class="text article-subtitle win-type-ellipsis">
+                            <h4 class="text avatar-text-container article-subtitle" data-bind="visible: post.showAvatarText">
+                                <span class="avatar-text" data-bind="html: post.avatarText"></span>
+                            </h4>
+
+                            <h4 class="text date-container article-subtitle win-type-ellipsis">
                                 <span class="date" data-bind="text: post.formattedDate"></span>
                             </h4>
                         </header>
@@ -75,9 +81,28 @@
             </div>
         </div>
 
+        <!-- Private Message template -->
+        <div id="pmView" class="sectionView" data-bind='template: { if: displayMessage, name: "messageTemplate", data: message, afterRender: message().onRender }'></div>
+
+        <script type="text/html" id="messageTemplate">
+            <header class="header">
+                <div class="header-background"></div>
+                <div class="text">
+                    <h3 class="article-description win-type-large"><span data-bind="text: description"></span></h3>
+                    <h2 class="article-title win-type-x-large"><span data-bind="text: title"></span></h2>
+                    <h3 class="article-subtitle win-type-large"><span data-bind="text: subtitle"></span></h3>
+                </div>
+            </header>
+            <article>
+                <div class="article-content" data-bind="html: content">blah blah</div>
+            </article>
+        </script>
+
         <!-- Article template -->
-        <div id="articleView" data-bind="if: displayArticle">
-            <header class="header" data-bind="with: article">
+        <div id="articleView" class="sectionView" data-bind='template: { if: displayArticle, name: "articleTemplate", data: article }'></div>
+
+        <script type="text/html" id="articleTemplate">
+            <header class="header">
                 <div class="header-background"></div>
                 <div class="text">
                     <h3 class="article-description win-type-large">Front Page</h3>
@@ -86,17 +111,9 @@
                 </div>
             </header>
             <article>
-                <!--
-                <header class="header">
-                    <div class="text">
-                        <h2 class="article-title"><span data-bind="text: article().title">monkey</span></h2>
-                        <h4 class="article-subtitle"><span data-bind="text: article().subtitle">cheese</span></h4>
-                    </div>
-                </header>
-                -->
-                <div class="article-content" data-bind="html: article().content">blah blah</div>
+                <div class="article-content" data-bind="html: content">blah blah</div>
             </article>
-        </div>
+        </script>
     </div>
     <script type="text/javascript" src="/js/jquery-2.0.3.js"></script>
     <script type="text/javascript" src="/js/sammy.js"></script>
@@ -116,6 +133,9 @@
         function viewArticle(json) {
             return WebViewJS.viewArticle(json);
         }
+        function viewMessage(json) {
+            return WebViewJS.viewMessage(json);
+        }
         function scrollToTop() {
             if (WebViewJS.viewModel.displayThread()) {
                 WebViewJS.threadScrollToTop(function () { }, 0, -55);
@@ -130,9 +150,11 @@
             }
             return "FAIL";
         }
+        // Scrolls to the thread post with the target post id.
         function scrollToPost(id) {
             if (WebViewJS.viewModel.displayThread()) {
-                WebViewJS.threadScrollToPost(id);
+                // post elements in the DOM have 'post' appended to the id
+                WebViewJS.threadScrollToPost("post" + id);
                 return "OK";
             }
             return "FAIL";

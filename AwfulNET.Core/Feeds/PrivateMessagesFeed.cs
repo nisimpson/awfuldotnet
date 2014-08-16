@@ -1,4 +1,5 @@
 ﻿using AwfulNET.Common;
+using AwfulNET.Core.Common;
 using AwfulNET.Core.Rest;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace AwfulNET.Core.Feeds
     public class PrivateMessagesFeed : CommonFeed<IEnumerable<PrivateMessageFolderFeed>>
     {
         [IgnoreDataMember]
-        public ForumAccessToken Token
+        public IForumAccessToken Token
         {
             get
             {
@@ -54,7 +55,7 @@ namespace AwfulNET.Core.Feeds
     public class PrivateMessageFolderFeed : CommonFeed<PrivateMessageMetadataCollection>
     {
         [IgnoreDataMember]
-        public ForumAccessToken Token
+        public IForumAccessToken Token
         {
             get 
             {
@@ -83,6 +84,9 @@ namespace AwfulNET.Core.Feeds
             // only refresh if the items are empty, or a refresh is called
             if (items.Count == 0 || refresh)
                 await items.RefreshAsync(Token);
+
+            foreach (var item in items)
+                item.FolderId = items.Folder.FolderId;
 
             return items;
         }

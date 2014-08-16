@@ -38,6 +38,8 @@ namespace AwfulNET
         public string FolderId { get; set; }
         [DataMember]
         public string IconUri { get; set; }
+        [DataMember]
+        public string RawText { get; set; }
     }
 
     public class PrivateMessageMetadataCollection : List<PrivateMessageMetadata>

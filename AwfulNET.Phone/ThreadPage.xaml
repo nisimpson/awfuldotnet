@@ -36,6 +36,8 @@
         <common:EventCommand x:Key="nextCommand" ExecuteRaised="GoToNextPage" CanExecuteRaised="CanGoToNextPage" />
         <common:EventCommand x:Key="tabsCommand" ExecuteRaised="ShowTabsView" CanExecuteRaised="CanShowTabsView" />
         <common:EventCommand x:Key="showDetailsCommand" ExecuteRaised="OnShowDetailsCommandExecuted" />
+        <common:EventCommand x:Key="jumpToPostCommand" ExecuteRaised="ShowJumpToPostView"
+                CanExecuteRaised="CanShowJumpToPostView" />
     </phone:PhoneApplicationPage.Resources>
     
     <i:Interaction.Triggers>
@@ -57,6 +59,7 @@
                         <apu:AppBar.MenuItems>
                             <apu:AppBarMenuItem Command="{StaticResource scrollToTopCommand}" Text="scroll to top" />
                             <apu:AppBarMenuItem Command="{StaticResource scrollToBottomCommand}" Text="scroll to bottom" />
+                            <apu:AppBarMenuItem Command="{StaticResource jumpToPostCommand}" Text="scroll to post..." />
                             <apu:AppBarMenuItem Command="{StaticResource replyCommand}" Text="reply..." />
                             <apu:AppBarMenuItem Command="{StaticResource rateCommand}" Text="rate..." />
                             <apu:AppBarMenuItem Command="{StaticResource bookmarkCommand}" Text="toggle bookmark" />
@@ -69,6 +72,13 @@
                     <apu:AppBar Id="2">
                         <apu:AppBar.Buttons>
                             <apu:AppBarButton Text="close" IconUri="/Assets/AppBar/cancel.png" Command="{StaticResource showDetailsCommand}" />
+                        </apu:AppBar.Buttons>
+                    </apu:AppBar>
+                    <!-- post jump view app bar -->
+                    <apu:AppBar Id="3">
+                        <apu:AppBar.Buttons>
+                            <apu:AppBarButton Text="close" IconUri="/Assets/AppBar/cancel.png"
+                                    Command="{StaticResource showDetailsCommand}" />
                         </apu:AppBar.Buttons>
                     </apu:AppBar>
                 </apu:SwitchAppBarAction.AppBars>
@@ -88,6 +98,12 @@
                     </VisualTransition>
                    
                     <VisualTransition From="TabsView" GeneratedDuration="0:0:0.5" To="DetailsView">
+                        <VisualTransition.GeneratedEasingFunction>
+                            <CircleEase EasingMode="EaseIn" />
+                        </VisualTransition.GeneratedEasingFunction>
+                    </VisualTransition>
+
+                    <VisualTransition From="PostJumpView" GeneratedDuration="0:0:0.5" To="DetailsView">
                         <VisualTransition.GeneratedEasingFunction>
                             <CircleEase EasingMode="EaseIn" />
                         </VisualTransition.GeneratedEasingFunction>
@@ -133,6 +149,26 @@
                 			</DiscreteObjectKeyFrame>
                 		</ObjectAnimationUsingKeyFrames>
                 	</Storyboard>
+                </VisualState>
+                <VisualState x:Name="PostJumpView">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                Storyboard.TargetName="postJumpPanel">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Visible</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
+                                Storyboard.TargetName="itemTitlePanel">
+                            <DiscreteObjectKeyFrame KeyTime="0">
+                                <DiscreteObjectKeyFrame.Value>
+                                    <Visibility>Collapsed</Visibility>
+                                </DiscreteObjectKeyFrame.Value>
+                            </DiscreteObjectKeyFrame>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -196,6 +232,49 @@
             	<TextBlock x:Name="ApplicationTitle1" Text="{StaticResource ApplicationTitle}" Style="{StaticResource PhoneTextNormalStyle}" FontFamily="Segoe WP Semibold"/>
             	<TextBlock x:Name="ThreadTabTitle" Style="{StaticResource PhoneTextTitle1Style}" TextWrapping="Wrap" Text="thread tabs" Margin="12,-7,12,0"/>
             </StackPanel>
+        </Grid>
+        
+        <Grid x:Name="postJumpPanel" Visibility="Collapsed" Canvas.ZIndex="100">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <StackPanel x:Name="postJumpHeader" Margin="12,17,0,28">
+                <TextBlock x:Name="postJumpHeaderTitle" Text="{StaticResource ApplicationTitle}"
+                        Style="{StaticResource PhoneTextNormalStyle}" FontFamily="Segoe WP Semibold" />
+                <TextBlock x:Name="postJumpHeaderSubtitle" Margin="9,12"
+                        Text="select post"
+                        Style="{StaticResource PhoneTextTitle1Style}" TextWrapping="NoWrap"
+                        FontSize="{StaticResource PhoneFontSizeExtraLarge}" />
+            </StackPanel>
+            
+            <phone:LongListSelector x:Name="postJumpList" ItemsSource="{Binding CurrentThread.CurrentPagePosts}" Grid.Row="1">
+                <phone:LongListSelector.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="24,0,0,12" Tap="postJumpItem_Tap"
+                                    toolkit:TiltEffect.IsTiltEnabled="True">
+                            <Border Height="64" Width="64" BorderBrush="{StaticResource PhoneBorderBrush}"
+                                    Background="{StaticResource PhoneAccentBrush}"
+                                    BorderThickness="{StaticResource PhoneBorderThickness}">
+                                <TextBlock TextAlignment="Center" FontWeight="Bold"
+                                           Margin="0"
+                                       FontSize="{StaticResource PhoneFontSizeMedium}" VerticalAlignment="Center">
+                                    <Run Text="{Binding PageIndex}" />
+                                </TextBlock>
+                            </Border>
+                            <StackPanel Margin="{StaticResource PhoneHorizontalMargin}"
+                                        VerticalAlignment="Center">
+                                <TextBlock Margin="0" Text="{Binding Author}"
+                                        VerticalAlignment="Center" Style="{StaticResource PhoneTextTitle3Style}" />
+                                <TextBlock Margin="0" Text="{Binding PostDate}"
+                                        Style="{StaticResource PhoneTextSubtleStyle}" />
+                            </StackPanel>
+                           
+                        </StackPanel>
+                    </DataTemplate>
+                </phone:LongListSelector.ItemTemplate>
+            </phone:LongListSelector>
         </Grid>
     </Grid>
 

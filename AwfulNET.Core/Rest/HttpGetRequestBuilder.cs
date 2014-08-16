@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AwfulNET;
 using AwfulNET.Core;
+using AwfulNET.Core.Common;
 
 namespace System.Net.Http
 {
@@ -58,9 +59,12 @@ namespace System.Net.Http
             return builder.ToString();
         }
 
-        public Task<HttpResponseMessage> SendRequestAsync(HttpClient client)
+        public async Task<HttpResponseMessage> SendRequestAsync(HttpClient client)
         {
-            return client.GetAsyncEx(builder.ToString());
+            Logger.Default.AddEntry(LogLevel.INFO, "[HttpGet] Sending request...");
+            var result = await client.GetAsyncEx(builder.ToString());
+            Logger.Default.AddEntry(LogLevel.INFO, "[HttpGet] Completed.");
+            return result;
         }
 
         public void AddParameter(string name, Func<string> toString)
@@ -146,7 +150,10 @@ namespace System.Net.Http
         public static async Task<HtmlDocument> GetHtmlAsync(this IHttpRequestBuilder builder, HttpClient client)
         {
             var result = await builder.SendRequestAsync(client);
-            result.EnsureSuccessStatusCode();
+            if (result.StatusCode == HttpStatusCode.NoContent)
+                throw new HttpRequestException("404 Not Found");
+
+            //result.EnsureSuccessStatusCode();
             HtmlDocument doc = await result.ToHtmlAsync();
             return doc;
         }

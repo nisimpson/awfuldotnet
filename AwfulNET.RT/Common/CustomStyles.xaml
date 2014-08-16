@@ -476,5 +476,64 @@
     <Style x:Key="navBoxWindowStyle" TargetType="ContentControl" BasedOn="{StaticResource contentControlBaseStyle}">
         <Setter Property="ContentTemplate" Value="{StaticResource navBoxWindowTemplate}" />
     </Style>
+    <Flyout x:Key="MessageFormFlyout">
+        <Grid x:Name="templateRoot" xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+                xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+                xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+                MinWidth="320"
+                MaxWidth="800">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.ColumnSpan="2" Margin="0,0,0,12">
+                <TextBox x:Name="FormToField" Text="{Binding MessageForm.To, Mode=TwoWay}" PlaceholderText="To:"
+                        HorizontalAlignment="Stretch" Margin="0,0,0,12" IsEnabled="{Binding MessageForm.IsEnabled}" />
+                <TextBox x:Name="FormSubjectField" Text="{Binding MessageForm.Subject, Mode=TwoWay}"
+                        PlaceholderText="Subject:" HorizontalAlignment="Stretch" InputScope="Chat"
+                        IsEnabled="{Binding MessageForm.IsEnabled}" />
+            </StackPanel>
+            <ScrollViewer Grid.ColumnSpan="2" Grid.Row="2">
+                <TextBox x:Name="replyTextBox" Text="{Binding MessageForm.Message, Mode=TwoWay}" TextWrapping="Wrap"
+                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AcceptsReturn="True" InputScope="Chat"
+                        IsEnabled="{Binding MessageForm.IsEnabled}" PlaceholderText="Type your post here." />
+            </ScrollViewer>
+            <Button x:Name="sendReplybutton" Content="Submit" HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                    BorderBrush="{ThemeResource HomePageAccentBrush}" Grid.Row="3" Grid.ColumnSpan="2"
+                    IsEnabled="{Binding MessageForm.IsEnabled}"
+                    Margin="-3,12,-3,0" Command="{Binding MessageForm.SubmitCommand}"
+                    Background="{ThemeResource HomePageAccentBrush}">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior x:Name="emptyPostBehavior"
+                            Binding="{Binding Text.Length, ElementName=replyTextBox}" Value="0">
+                        <Core:ChangePropertyAction PropertyName="IsEnabled">
+                            <Core:ChangePropertyAction.Value>
+                                <x:Boolean>False</x:Boolean>
+                            </Core:ChangePropertyAction.Value>
+                        </Core:ChangePropertyAction>
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior x:Name="nonemptyPostBehavior"
+                            Binding="{Binding Text.Length, ElementName=replyTextBox}" Value="0"
+                            ComparisonCondition="GreaterThan">
+                        <Core:ChangePropertyAction PropertyName="IsEnabled" Value="{Binding MessageForm.IsEnabled}">
+                        </Core:ChangePropertyAction>
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </Button>
+            <TextBlock x:Name="characterCountLabel" HorizontalAlignment="Left" TextWrapping="Wrap"
+                    Grid.Row="1" Text="Character Count" VerticalAlignment="Top" Style="{StaticResource CaptionTextBlockStyle}"
+                    Margin="0,0,0,12" />
+            <TextBlock x:Name="characterCountValue" HorizontalAlignment="Right" TextWrapping="Wrap"
+                    Text="{Binding Text.Length, ElementName=replyTextBox, Mode=OneWay}" VerticalAlignment="Top"
+                    Grid.Row="1" Grid.Column="1" Style="{StaticResource CaptionTextBlockStyle}"
+                    Foreground="{ThemeResource HomePageAccentBrush}" FontWeight="Bold" />
+        </Grid>
+    </Flyout>
 
 </ResourceDictionary>

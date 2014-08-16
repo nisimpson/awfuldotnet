@@ -11,7 +11,7 @@ namespace AwfulNET.Common
     {
         public static IStorageModel GetStorageModel()
         {
-            return WinRTStorageModel.Instance;
+            return WinRTRoamingStorageModel.Instance;
         }
     }
 }

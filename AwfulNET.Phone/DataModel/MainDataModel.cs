@@ -18,10 +18,16 @@ namespace AwfulNET.DataModel
         public const string DATATYPE_THREAD = "item";
         public const string DATATYPE_MENU = "menu";
         public const string DATATYPE_FORUM = "forum";
+        public const string DATATYPE_FOLDER = "folder";
+        public const string DATATYPE_PM = "message";
 
         [Obsolete]
-        private ForumAccessToken token;
+        private IForumAccessToken token;
 
+        // Threads that have been linked to via other means (private messages, etc.) go here.
+        private Stack<ThreadDataItem> tabHistory;
+
+        private PrivateMessageFolderIndex messages;
         private ArticleDataGroup articles;
         private BookmarkDataGroup bookmarks;
         private ForumsIndexGroup forums;
@@ -31,6 +37,8 @@ namespace AwfulNET.DataModel
         public BookmarkDataGroup Bookmarks { get { return bookmarks; } }
         public ForumsIndexGroup Forums { get { return forums; } }
         public PinnedForumsGroup Pinned { get { return pinned; } }
+        public PrivateMessageFolderIndex Messages { get { return messages; } }
+        public Stack<ThreadDataItem> TabHistory { get { return this.tabHistory; } }
 
         public MainDataModel() : base(false, false)
         {
@@ -42,15 +50,15 @@ namespace AwfulNET.DataModel
             this.articles.Subtitle = "Your awful news feed.";
             this.articles.Group = this;
             this.articles.DataType = DATATYPE_MENU;
-            this.Items.Add(articles);
-
+           
             this.bookmarks = new BookmarkDataGroup(new BookmarksFeed());
             this.bookmarks.Title = "Bookmarks";
             this.bookmarks.Subtitle = "Threads you've bookmarked go here.";
             this.bookmarks.DataType = DATATYPE_MENU;
             this.bookmarks.Group = this;
-            this.Items.Add(bookmarks);
 
+            this.tabHistory = new Stack<ThreadDataItem>();
+           
             this.forums = new ForumsIndexGroup(new ForumsIndexFeed(StorageModelFactory.GetStorageModel()), pinned);
             this.forums.Title = "Forums Index";
             this.forums.Subtitle = "The Something Awful Forums.";
@@ -62,9 +70,18 @@ namespace AwfulNET.DataModel
             this.pinned.Subtitle = "Quick access to your favorite forums.";
             this.pinned.DataType = DATATYPE_MENU;
             this.pinned.Group = this;
-            
+
+            this.messages = new PrivateMessageFolderIndex();
+            this.messages.Title = "Private Messages";
+            this.messages.Subtitle = "Check your PMs here. Platinum membership required.";
+            this.messages.DataType = DATATYPE_MENU;
+            this.messages.Group = this;
+
+            this.Items.Add(articles);
+            this.Items.Add(bookmarks);
             this.Items.Add(pinned);
             this.Items.Add(forums);
+            this.Items.Add(messages);
             this.ItemsSource = this.Items;
         }
 
@@ -81,7 +98,7 @@ namespace AwfulNET.DataModel
         internal static async Task<MainDataModel> CreateAsync(string user)
         {
             var storage = StorageModelFactory.GetStorageModel();
-            ForumAccessToken token = await storage.LoadAccessTokenFromStorage(user);
+            IForumAccessToken token = await storage.LoadAccessTokenFromStorage(user);
             MainDataModel main = null;
             if (token != null)
             {
@@ -92,12 +109,20 @@ namespace AwfulNET.DataModel
             return main;
         }
 
+        internal void AddToHistory(ThreadDataItem thread)
+        {
+            tabHistory.Push(thread);
+        }
+
         internal ThreadDataItem GetThreadDataByID(string id)
         {
             var selected = bookmarks.Items.SingleOrDefault(item => item.UniqueID.Equals(id));
             if (selected == null)
                 selected = forums.Items.SelectMany(group => (group as ICommonDataGroup).Items)
                     .FirstOrDefault(item => item.UniqueID.Equals(id));
+
+            if (selected == null)
+                selected = tabHistory.FirstOrDefault(thread => thread.UniqueID.Equals(id));
 
             if (selected == null)
                 throw new ArgumentException("Unknown item with id: " + id);
@@ -115,6 +140,15 @@ namespace AwfulNET.DataModel
         {
             var selected = forums.Items.SingleOrDefault(item => item.UniqueID.Equals(uniqueID));
             return selected as IListViewModel;
+        }
+
+        internal PrivateMessageItem GetPrivateMessageByID(string uniqueID)
+        {
+            var selected = messages.Items
+                .SelectMany(group => (group as ICommonDataGroup).Items)
+                .SingleOrDefault(item => item.UniqueID.Equals(uniqueID));
+
+            return selected as PrivateMessageItem;
         }
 
         #region AwfulDataGroupBase

@@ -13,6 +13,7 @@ using AwfulNET.Views;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.Phone
 {
@@ -26,7 +27,7 @@ namespace AwfulNET.Phone
         private bool isNewInstance = false;
         private bool isStateLoaded = false;
 
-        private const string THREAD_TAB_MESSAGE = "Congrats, you've unlocked thread tabs! Access the tabs menu to switch between active tabs. Pressing the back button will still return you to the home page. Enjoy! Press OK to never show this message again, or CANCEL if you need to be reminded.";
+        private const string THREAD_TAB_MESSAGE = "Congrats, you've unlocked metadata tabs! Access the tabs menu to switch between active tabs. Pressing the back button will still return you to the home page. Enjoy! Press OK to never show this message again, or CANCEL if you need to be reminded.";
         
         public ThreadPage()
         {
@@ -57,19 +58,26 @@ namespace AwfulNET.Phone
             InitializeWebView(this.Browser);
         }
 
-        protected override Task<Views.IWebViewModel<string>> CreateWebViewModelAsync(NavigationEventArgs e)
+        protected override Task<IWebViewModel<string>> CreateWebViewModelAsync(NavigationEventArgs e)
         {
             string id = null;
-            TaskCompletionSource<Views.IWebViewModel<string>> tcs = new TaskCompletionSource<IWebViewModel<string>>();
-            if (NavigationContext.QueryString.ContainsKey("id"))
+            TaskCompletionSource<IWebViewModel<string>> tcs = new TaskCompletionSource<IWebViewModel<string>>();
+            var query = NavigationContext.QueryString;
+            if (query.ContainsKey("id"))
             {
-                id = NavigationContext.QueryString["id"];
+                id = query["id"];
                 int pageNumber = 0;
-                if (int.TryParse(NavigationContext.QueryString["page"], out pageNumber))
+                if (query.ContainsKey("page") && int.TryParse(query["page"], out pageNumber))
                 {
                     try
                     {
-                        this.viewmodel = new ThreadPageViewModel(GetThread(id, pageNumber), this, this.progress);
+                        var thread = GetThread(id, pageNumber);                        
+                        this.viewmodel = new ThreadPageViewModel(
+                            thread, mainDataModel.TabHistory, this, this.progress);
+
+                        if (!query.ContainsKey("notab"))
+                            this.viewmodel.AddTab(thread);
+
                         tcs.SetResult(viewmodel);
                     }
                     catch (Exception)
@@ -136,9 +144,7 @@ namespace AwfulNET.Phone
         protected override void OnSelectionChanged(Exception error)
         {
             base.OnSelectionChanged(error);
-
-            VisualStateManager.GoToState(this, "DetailsView", true);
-            this.viewmodel.CurrentState = ThreadPageViewModel.State.Details;
+            ShowDetailsView();
         }
 
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
@@ -148,9 +154,9 @@ namespace AwfulNET.Phone
                 suppressBackButton = false;
                 e.Cancel = true;
             }
-            else if (isTabsViewVisible)
+            else if (!isDetailsViewVisible)
             {
-                this.HideTabsView();
+                this.ShowDetailsView();
                 e.Cancel = true;
             }
             else if (this.pageNavPanel.Visibility == System.Windows.Visibility.Visible)
@@ -177,6 +183,7 @@ namespace AwfulNET.Phone
             (this.Resources["refreshCommand"] as EventCommand).RaiseCanExecuteChanged();
             (this.Resources["nextCommand"] as EventCommand).RaiseCanExecuteChanged();
             (this.Resources["tabsCommand"] as EventCommand).RaiseCanExecuteChanged();
+            (this.Resources["jumpToPostCommand"] as EventCommand).RaiseCanExecuteChanged();
         }
 
         public void SetPostForm(MessagePostModel model, bool navigateToReplyView)
@@ -209,7 +216,7 @@ namespace AwfulNET.Phone
                 AccessTokenMessage message = new AccessTokenMessage();
                 NotificationService.Default.Notify(this, message);
                 var tab = new ThreadDataItemFromPage(threadPage, message.Token);
-                this.viewmodel.Threads.Add(tab);
+                this.viewmodel.AddTab(tab);
                 this.tabsListView.SelectedItem = tab;
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -217,6 +224,18 @@ namespace AwfulNET.Phone
         #endregion IThreadPageView
 
         #region AppBar Events
+
+        private void ShowJumpToPostView(object sender, ExecuteEventArgs args)
+        {
+            ShowPostJumpView();
+        }
+
+        private void CanShowJumpToPostView(object sender, CanExecuteEventArgs args)
+        {
+            args.CanExecute = false;
+            if (this.viewmodel != null)
+                args.CanExecute = this.viewmodel.CurrentThread != null;
+        }
 
         private void scrollToTop(object sender, ExecuteEventArgs args)
         {
@@ -270,8 +289,15 @@ namespace AwfulNET.Phone
             try { await task; }
             catch (Exception ex)
             {
+                string msg = ex.Message;
+
+#if DEBUG
+                msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
                 result = false;
-                MessageBox.Show(ex.Message, "Oops, Something Went Wrong.", MessageBoxButton.OK);
+                MessageBox.Show(msg, "Oops, Something Went Wrong.", MessageBoxButton.OK);
             }
 
             return result;
@@ -331,21 +357,36 @@ namespace AwfulNET.Phone
             args.CanExecute = args.CanExecute && this.viewmodel.CanGoToNext();
         }
 
-        private bool isTabsViewVisible = false;
+        private bool isDetailsViewVisible = true;
         private void ShowTabsView(object sender, ExecuteEventArgs args)
-        { 
+        {
+            this.isDetailsViewVisible = false;
             VisualStateManager.GoToState(this, "TabsView", true);
             this.viewmodel.CurrentState = ThreadPageViewModel.State.Tabs;
-            this.isTabsViewVisible = true;
             (this.Resources["tabsCommand"] as EventCommand).RaiseCanExecuteChanged();
         }
 
-        private void HideTabsView()
+        private void ShowDetailsView()
         {
+            isDetailsViewVisible = true;
             VisualStateManager.GoToState(this, "DetailsView", true);
             this.viewmodel.CurrentState = ThreadPageViewModel.State.Details;
-            isTabsViewVisible = false;
             (this.Resources["tabsCommand"] as EventCommand).RaiseCanExecuteChanged();
+        }
+
+        private void ShowPostJumpView()
+        {
+            if (postJumpList.ItemsSource.Count > 0)
+            {
+                // always show first post in view; this might fail if
+                // the list hasn't been rendered yet, so surround with a try/catch.
+                try { postJumpList.ScrollTo(postJumpList.ItemsSource[0]); }
+                catch (Exception) { }
+            }
+
+            this.isDetailsViewVisible = false;
+            this.viewmodel.CurrentState = ThreadPageViewModel.State.PostJump;
+            VisualStateManager.GoToState(this, "PostJumpView", true);
         }
 
         private void CanShowTabsView(object sender, CanExecuteEventArgs e)
@@ -379,8 +420,7 @@ namespace AwfulNET.Phone
 
         private void OnShowDetailsCommandExecuted(object sender, ExecuteEventArgs args)
         {
-            if (this.isTabsViewVisible)
-                HideTabsView();
+            ShowDetailsView();
         }
 
         #endregion
@@ -406,6 +446,17 @@ namespace AwfulNET.Phone
             }
         }
 
+        private void postJumpItem_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            FrameworkElement element = sender as FrameworkElement;
+            if (element != null)
+            {
+                ThreadPostMetadata post = element.DataContext as ThreadPostMetadata;
+                this.Browser.InvokeScript("scrollToPost", post.PostID);
+                ShowDetailsView();
+            }
+        }
+
         #region LogicalPageNavigation
 
         private async void tabsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -426,11 +477,11 @@ namespace AwfulNET.Phone
 
                 // go back to details view
                 else if (this.viewmodel.CurrentState == ThreadPageViewModel.State.Tabs)
-                    HideTabsView();
+                    ShowDetailsView();
             }
         }
 
-        #endregion LogicalPageNavigation
+        #endregion LogicalPageNavigation  
     }
 
     [DataContract]
@@ -474,17 +525,20 @@ namespace AwfulNET.Phone
         {
             Normal = 0,
             Details,
-            Tabs
+            Tabs,
+            PostJump
         }
 
         private State currentState;
         private IThreadViewPage page;
         private IProgress<string> progress;
-        private ObservableCollection<ThreadDataItem> threads = new ObservableCollection<ThreadDataItem>();
+        private ObservableCollection<ThreadDataItem> threads;
+        private Stack<ThreadDataItem> history;
 
-        public ThreadPageViewModel(ThreadDataItem initial, IThreadViewPage page, IProgress<string> progress )
+        public ThreadPageViewModel(ThreadDataItem initial, Stack<ThreadDataItem> history, IThreadViewPage page, IProgress<string> progress)
         {
-            this.threads.Add(initial);
+            this.history = history;
+            this.threads = new ObservableCollection<ThreadDataItem>(history);
             this.currentThread = initial;
             this.page = page;
             this.progress = progress;
@@ -600,6 +654,12 @@ namespace AwfulNET.Phone
         public int LastPage
         {
             get { return CurrentThread.LastPage; }
+        }
+
+        internal void AddTab(ThreadDataItem tab)
+        {
+            history.Push(tab);
+            threads.Add(tab);
         }
     }
 }

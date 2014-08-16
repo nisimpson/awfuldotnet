@@ -1,4 +1,5 @@
-﻿using AwfulNET.Phone;
+﻿using AwfulNET.Core.Common;
+using AwfulNET.Phone;
 using AwfulNET.Views;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
@@ -88,8 +89,15 @@ namespace AwfulNET.Common
 
                 error = ex;
             }
-            catch (Exception ex) { 
-                MessageBox.Show(ex.Message, "Oops, something went wrong.", MessageBoxButton.OK);
+            catch (Exception ex) {
+
+                string msg = ex.Message;
+
+#if DEBUG
+                msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+                MessageBox.Show(msg, "Oops, something went wrong.", MessageBoxButton.OK);
                 error = ex;
             }
             finally { 
@@ -147,6 +155,11 @@ namespace AwfulNET.Common
                     await InvokeAndNotifyOnError(this.ViewModel.OnScriptNotifyAsync(this, this.progress, e.Value));
                     break;
             }
+
+#if DEBUG
+            // show the passed in value
+            MessageBox.Show(e.Value, "Script Notify", MessageBoxButton.OK);
+#endif
         }
 
         protected virtual async Task InvokeAndNotifyOnError(Task task)
@@ -155,7 +168,15 @@ namespace AwfulNET.Common
             catch (Exception ex)
             {
                 HideLoading();
-                MessageBox.Show(ex.Message, "Oops, Something Went Wrong.", MessageBoxButton.OK);
+
+                string msg = ex.Message;
+
+#if DEBUG
+                msg = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+                MessageBox.Show(msg, "Oops, something went wrong.", MessageBoxButton.OK);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
             }
         }
 
@@ -226,6 +247,8 @@ namespace AwfulNET.Common
         {
             this.NavigationService.Navigate(uri);
         }
+
+        public void SetContentAsActive(IContentViewModel content) { }
 
         #endregion IWebViewPage
     }

@@ -7,13 +7,15 @@
         value: ko.observable("fart"),
         displayArticle: ko.observable(false),
         displayThread: ko.observable(false),
-        displayPlaceholder : ko.observable(true),
 
+        displayMessage: ko.observable(false),
+        displayPlaceholder : ko.observable(true),
         article: ko.observable(''),
+
         thread: ko.observable(''),
         message: ko.observable(''),
-
         showSeparators: ko.observable(false),
+
         theme: ko.observable(''),
         accent: ko.observable(''),
         isLoading: ko.observable(false)
@@ -27,6 +29,7 @@
 
         disableScroll: disableScrolling,
         enableScroll: enableScrolling,
+        viewMessage: viewMessage,
 
         viewThreadPage: viewThreadPage,
         threadScrollToTop: scrollToTopPost,
@@ -61,8 +64,15 @@
         self.isEditable = post.IsEditable;                     // flags the post as editable (meaning this is the current user's post).
         self.content = ko.observable(post.PostBody);           // post content; contains unsanitized html.
         self.avatar = ko.observable(post.PostIconUri);
+        self.avatarText = ko.observable(post.PostAvatarText);
+        self.showAvatarText = ko.observable(false);
         self.thread = thread;
         self.isIgnored = ko.observable(post.IsIgnored);
+
+        self.toggleAvatarText = function () {
+            var value = self.showAvatarText();
+            self.showAvatarText(!value);
+        };
 
         // post options
         self.options = ko.observableArray([
@@ -443,7 +453,7 @@
         }
         else {
             console.log("all posts...read? scrolling to top.");
-            scrollToTopPost(then, 0);
+            scrollToBottomPost(then, 0);
         }
     }
 
@@ -651,6 +661,23 @@
         });
     }
 
+    // Unnests deep quotes. Use for private messages.
+    function unwrapQuotes(element) {
+        var quotes = $('.bbc-block', element);
+        if (quotes.length > 1) {
+            var top = quotes[0];
+            var current = top;
+
+            quotes.each(function () {
+                if ($(this).parent().is('blockquote')) {
+                    var quote = $(this).detach();
+                    $(current).after(quote);
+                    current = quote;
+                } else { current = this; }
+            });
+        }
+    }
+
     function attachUnveilPlugin() {
         $(".unveil-img").unveil(200, function () {
             $(this).load(function () {
@@ -705,6 +732,36 @@
         return "OK: " + JSON.stringify(model);
     }
 
+    function viewMessage(json) {
+        // clear display
+        hideView();
+
+        var message = JSON.parse(json);
+        var model = {
+            title: message.Subject,
+            subtitle: formatDate(message.PostDate),
+            description: message.From,
+            content: message.RawHtml,
+
+            // Invoked when DOM element for private message is rendered.
+            onRender: function (element) {
+                unwrapQuotes(element);
+                attachSpoilerEvent(element);
+                fixLongLinks(element);
+                youTubeFix(element);
+                attachImageEvents(element);
+                mapNavigation();
+            }
+        };
+
+        webViewModel.message(model);
+        webViewModel.displayMessage(true);
+        attachUnveilPlugin();
+        webViewModel.value("message loaded.");
+        scrollToIndex(0, function () { }, 0);
+        return "OK: " + JSON.stringify(model);
+    }
+
     function viewThreadPage(json) {
         hideView();
 
@@ -720,6 +777,7 @@
     function hideView() {
         webViewModel.displayArticle(false);
         webViewModel.displayThread(false);
+        webViewModel.displayMessage(false);
         webViewModel.displayPlaceholder(false);
         return "OK";
     }

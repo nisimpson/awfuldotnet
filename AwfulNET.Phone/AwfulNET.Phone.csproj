@@ -90,6 +90,66 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Awful-Debug|AnyCPU'">
+    <OutputPath>bin\Awful-Debug\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Awful-Debug|x86'">
+    <OutputPath>bin\x86\Awful-Debug\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Awful-Debug|ARM'">
+    <OutputPath>bin\ARM\Awful-Debug\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Offline|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Offline\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;OFFLINE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Offline|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Offline\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Offline|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Offline\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -106,6 +166,7 @@
     <Compile Include="Common\CommonMessageBox.cs" />
     <Compile Include="Common\CommonValueConverter.cs" />
     <Compile Include="Common\ContextMenu\IContextMenuExtensions.cs" />
+    <Compile Include="Common\Converters.cs" />
     <Compile Include="Common\DataTypeTemplateSelector.cs" />
     <Compile Include="Common\EmptyContentControl\EmptyContentControl.cs" />
     <Compile Include="Common\EventCommand.cs" />
@@ -116,8 +177,14 @@
     </Compile>
     <Compile Include="Common\ContextMenu\AwfulContextMenu.cs" />
     <Compile Include="Common\IProgressFactory.cs" />
+    <Compile Include="Common\LoggingOverlay\LoggingOverlay.xaml.cs">
+      <DependentUpon>LoggingOverlay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\SettingsModelFactory.cs" />
     <Compile Include="Common\StorageModelFactory.cs" />
+    <Compile Include="Common\SmileyTagSelector\SmileyTagSelector.xaml.cs">
+      <DependentUpon>SmileyTagSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\WP8HttpClient.cs" />
     <Compile Include="Common\PageNavigator\PageNavigator.xaml.cs">
       <DependentUpon>PageNavigator.xaml</DependentUpon>
@@ -130,15 +197,19 @@
     <Compile Include="Common\VariableContentControl.cs" />
     <Compile Include="Common\WebViewAwarePage.cs" />
     <Compile Include="Common\WebViewScriptNotificationHandler.cs" />
+    <Compile Include="Common\WPCrashReporter.cs" />
+    <Compile Include="Common\WPLogger.cs" />
     <Compile Include="Common\WPSettingsModel.cs" />
     <Compile Include="Common\WPStorageModel.cs" />
     <Compile Include="DataModel\ArticleDataModel.cs" />
     <Compile Include="DataModel\AwfulDataGroupBase.cs" />
     <Compile Include="DataModel\AwfulViewPostForm.cs" />
+    <Compile Include="DataModel\CodeTagDataModel.cs" />
     <Compile Include="DataModel\CommonDataModel.cs" />
     <Compile Include="DataModel\ForumDataModel.cs" />
     <Compile Include="DataModel\JumpListDataModel.cs" />
     <Compile Include="DataModel\MainDataModel.cs" />
+    <Compile Include="DataModel\PrivateMessageDataModel.cs" />
     <Compile Include="DataModel\SignInDataModel.cs" />
     <Compile Include="DataModel\ThreadDataModel.cs" />
     <Compile Include="Data\UserAccount.cs" />
@@ -171,11 +242,24 @@
     <Compile Include="ThreadPage.xaml.cs">
       <DependentUpon>ThreadPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Etc\TagsPage.xaml.cs">
+      <DependentUpon>TagsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\IHomePageView.cs" />
     <Compile Include="Views\IListViewModel.cs" />
     <Compile Include="Views\IArticlePageView.cs" />
+    <Compile Include="Views\IPrivateMessageView.cs" />
     <Compile Include="Views\IThreadPageView.cs" />
     <Compile Include="Views\LoadMoreItemsConverter.cs" />
+    <Compile Include="Views\PM\NewMessageView.xaml.cs">
+      <DependentUpon>NewMessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PM\PrivateMessagePage.xaml.cs">
+      <DependentUpon>PrivateMessagePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PM\PrivateMessages.xaml.cs">
+      <DependentUpon>PrivateMessages.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -194,7 +278,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Common\LoggingOverlay\LoggingOverlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Common\PageNavigator\PageNavigator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Common\SmileyTagSelector\SmileyTagSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -230,6 +322,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Etc\TagsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PM\NewMessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PM\PrivateMessagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PM\PrivateMessages.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -252,9 +360,13 @@
     <Content Include="Assets\AppBar\check.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\AppBar\message-add.png" />
+    <Content Include="Assets\AppBar\mail.png" />
+    <Content Include="Assets\AppBar\reply.png" />
     <Content Include="Assets\AppBar\sync.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\AppBar\tags.png" />
     <Content Include="Assets\ApplicationIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -343,6 +455,7 @@
   <ItemGroup>
     <DesignTimeOnly Include="SampleData\SampleItemsSource\SampleItemsSource.xsd" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

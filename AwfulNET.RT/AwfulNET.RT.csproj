@@ -19,6 +19,7 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
     <PackageCertificateThumbprint>AF6ABF60CE66C8184EED0E83A3285ABF1431D48B</PackageCertificateThumbprint>
+    <AppxBundle>Always</AppxBundle>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -179,6 +180,9 @@
     <Compile Include="..\AwfulNET.Phone\DataModel\MainDataModel.cs">
       <Link>DataModel\MainDataModel.cs</Link>
     </Compile>
+    <Compile Include="..\AwfulNET.Phone\DataModel\PrivateMessageDataModel.cs">
+      <Link>DataModel\PrivateMessageDataModel.cs</Link>
+    </Compile>
     <Compile Include="..\AwfulNET.Phone\DataModel\SignInDataModel.cs">
       <Link>DataModel\SignInDataModel.cs</Link>
     </Compile>
@@ -190,6 +194,9 @@
     </Compile>
     <Compile Include="..\AwfulNET.Phone\Views\IListViewModel.cs">
       <Link>Views\IListViewModel.cs</Link>
+    </Compile>
+    <Compile Include="..\AwfulNET.Phone\Views\IPrivateMessageView.cs">
+      <Link>Views\IPrivateMessageView.cs</Link>
     </Compile>
     <Compile Include="..\AwfulNET.Phone\Views\IThreadPageView.cs">
       <Link>Views\IThreadPageView.cs</Link>
@@ -222,6 +229,7 @@
     <Compile Include="Common\WinRTSettingsModel.cs" />
     <Compile Include="Common\WinRTStorageModel.cs" />
     <Compile Include="DataModel\AwfulViewPageNavigator.cs" />
+    <Compile Include="DataModel\NewPrivateMessageForm.cs" />
     <Compile Include="Data\UserAccount.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -237,6 +245,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\AwfulNET.Phone\Assets\AppBar\mail.png">
+      <Link>Assets\AppBar\mail.png</Link>
+    </Content>
     <Content Include="..\AwfulNET.Phone\js\jquery-2.0.3.js">
       <Link>js\jquery-2.0.3.js</Link>
     </Content>

@@ -3,6 +3,7 @@ using System.Linq;
 using HtmlAgilityPack;
 using System.Net;
 using System.Collections.Generic;
+using AwfulNET.Core.Common;
 
 
 namespace AwfulNET.Core.Parsing
@@ -40,6 +41,17 @@ namespace AwfulNET.Core.Parsing
 
         internal static ThreadPageMetadata ParseThreadPage(HtmlDocument document)
         {
+            var top = document.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(document);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             return ProcessThreadPage(document.DocumentNode);
         }
 

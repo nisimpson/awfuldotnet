@@ -32,9 +32,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Awful-Debug|AnyCPU'">
+    <OutputPath>bin\Awful-Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Offline|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Offline\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\AsyncObserver.cs" />
-    <Compile Include="Common\CompareThreadByNewPost.cs" />
+    <Compile Include="Common\ThreadComparers.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\Exceptions.cs" />
     <Compile Include="Common\Extensions.cs" />
@@ -80,7 +98,10 @@
     <Compile Include="Metadata\ThreadPostMetadata.cs" />
     <Compile Include="Rest\ForumAccessToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rest\IForumAccessToken.cs" />
+    <Compile Include="Rest\IMockHtmlGenerator.cs" />
     <Compile Include="Rest\JsonHelper.cs" />
+    <Compile Include="Rest\MockForumAccessToken.cs" />
     <Compile Include="Rest\NewThreadRequest.cs" />
     <Compile Include="Rest\PrivateMessageFolderEditor.cs" />
     <Compile Include="Rest\PrivateMessageRequest.cs" />

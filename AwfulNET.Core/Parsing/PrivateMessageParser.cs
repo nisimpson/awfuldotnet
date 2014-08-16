@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 
 using AwfulNET.Core.Rest;
+using AwfulNET.Core.Common;
 
 namespace AwfulNET.Core.Parsing
 {
@@ -46,6 +47,17 @@ namespace AwfulNET.Core.Parsing
             List<PrivateMessageFolderMetadata> folders = new List<PrivateMessageFolderMetadata>();
             // get select option nodes
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
+
             var selectNode = top.Descendants("select")
                 .Where(node => node.GetAttributeValue("name", string.Empty).Equals("folderid"))
                 .FirstOrDefault();
@@ -78,6 +90,16 @@ namespace AwfulNET.Core.Parsing
         public static ICollection<TagMetadata> ParseNewPrivateMessageIcons(HtmlDocument doc)
         {
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var iconArray = top.Descendants(NEW_MESSAGE_ICON_TAG)
                 .Where(node => node.GetAttributeValue("class", string.Empty).Equals(NEW_MESSAGE_POSTICON))
                 .ToArray();
@@ -114,6 +136,16 @@ namespace AwfulNET.Core.Parsing
         {
             List<PrivateMessageMetadata> messages = new List<PrivateMessageMetadata>();
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var messagesNode = top.Descendants("table").FirstOrDefault();
             var messageTable = messagesNode.Descendants("tr").ToArray();
 
@@ -133,15 +165,16 @@ namespace AwfulNET.Core.Parsing
                     var rows = item.Descendants("td").ToArray();
                     var statusNode = rows[0];
                     message.Status = GetMessageStatusFromNode(statusNode);
-                    // skip the thread tag node, since I'm not using those yet
-                    var titleNode = rows[2];
+                    // thread tag
+                    var tagNode = rows.SingleOrDefault(row => row.GetAttributeValue("class", string.Empty).Contains("icon"));
+                    message.IconUri = GetMessageIconUriFromNode(tagNode);
                     // title node has our subject and message id
+                    var titleNode = rows[2];
                     message.Subject = GetMessageTitleFromNode(titleNode);
                     message.PrivateMessageId = GetMessageIDFromNode(titleNode);
                     // author node is next <td>
                     var authorNode = rows[3];
                     message.From = GetMessageAuthorFromNode(authorNode);
-
                     // postmark node is next <td>
                     var postmarkNode = rows[4];
                     message.PostDate = GetPostMarkFromNode(postmarkNode);
@@ -161,6 +194,16 @@ namespace AwfulNET.Core.Parsing
         {
             var pmRequest = new PrivateMessageRequest();
             var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var inputArray = top.Descendants("input").ToArray();
 
             string toUser = GetInputValue(inputArray, NEW_MESSAGE_TOUSER);
@@ -184,6 +227,17 @@ namespace AwfulNET.Core.Parsing
 
         private static List<TagMetadata> ParseFormTagOptions(HtmlDocument doc)
         {
+            var top = doc.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var tagNodes = doc.DocumentNode.Descendants("div")
                 .Where(node => node.GetAttributeValue("class", string.Empty).Equals("posticon"));
 
@@ -220,13 +274,25 @@ namespace AwfulNET.Core.Parsing
             var pm = new PrivateMessageMetadata();
             var top = doc.DocumentNode;
 
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             // **** PARSE BODY *****
             var postBodyNode = top.Descendants("td")
                 .Where(node => node.GetAttributeValue("class", string.Empty).Equals(NEW_MESSAGE_POSTBODY))
                 .SingleOrDefault();
 
             if (postBodyNode != null)
+            {
                 pm.RawHtml = postBodyNode.InnerHtml;
+                pm.RawText = postBodyNode.InnerText;
+            }
 
             // ***** PARSE AUTHOR *****
             var authorNode = top.Descendants("dt")
@@ -283,6 +349,16 @@ namespace AwfulNET.Core.Parsing
         {
             PrivateMessageFolderMetadata folder = null;
             var top = htmlDocument.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(htmlDocument);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var currentFolderNode = top.Descendants("div")
                 .Where(node => node.GetAttributeValue("class", string.Empty).Equals("breadcrumbs"))
                 .FirstOrDefault();
@@ -318,6 +394,16 @@ namespace AwfulNET.Core.Parsing
         {
             PrivateMessageFolderEditor request = null;
             var top = htmlDocument.DocumentNode;
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(htmlDocument);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             var inputArray = top.Descendants("input");
             if (inputArray != null)
             {
@@ -367,6 +453,19 @@ namespace AwfulNET.Core.Parsing
 
             value = valueNode == null ? string.Empty : valueNode.GetAttributeValue("value", string.Empty);
             return value;
+        }
+
+        private static string GetMessageIconUriFromNode(HtmlNode node)
+        {
+            // grab the image tag
+            HtmlNode img = node.Descendants("img").FirstOrDefault();
+            if (img != null)
+            {
+                var src = img.GetAttributeValue("src", string.Empty);
+                return src;
+            }
+
+            return null;
         }
 
         private static DateTime? GetPostMarkFromNode(HtmlNode node)

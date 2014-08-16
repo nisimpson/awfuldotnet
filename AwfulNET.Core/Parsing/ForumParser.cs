@@ -45,6 +45,14 @@ namespace AwfulNET.Core.Parsing
                 if (title != null && title.InnerText.ToLower().Contains("banned"))
                     throw new BannedAccountException("Cannot parse forums using a banned account.");
 
+                var body = parent.Descendants("body").FirstOrDefault();
+                if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+                {
+                    var ex = new SpecialMessageException(doc);
+                    Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                    throw ex;
+                }
+
                 // get all unique links off the page with hrefs containing "forumdisplay.php"
                 // and with nonempty class attributes
                 var forumAnchors = parent.Descendants("a")
@@ -87,7 +95,19 @@ namespace AwfulNET.Core.Parsing
 
             var title = parent.Descendants("title").FirstOrDefault();
             if (title != null && title.InnerText.ToLower().Contains("banned"))
-                throw new BannedAccountException("Cannot parse forums using a banned account.");
+            {
+                var ex = new BannedAccountException("Cannot parse forums using a banned account.");
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
+            var body = parent.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
            
             var selectNode = parent.Descendants("select")
                 .Where(node => node.GetAttributeValue("name", "").Equals("forumid"))
@@ -101,7 +121,10 @@ namespace AwfulNET.Core.Parsing
                 {
                     var forum = CreateForumMetadata(node);
                     if (forum != null)
+                    {
+                        Logger.Default.AddEntry(LogLevel.INFO, "[ForumParser] Forum -> " + forum.ForumName);
                         forums.Add(forum);
+                    }
                 }
             }
 
@@ -207,6 +230,16 @@ namespace AwfulNET.Core.Parsing
         public static IEnumerable<ForumMetadata> ParseForumDescription(this IEnumerable<ForumMetadata> forums,
             HtmlDocument doc)
         {
+            var parent = doc.DocumentNode;
+
+            var body = parent.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
+
             // first, place each forum into a dictionary, with the name as the key, and the forum as the value.
             var forumMap = forums.ToDictionary<ForumMetadata, string>(forum => forum.ForumName);
 
@@ -239,6 +272,7 @@ namespace AwfulNET.Core.Parsing
 
         public static ForumPageMetadata ParseForumPage(HtmlDocument doc)
         {
+
             var top = doc.DocumentNode;
             var page = new ForumPageMetadata();
             int pageNumber = -1;
@@ -247,6 +281,15 @@ namespace AwfulNET.Core.Parsing
             var title = top.Descendants("title").FirstOrDefault();
             if (title != null && title.InnerText.ToLower().Contains("banned"))
                 throw new BannedAccountException("Cannot parse using a banned account.");
+
+            // check for unregistered account
+            var body = top.Descendants("body").FirstOrDefault();
+            if (body.GetAttributeValue("class", string.Empty).Contains("error"))
+            {
+                var ex = new SpecialMessageException(doc);
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex;
+            }
 
             // first, let's find the forum id
             var formNode = top.Descendants("form")
@@ -362,12 +405,13 @@ namespace AwfulNET.Core.Parsing
         // TODO: Remember to sort thread data by new posts
         private static IList<ThreadMetadata> GenerateThreadData(ForumPageMetadata page, IEnumerable<HtmlNode> threadsInfo)
         {
-            //Logger.AddEntry("AwfulForumPage - Generating thread data...");
+            Logger.Default.AddEntry(LogLevel.INFO, "Generating thread data from page...");
 
             List<ThreadMetadata> data = new List<ThreadMetadata>();
             foreach (var node in threadsInfo)
             {
                 var thread = ThreadParser.ParseThread(node);
+                Logger.Default.AddEntry(LogLevel.INFO, "[ForumParser] Thread -> " + thread.Title);
                 data.Add(thread);
             }
 

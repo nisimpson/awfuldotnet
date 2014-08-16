@@ -15,6 +15,7 @@ namespace AwfulNET
     {
         public const int DefaultTimeoutInMilliseconds = 60000;
         private const string BASE_URL = "http://forums.somethingawful.com";
+        private const string BASE_LOGIN_URL = "https://forums.somethingawful.com";
         private const string COOKIE_DOMAIN_URL = "http://fake.forums.somethingawful.com";
         private const string DOMAIN_FIX = ".somethingawful.com";
         private const string LOGIN_URL = "http://forums.somethingawful.com/account.php?";
@@ -43,7 +44,8 @@ namespace AwfulNET
             {
                 CookieContainer = cookieContainer,
                 UseCookies = true,
-                AllowAutoRedirect = true
+                AllowAutoRedirect = true,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
 
             if (cookies != null)
@@ -85,6 +87,7 @@ namespace AwfulNET
         {
             var handler = CreateHttpClientHandler(null);
             var loginClient = CreateHttpClient(handler);
+            loginClient.BaseAddress = new Uri(BASE_LOGIN_URL, UriKind.Absolute);
 
             HttpContent content = new FormUrlEncodedContent(
                 new KeyValuePair<string,string>[]{
@@ -103,7 +106,7 @@ namespace AwfulNET
          
             var response = await loginClient.PostAsync("/account.php", content);
             response.EnsureSuccessStatusCode();
-           
+            
             ForumAccessToken user = new ForumAccessToken();
             user.Username = username;
 

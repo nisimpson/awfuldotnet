@@ -19,7 +19,6 @@ namespace AwfulNET.DataModel
         AwfulDataGroupBase
     {
         private ForumsIndexFeed feed;
-        private bool isBusy;
         private readonly Dictionary<ForumCategory, ICommonDataGroup> categories;
         private Func<ForumsIndexFeed> createFeed;
         private PinnedForumsGroup pinned;
@@ -85,13 +84,21 @@ namespace AwfulNET.DataModel
             SetOnItemsReady(true);
         }
 
-        private void OnError(Exception obj)
+        private void OnError(Exception ex)
         {
             this.IsBusy = false;
             SetOnItemsReady(false);
+
+            string msg = "An error occured while loading the forums.";
+
+#if DEBUG
+            msg = string.Format("An error occured while loading the forums.\n\n{0}\n\n{1}", ex.Message, ex.StackTrace);
+#endif
+
+            Logger.Default.AddEntry(LogLevel.WARNING, ex);
+
             NotificationService.Default.Notify<DialogMessage>(this,
-                new DialogMessage("An error occurred while loading the forums.",
-                    "Oops, something went wrong."));
+                new DialogMessage(msg, "Oops, something went wrong."));
 
             this.Items.Clear();
         }
@@ -160,7 +167,7 @@ namespace AwfulNET.DataModel
 
         public override bool CanRefresh()
         {
-            return !this.isBusy;
+            return !this.IsBusy;
         }
 
         private void NotifyItemsSourceChanged()
@@ -172,7 +179,7 @@ namespace AwfulNET.DataModel
 
         private async Task LoadAsync(Func<Task> requestAsync, IProgress<string> progress)
         {
-            this.isBusy = true;
+            this.IsBusy = true;
            
             // detach listener to pin changes
             ThreadDataGroup.PinChanged -= ThreadDataGroup_PinChanged;
@@ -186,12 +193,13 @@ namespace AwfulNET.DataModel
             }
             
             await requestAsync();
+            this.IsBusy = false;
             ReportProgress(progress, null);
         }
 
         protected override async Task OnSelectedAsyncCore(object state, IProgress<string> progress)
         {
-            if (!this.isBusy && this.Items.Count == 0)
+            if (!this.IsBusy && this.Items.Count == 0)
                 await LoadAsync(() =>
                 {
                     if (this.feed == null)
@@ -200,13 +208,17 @@ namespace AwfulNET.DataModel
                         this.feed = this.createFeed();
                         this.InitializeFeed(feed);
                     }
-                    return this.feed.UpdateAsync();
+                    return this.feed.PullAsync();
                 }, progress);
+            else
+            {
+                SetOnItemsReady(true);
+            }
         }
 
         protected override async Task OnRefreshAsyncCore(object state, IProgress<string> progress)
         {
-            if (!this.isBusy)
+            if (!this.IsBusy)
                 await this.LoadAsync(() =>
                     {
                         if (this.feed == null)
@@ -215,8 +227,13 @@ namespace AwfulNET.DataModel
                             this.feed = this.createFeed();
                             this.InitializeFeed(feed);
                         }
-                        return this.feed.PullAsync();
+                        ReportProgress(progress, "Refreshing forums index...");
+                        return this.feed.UpdateAsync();
                     }, progress);
+            else
+            {
+                SetOnItemsReady(true);
+            }
         }
 
         #endregion IListViewModel
@@ -240,13 +257,14 @@ namespace AwfulNET.DataModel
         {
             if (this.isNewInstance)
             {
-                this.Items.Clear();
                 EmptyText = "Please wait...";
                 await forumsIndex.OnSelectedAsync(state, progress);
                 this.ItemsSource = this.Items;
                 EmptyText = "Long press your favorite forum and select 'pin to favorites'.";
                 this.isNewInstance = false;
             }
+
+             this.SetOnItemsReady(true);
         }
 
         public override bool CanRefresh()

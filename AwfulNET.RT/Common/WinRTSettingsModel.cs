@@ -10,7 +10,7 @@ namespace AwfulNET.WinRT.Common
 {
     public class WinRTSettingsModel : ISettingsModel
     {
-        private ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+        protected virtual ApplicationDataContainer settings { get { return ApplicationData.Current.LocalSettings; } }
 
         public T GetValueOrDefault<T>(string key, T defaultValue)
         {
@@ -82,6 +82,17 @@ namespace AwfulNET.WinRT.Common
         {
             settings.DeleteContainer(key);
             return true;
+        }
+    }
+
+    public class WinRTRoamingSettingsModel : WinRTSettingsModel
+    {
+        protected override ApplicationDataContainer settings
+        {
+            get
+            {
+                return ApplicationData.Current.RoamingSettings;
+            }
         }
     }
 }

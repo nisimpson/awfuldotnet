@@ -52,7 +52,7 @@ namespace AwfulNET.DataModel
 #if WINDOWS_PHONE
         private const string IMG_PREFIX = "/Assets/";
 #else
-        private const string IMG_PREFIX = "ms-appx:///";
+        private const string IMG_PREFIX = "ms-appx:///Assets/";
 #endif
 
         public CommonDataModel()
@@ -196,8 +196,11 @@ namespace AwfulNET.DataModel
         public void SetImage(String path)
         {
             this._image = null;
-            this.imagePath = path;
-            this.OnPropertyChanged("Image");
+            if (this.imagePath != path)
+            {
+                this.imagePath = path;
+                this.OnPropertyChanged("Image");
+            }
         }
 
         private ICommonDataGroup group = null;

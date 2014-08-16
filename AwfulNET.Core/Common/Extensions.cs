@@ -27,14 +27,14 @@ namespace AwfulNET
             return observable.Subscribe(observer);
         }
 
-        public static Task<ForumAccessToken> LoadAccessTokenFromStorage(
+        public static Task<IForumAccessToken> LoadAccessTokenFromStorage(
             this IStorageModel storage,
             string username)
         {
-            return storage.LoadFromStorageAsync<ForumAccessToken>(username + ".dat");
+            return storage.LoadFromStorageAsync<IForumAccessToken>(username + ".dat");
         }
 
-        public static Task SaveToStorageAsync(this ForumAccessToken token, IStorageModel storage)
+        public static Task SaveToStorageAsync(this IForumAccessToken token, IStorageModel storage)
         {
             string filename = string.Format("{0}.dat", token.Username);
             return storage.SaveToStorageAsync(filename, token);
@@ -172,7 +172,7 @@ namespace AwfulNET
 
         public static async Task<ThreadFormResponse> ReplyAsync(this ThreadMetadata thread,
             string message,
-            ForumAccessToken token,
+            IForumAccessToken token,
             bool parseUrl = true,
             bool addToBookmarks = true)
         {
@@ -206,12 +206,41 @@ namespace AwfulNET
             NetworkDetectionMessage networkStatus = new NetworkDetectionMessage() { IsNetworkActive = true };
             NotificationService.Default.Notify<NetworkDetectionMessage>(client, networkStatus);
             if (!networkStatus.IsNetworkActive)
-                throw new WebException("The request failed. Please check your connection settings and try again.", 
+                throw new WebException("The request failed. Please check your connection settings and try again.",
                     WebExceptionStatus.RequestCanceled);
+            
 
             HttpResponseMessage result = null;
-            try { result = await client.GetAsync(requestUri); }
-            catch (Exception ex) { throw new TimeoutException("The request timed out.", ex); }
+            try 
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] " + requestUri);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] HttpClient.GetAsync...");
+
+                result = await client.GetAsync(requestUri, HttpCompletionOption.ResponseContentRead);
+
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Done.");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Http request header:");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] --------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, result.RequestMessage.ToString());
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] --------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] StatusCode: " + result.StatusCode);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Http response header:");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] ---------------------");
+                Logger.Default.AddEntry(LogLevel.INFO, result.ToString());
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] ---------------------");
+            }
+            catch (HttpRequestException hre)
+            {
+                Logger.Default.AddEntry(LogLevel.WARNING, hre);
+            }
+
+            catch (Exception ex) 
+            { 
+                var timeout = new TimeoutException("The request timed out.", ex);
+                Logger.Default.AddEntry(LogLevel.WARNING, timeout);
+            }
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetAsyncEx] Completed.");
             return result;
         }
 
@@ -249,13 +278,52 @@ namespace AwfulNET
             try
             {
                 var bytes = await content.ReadAsByteArrayAsync();
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Converting html content into Win1252...");
                 html = western.GetString(bytes, 0, bytes.Length);
-            }
-            catch (Exception ex) { throw ex; }
+               
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html character length: " + html.Length);
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
 
+                // Uncomment to attach to debugger
+                //NotificationService.Default.Notify<string>(content, html);
+            }
+            catch (Exception ex) 
+            {
+                Logger.Default.AddEntry(LogLevel.WARNING, ex);
+                throw ex; 
+            }
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Creating html document...");
+            
             doc = new HtmlDocument();
             doc.LoadHtml(html);
+
+            try
+            {
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Html snippet (1000 char max):");
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] --------------------");
+
+                var htmlNode = doc.DocumentNode.Descendants("html").First();
+
+                foreach (var node in htmlNode.ChildNodes)
+                {
+                    string outer = node.OuterHtml;
+                    if (!string.IsNullOrWhiteSpace(outer))
+                    {
+                        Logger.Default.AddEntry(LogLevel.INFO, outer.Substring(0, Math.Min(1000, outer.Length)));
+                        Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] <truncating>");
+                    }
+                }
+
+                Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] --------------------");
+            }
+            catch (Exception) { }
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Disposing content resource...");
             content.Dispose();
+
+            Logger.Default.AddEntry(LogLevel.INFO, "[GetHtml] Completed.");
+
             return doc;
         }
 
@@ -286,7 +354,7 @@ namespace AwfulNET
     public static class MetadataExtensions
     {
         public static async Task RefreshAsync(this PrivateMessageMetadataCollection collection,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             var refresh = await collection.Folder.RefreshAsync(token);
             if (null != refresh)
@@ -296,7 +364,7 @@ namespace AwfulNET
             }
         }
 
-        public static Task<ThreadFormResponse> SubmitAsync(this IThreadForm form, ForumAccessToken token)
+        public static Task<ThreadFormResponse> SubmitAsync(this IThreadForm form, IForumAccessToken token)
         {
             return token.SubmitAsync(form);
         }
@@ -314,50 +382,50 @@ namespace AwfulNET
         }
 
         public static Task<ThreadPageMetadata> GetThreadPageAsync(
-            this ThreadMetadata thread, int pageNumber, ForumAccessToken token)
+            this ThreadMetadata thread, int pageNumber, IForumAccessToken token)
         {
             return token.GetThreadPageAsync(thread.ThreadID, pageNumber);
         }
 
         public static Task<ThreadPageMetadata> GetLastPostAsync(
-            this ThreadMetadata thread, ForumAccessToken token)
+            this ThreadMetadata thread, IForumAccessToken token)
         {
             return token.GetLastPostAsync(thread.ThreadID);
         }
 
         public static Task<ThreadPageMetadata> GetNewPostAsync(
-            this ThreadMetadata thread, ForumAccessToken token)
+            this ThreadMetadata thread, IForumAccessToken token)
         {
             return token.GetNewPostAsync(thread.ThreadID);
         }
 
         public static Task<string> QuoteAsync(this ThreadPostMetadata post,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.QuoteAsync(post.PostID);
         }
 
         public static Task<bool> RateAsync(this ThreadMetadata thread,
-            int rating, ForumAccessToken token)
+            int rating, IForumAccessToken token)
         {
             return token.RateAsync(thread.ThreadID, rating);
         }
 
         public static Task<bool> MarkAsReadAsync(this ThreadPostMetadata post,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.MarkAsReadAsync(post.PostID, post.ThreadIndex);
         }
 
         public static Task<ThreadPageMetadata> RefreshAsync(this ThreadPageMetadata page,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.RefreshAsync(page.ThreadID, page.PageNumber);
         }
 
         public enum BookmarkOptions { Add, Remove }
 
-        public static Task<bool> SetBookmarkAsync(this ThreadMetadata thread, BookmarkOptions option, ForumAccessToken token)
+        public static Task<bool> SetBookmarkAsync(this ThreadMetadata thread, BookmarkOptions option, IForumAccessToken token)
         {
             if (option == BookmarkOptions.Add)
                 return token.AddToBookmarkAsync(thread.ThreadID);
@@ -365,65 +433,67 @@ namespace AwfulNET
             return token.RemoveFromBookmarkAsync(thread.ThreadID);
         }
 
-        public static Task<PrivateMessageMetadata> RefreshAsync(this PrivateMessageMetadata message,
-            ForumAccessToken token)
+        public static async Task<PrivateMessageMetadata> RefreshAsync(this PrivateMessageMetadata message,
+            IForumAccessToken token)
         {
-            return token.RefreshAsync(message.PrivateMessageId);
+            var result = await token.RefreshAsync(message.PrivateMessageId);
+            result.FolderId = message.FolderId;
+            return result;
         }
 
-        public static Task<ForumPageMetadata> RefreshAsync(this ForumPageMetadata page, ForumAccessToken token)
+        public static Task<ForumPageMetadata> RefreshAsync(this ForumPageMetadata page, IForumAccessToken token)
         {
             return token.GetForumPageAsync(page.ForumID, page.PageNumber);
         }
 
         public static Task<ForumPageMetadata> GetForumPageAsync(
-            this ForumMetadata forum, ForumAccessToken token, int pagenumber = 1)
+            this ForumMetadata forum, IForumAccessToken token, int pagenumber = 1)
         {
             return token.GetForumPageAsync(forum.ForumID, pagenumber);
         }
 
         public static Task<ForumPageMetadata> GetFilteredForumPageAsync(this ForumMetadata forum, FilterTagMetadata metadata,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.GetForumPageAsync(forum.ForumID, 1, metadata);
         }
 
-        public static Task<bool> ClearAllMarkedPostsAsync(this ThreadMetadata thread, ForumAccessToken token)
+        public static Task<bool> ClearAllMarkedPostsAsync(this ThreadMetadata thread, IForumAccessToken token)
         {
             return token.ClearAllMarkedPostsAsync(thread.ThreadID);
         }
 
-        public static Task<ThreadPageMetadata> GetThreadPageAsync(this Uri uri, ForumAccessToken token)
+        public static Task<ThreadPageMetadata> GetThreadPageAsync(this Uri uri, IForumAccessToken token)
         {
             return token.GetThreadPageAsync(uri);
         }
 
         public static Task<IPrivateMessageRequest> GetReplyRequestAsync(this PrivateMessageMetadata message,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.GetReplyRequestAsync(message.PrivateMessageId);
         }
 
         public static Task<IPrivateMessageRequest> GetForwardRequestAsync(this PrivateMessageMetadata message,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.GetForwardRequestAsync(message.PrivateMessageId);
         }
 
         public static Task<bool> SubmitAsync(this IPrivateMessageRequest request,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.SendMessageAsync(request);
         }
 
         public static Task<PrivateMessageFolderMetadata> RefreshAsync(this PrivateMessageFolderMetadata folder,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.RefreshPrivateMessageFolderAsync(folder.FolderId);
         }
 
         public static async Task<bool> DeleteAllAsync(this IEnumerable<PrivateMessageMetadata> messages,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             List<Task> tasks = new List<Task>();
             foreach (var message in messages)
@@ -435,40 +505,46 @@ namespace AwfulNET
             return success;
         }
 
+        public static Task<bool> DeleteAsync(this PrivateMessageMetadata message,
+            IForumAccessToken token)
+        {
+            return DeleteAllAsync(new List<PrivateMessageMetadata>() { message }, token);
+        }
+
         public static Task<bool> MoveAllAsync(this IEnumerable<PrivateMessageMetadata> messages,
             PrivateMessageFolderMetadata folder,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             var pairs = messages.Select(pair => new KeyValuePair<string, string>(pair.PrivateMessageId, pair.FolderId));
             return token.MoveAllPrivateMessagesAsync(pairs, folder.FolderId);
         }
 
         public static Task<bool> MoveAsync(this PrivateMessageMetadata message, PrivateMessageFolderMetadata folder,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.MovePrivateMessageAsync(message.PrivateMessageId, message.FolderId, folder.FolderId);
         }
 
         public static Task<bool> SubmitAsync(this PrivateMessageFolderEditor editor,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.SaveChangesAsync(editor);
         }
 
         public static Task<INewThreadRequest> CreateNewThreadAsync(this ForumMetadata forum,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.BeginNewThreadAsync(forum.ForumID);
         }
 
         public static Task<bool> SubmitAsync(this INewThreadRequest request,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.SubmitAsync(request);
         }
 
         public static Task<string> PreviewAsync(this INewThreadRequest request,
-            ForumAccessToken token)
+            IForumAccessToken token)
         {
             return token.PreviewAsync(request);
         }

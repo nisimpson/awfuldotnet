@@ -7,6 +7,7 @@ using System.Text;
 
 namespace AwfulNET.Core.Common
 {
+    [Obsolete("This class is deprecated. Thread page metadata is no longer altered in app.", true)]
     internal class ThreadPageConverter : HtmlConverter<ThreadPageMetadata>
     {
         public static readonly ThreadPageConverter Instance;

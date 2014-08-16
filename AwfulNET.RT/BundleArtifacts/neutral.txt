@@ -1,4 +1,4 @@
-MainPackage=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\bin\Release\AwfulNET.RT_3.0.0.1_Bundle\AwfulNET.RT_3.0.0.1_AnyCPU.appx
-SymbolPackage=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\AppPackages\AwfulNET.RT_3.0.0.1_Test\AwfulNET.RT_3.0.0.1_AnyCPU.appxsym
-ResourcePack=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\bin\Release\AwfulNET.RT_3.0.0.1_Bundle\AwfulNET.RT_3.0.0.1_scale-140.appx
-ResourcePack=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\bin\Release\AwfulNET.RT_3.0.0.1_Bundle\AwfulNET.RT_3.0.0.1_scale-180.appx
+MainPackage=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\bin\Release\AwfulNET.RT_3.0.0.2_Bundle\AwfulNET.RT_3.0.0.2_AnyCPU.appx
+SymbolPackage=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\AppPackages\AwfulNET.RT_3.0.0.2_Test\AwfulNET.RT_3.0.0.2_AnyCPU.appxsym
+ResourcePack=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\bin\Release\AwfulNET.RT_3.0.0.2_Bundle\AwfulNET.RT_3.0.0.2_scale-140.appx
+ResourcePack=C:\Users\Nathan\Documents\Visual Studio 2012\Projects\AwfulNET\AwfulNET.RT\bin\Release\AwfulNET.RT_3.0.0.2_Bundle\AwfulNET.RT_3.0.0.2_scale-180.appx

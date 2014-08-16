@@ -32,6 +32,7 @@
     <phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True">
             <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="private" />
                 <shell:ApplicationBarMenuItem Text="logout" />
                 <shell:ApplicationBarMenuItem Text="donate" />
             </shell:ApplicationBar.MenuItems>
@@ -42,6 +43,7 @@
     <i:Interaction.Behaviors>
         <apu:AppBarItemCommand Id="refresh" Type="Button" IconUri="Assets/AppBar/sync.png"
                 Command="{StaticResource refreshCommand}" />
+        <apu:AppBarItemNavigation Id="private" Type="MenuItem" Text="private messages..." TargetPage="/Views/PM/PrivateMessages.xaml" />
         <apu:AppBarItemCommand Id="logout" Type="MenuItem" Command="{StaticResource logoutCommand}" Text="logout..." />
         <apu:AppBarItemNavigation Id="donate" Type="MenuItem" Text="donate..." TargetPage="/DonateView.xaml" />
     </i:Interaction.Behaviors>
@@ -55,7 +57,6 @@
 		<Grid.Resources>
 
             <!-- jump list template and style -->
-
 			<DataTemplate x:Key="listViewItemTemplate">
 				<Grid toolkit:TiltEffect.IsTiltEnabled="True">
 					<toolkit:ContextMenuService.ContextMenu>
@@ -138,6 +139,13 @@
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
         
+        <!--
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="0.6*"/>
+        </Grid.RowDefinitions>
+        -->
+        
         <!--Pivot Control-->
 		<phone:Pivot x:Name="mainPivot"
 			HeaderTemplate="{StaticResource pivotHeaderTemplate}"
@@ -149,7 +157,24 @@
 				d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=datamodel:SampleDataGroup}"
 				Header="{Binding Title}">
 				<Grid>
-					<ContentControl Style="{StaticResource listContentStyle}" Content="{Binding}" />
+                    <Grid.Resources>
+                        <common:SortStyleTextConverter x:Key="SortStyleConverter" />
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="0, -24, 0, 24">
+                        <TextBlock x:Name="BookmarkListSortStatus" Style="{StaticResource PhoneTextTitle3Style}"
+                                   toolkit:TiltEffect.IsTiltEnabled="True"
+                                common:UIExtensions.TapCommand="{Binding ToggleStyleCommand}"
+                                Foreground="{StaticResource PhoneSubtleBrush}">
+                            <Run Text="{Binding SortingStyle, Converter={StaticResource SortStyleConverter}, FallbackValue='awful style'}"
+                                    Foreground="{StaticResource PhoneAccentBrush}" />
+                            <Run Text="sorting" />
+                        </TextBlock>
+                    </Grid>
+					<ContentControl Grid.Row="1" Style="{StaticResource listContentStyle}" Content="{Binding}" />
 				</Grid>
 			</phone:PivotItem>
 
@@ -175,6 +200,11 @@
 				</Grid>
 			</phone:PivotItem>
 		</phone:Pivot>
+        
+        <!-- Logging Overlay -->
+        <!--
+        <common:LoggingOverlay x:Name="logOverlay" />
+        -->
 	</Grid>
     
 </phone:PhoneApplicationPage>

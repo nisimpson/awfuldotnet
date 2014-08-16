@@ -35,7 +35,7 @@ namespace AwfulNET.Phone
             InitializeWebView(this.Browser);
         }
 
-        protected override async Task<Views.IWebViewModel<string>> CreateWebViewModelAsync(NavigationEventArgs e)
+        protected override async Task<IWebViewModel<string>> CreateWebViewModelAsync(NavigationEventArgs e)
         {
             ArticleDataItem selected = null;
             if (NavigationContext.QueryString.ContainsKey("id"))
