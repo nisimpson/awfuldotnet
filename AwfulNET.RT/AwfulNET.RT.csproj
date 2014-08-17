@@ -369,6 +369,7 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\win8\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <Import Project="..\AwfulNET.RT.Shared\AwfulNET.RT.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

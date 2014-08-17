@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Windows.UI.Xaml.Input;
 #if WINDOWS_PHONE
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -60,8 +59,10 @@ namespace AwfulNET.Common
             else
                 element.Tapped -= element_Tap;
         }
-        private static void element_Tap(object sender, TappedRoutedEventArgs e)
+
+        private static void element_Tap(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
+
             FrameworkElement element = sender as FrameworkElement;
             ICommand command = GetTapCommand(element);
 
