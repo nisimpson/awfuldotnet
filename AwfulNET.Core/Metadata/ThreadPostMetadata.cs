@@ -48,7 +48,8 @@ namespace AwfulNET
             Standard,
             Administrator,
             Moderator,
-            OriginalPoster
+            OriginalPoster,
+            Platinum
         }
 
         [DataMember]

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 #if WINDOWS_PHONE
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -27,18 +28,17 @@ namespace AwfulNET.Common
             typeof(ICommand),
             typeof(UIExtensions),
             new PropertyMetadata(null, new PropertyChangedCallback(OnTapCommandChanged)));
-
+#if WINDOWS_PHONE
         private static void OnTapCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = d as FrameworkElement;
-            if (e.NewValue != null)
+         FrameworkElement element = d as FrameworkElement;
+                    if (e.NewValue != null)
             {
                 element.Tap += element_Tap;
             }
             else
                 element.Tap -= element_Tap;
         }
-
         static void element_Tap(object sender, GestureEventArgs e)
         {
             FrameworkElement element = sender as FrameworkElement;
@@ -47,7 +47,29 @@ namespace AwfulNET.Common
             if (command.CanExecute(element.DataContext))
                 command.Execute(element.DataContext);
         }
+#endif
+#if NETFX_CORE
+        private static void OnTapCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            FrameworkElement element = d as FrameworkElement;
+            if (e.NewValue != null)
+            {
+                element.Tapped += element_Tap;
+            }
+            else
+                element.Tapped -= element_Tap;
+        }
 
+        private static void element_Tap(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+
+            FrameworkElement element = sender as FrameworkElement;
+            ICommand command = GetTapCommand(element);
+
+            if (command.CanExecute(element.DataContext))
+                command.Execute(element.DataContext);
+        }
+#endif
         public static ICommand GetTapCommand(FrameworkElement element)
         {
             return element.GetValue(TapCommandProperty) as ICommand;

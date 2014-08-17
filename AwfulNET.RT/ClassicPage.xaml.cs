@@ -464,6 +464,12 @@ namespace AwfulNET.RT
             this.viewModelWrapper.NotifyContentCommands();
         }
 
+        public void OnNavigateToThreadPage(ThreadPageMetadata threadPage)
+        {
+            // TODO: Is this necessary anymore?
+            throw new NotImplementedException();
+        }
+
         #endregion IThreadViewPage
 
         #region IWebViewPage

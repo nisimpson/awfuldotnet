@@ -192,13 +192,11 @@ namespace AwfulNET.Core.Parsing
 
         private static ThreadPostMetadata ParseAuthor(this ThreadPostMetadata post, HtmlNode postNode)
         {
-            var authorNode = postNode.Descendants()
-              .Where(node =>
-                  (node.GetAttributeValue("class", "").Equals("author")) ||
-                  (node.GetAttributeValue("class", "").Equals("author op")) ||
-                  (node.GetAttributeValue("title", "").Equals("Administrator")) ||
-                  (node.GetAttributeValue("title", "").Equals("Moderator")))
-              .FirstOrDefault();
+            var authorNode = postNode.Descendants().FirstOrDefault(node => (node.GetAttributeValue("class", "").Equals("author")) ||
+                                                                           (node.GetAttributeValue("class", "").Equals("author platinum")) ||
+                                                                           (node.GetAttributeValue("class", "").Equals("author op")) ||
+                                                                           (node.GetAttributeValue("title", "").Equals("Administrator")) ||
+                                                                           (node.GetAttributeValue("title", "").Equals("Moderator")));
 
             if (authorNode != null)
             {
@@ -212,7 +210,9 @@ namespace AwfulNET.Core.Parsing
                     case "Moderator":
                         post.AuthorType = ThreadPostMetadata.PostType.Moderator;
                         break;
-
+                    case "Platinum User":
+                        post.AuthorType = ThreadPostMetadata.PostType.Platinum;
+                        break;
                     default:
                         post.AuthorType = ThreadPostMetadata.PostType.Standard;
                         break;

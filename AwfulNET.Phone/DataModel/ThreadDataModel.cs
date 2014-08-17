@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AwfulNET.Core.Common;
 using AwfulNET.Core.Feeds;
 using AwfulNET.Core.Rest;
 using AwfulNET.Common;
